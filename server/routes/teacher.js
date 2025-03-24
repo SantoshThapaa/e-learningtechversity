@@ -1,10 +1,11 @@
 import express from 'express';
-import { isAuth, isTeacher } from '../middlewares/isAuth.js';
-import { createCourse } from '../controllers/teacher.js';
+import { isAdmin, isAuth, isTeacher } from '../middlewares/isAuth.js';
+import { addLectures, createCourse } from '../controllers/teacher.js';
 import { uploadFiles } from '../middlewares/multer.js';
 
 const router = express.Router();
 
-router.get("/course/new", isAuth, isTeacher, uploadFiles, createCourse);
+router.post("/course/new", isAuth, isTeacher, uploadFiles, createCourse);
+router.post("/course/:id", isAuth, isAdmin, uploadFiles, addLectures);
 
 export default router;
