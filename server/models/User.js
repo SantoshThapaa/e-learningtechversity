@@ -19,7 +19,6 @@ const userSchema = new Schema({
     },
     role: {
         required: true,
-        default: "user",
         type: String
     },
     bio: {
