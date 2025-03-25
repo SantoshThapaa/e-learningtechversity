@@ -114,6 +114,6 @@ export const checkout = TryCatch(async(req, res)=>{
 });
 
 
-export const paymentVerification = TryCatch(async(req, res)=> {
-    const {} = req.body;  
-})
+// export const paymentVerification = TryCatch(async(req, res)=> {
+//     const {} = req.body;  
+// })
