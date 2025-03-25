@@ -1,3 +1,4 @@
+// import { instance } from "../index.js";
 import TryCatch from "../middlewares/TryCatch.js";
 import { Courses } from "../models/Courses.js";
 import { Lecture } from "../models/Lecture.js";
@@ -67,5 +68,41 @@ export const fetchLecture = TryCatch(async(req, res)=>{
         return res.status(400).json({
     message: "You dont have access to this course",
     });
-    res.json({lectures});   
+    res.json({lecture});   
 });
+
+export const getMyCourses = TryCatch(async (req, res)=> {
+    const courses = await Courses.find({_id: req.user.subscription});
+
+    res.json({
+        courses,
+    });
+});
+
+export const checkout = TryCatch(async(req, res)=>{
+    const user = await User.findById(req.user._id);
+
+    const course = await Courses.findById(req.params.id);
+
+    if(user.subscription.includes(course._id)){
+        return res.status(400).json({
+            message: "You already have access to this course",
+        });
+    }
+
+    const options = {
+        amount: Number(course.price * 100),
+        currency: "USD",
+    };
+
+    const order = await instance.orders.create(options);
+
+    res.status(201).json({
+        order,
+        course,
+    });
+});
+
+export const paymentVerification = TryCatch(async(req, res)=> {
+    const {} = req.body;  
+})
