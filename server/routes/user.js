@@ -1,4 +1,4 @@
-import express from 'express'
+import express from 'express';
 import { loginUser, myProfile, register, verifyUser } from '../controllers/user.js';
 import { isAuth } from '../middlewares/isAuth.js';
 
