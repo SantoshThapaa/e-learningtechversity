@@ -34,10 +34,15 @@ export const createTestimonial = async (req, res) => {
 
 export const getAllTestimonials = async (req, res) => {
     try {
-        const testimonials = await Testimonial.find().populate('userId', 'name email role');
+        const testimonials = await Testimonial.find().populate(
+            'userId',
+             'name email role'
+            );
         res.status(200).json(testimonials);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({
+             message: 'Server error' 
+        });
     }
 };
