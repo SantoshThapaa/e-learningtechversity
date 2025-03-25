@@ -39,10 +39,33 @@ export const addCourses = TryCatch(async (req, res) => {
     });
 });
 
-// export const fetchLectures = TryCatch(async(req, res)=>{
-//     const lectures = await Lecture.find({course: req.params.id})
+export const fetchLectures = TryCatch(async(req, res)=>{
+    const lectures = await Lecture.find({course: req.params.id})
 
-//     const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id);
 
-//     if(user.r)
-// })
+    if(user.role== "teacher"){
+        return res.json({lectures});
+    }
+    if(!user.subscription.includes(req.params.id))
+        return res.status(400).json({
+    message: "You dont have access to this course",
+    });
+    res.json({lectures});   
+});
+
+
+export const fetchLecture = TryCatch(async(req, res)=>{
+    const lecture = await Lecture.find({course: req.params.id})
+
+    const user = await User.findById(req.params.id);
+
+    if(user.role== "teacher"){
+        return res.json({lecture});
+    }
+    if(!user.subscription.includes(req.params.id))
+        return res.status(400).json({
+    message: "You dont have access to this course",
+    });
+    res.json({lectures});   
+});
