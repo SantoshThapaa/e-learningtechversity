@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import mongoose, { Schema } from "mongoose";
 
-const testimonialSchema = new mongoose.Schema({
+const testimonialSchema = new Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',  
@@ -34,4 +34,4 @@ const testimonialSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Testimonial', testimonialSchema);
+export const Testimonial = mongoose.models.Testimonial ?? mongoose.model("Testimonial", testimonialSchema);
