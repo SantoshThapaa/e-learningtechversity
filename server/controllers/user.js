@@ -61,6 +61,7 @@ export const verifyUser = TryCatch(async (req, res) => {
 });
 
 
+
 export const loginUser = TryCatch(async(req, res)=> {
     const {email, password} = req.body;
     const user = await User.findOne({email})
@@ -83,6 +84,8 @@ res.json({
     user,
 });
 });
+
+
 
 export const myProfile = TryCatch(async(req, res)=> {
     const user = await User.findById(req.user._id);

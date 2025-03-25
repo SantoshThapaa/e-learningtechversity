@@ -65,7 +65,9 @@ const unlinkAsync = promisify(fs.unlink)
 
 export const deleteCourse = TryCatch(async(req, res)=> {
     const course = await Courses.findById(req.params.id);
-    const lectures = await Lecture.find({course: course._id})
+    const lectures = await Lecture.find({
+        course: course._id
+    })
     await Promise.all(
         lectures.map(async(lecture)=> {
             await unlinkAsync(lecture.video);

@@ -11,12 +11,14 @@ export const getAllCourses = TryCatch(async (req, res) => {
     });
 });
 
+
 export const getSingleCourse = TryCatch(async(req, res)=>{
     const course = await Courses.findById(req.params.id)
     res.json({
         course,
     })
 })
+
 
 export const addCourses = TryCatch(async (req, res) => {
     const course = await Courses.findById(req.params.id); 
@@ -40,8 +42,12 @@ export const addCourses = TryCatch(async (req, res) => {
     });
 });
 
+
+
 export const fetchLectures = TryCatch(async(req, res)=>{
-    const lectures = await Lecture.find({course: req.params.id})
+    const lectures = await Lecture.find({
+        course: req.params.id}
+    )
 
     const user = await User.findById(req.params.id);
 
@@ -54,6 +60,8 @@ export const fetchLectures = TryCatch(async(req, res)=>{
     });
     res.json({lectures});   
 });
+
+
 
 
 export const fetchLecture = TryCatch(async(req, res)=>{
@@ -79,6 +87,8 @@ export const getMyCourses = TryCatch(async (req, res)=> {
     });
 });
 
+
+
 export const checkout = TryCatch(async(req, res)=>{
     const user = await User.findById(req.user._id);
 
@@ -102,6 +112,7 @@ export const checkout = TryCatch(async(req, res)=>{
         course,
     });
 });
+
 
 export const paymentVerification = TryCatch(async(req, res)=> {
     const {} = req.body;  
