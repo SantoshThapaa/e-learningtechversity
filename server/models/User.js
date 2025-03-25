@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema({
-   Name: {
+   name: {
         required: false,
         type: String
     },
@@ -10,7 +10,7 @@ const userSchema = new Schema({
         type: String
     },
     confirmPassword:{
-        required: true,
+        required: false,
         type: String
     },
     email: {
@@ -18,8 +18,8 @@ const userSchema = new Schema({
         type: String
     },
     role: {
-        required: true,
-        type: String
+        type: String,
+        default: 'user'
     },
     bio: {
         required: false,
