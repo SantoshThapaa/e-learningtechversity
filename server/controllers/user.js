@@ -19,7 +19,7 @@ export const register = TryCatch(async (req, res) => {
         email,
         password: hashPassword, 
     });
-    const otp = Math.floor(100000 + Math.random() * 900000); 
+    const otp = Math.floor(100000 + Math.random() * 900000);
     const activationToken = jwt.sign(
         { email, otp }, 
         process.env.Activation_Secret, 
@@ -34,6 +34,7 @@ export const register = TryCatch(async (req, res) => {
 
 
 
+
 export const verifyUser = TryCatch(async (req, res) => {
     const {otp, activationToken} = req.body;
     const verify = jwt.verify(activationToken, process.env.Activation_Secret);
@@ -44,6 +45,11 @@ export const verifyUser = TryCatch(async (req, res) => {
     if(verify.otp !== otp) return res.status(400).json({
         message: "Invalid otp",
     });
+    if(!verify.user || !verify.user.name || !verify.user.email || !verify.user.password){
+        return res.status(400).json({
+            message: "Invalid user",
+        });
+    }
     await User.create({
         name: verify.user.name,
         email: verify.user.email,
