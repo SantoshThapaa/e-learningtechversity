@@ -1,5 +1,6 @@
-import { Assignment } from "../models/Assignment";
-import { Courses } from "../models/Courses";
+import TryCatch from "../middlewares/TryCatch.js";
+import { Assignment } from "../models/Assignment.js";
+import { Courses } from "../models/Courses.js";
 
 export const postAssignment = TryCatch(async (req, res) => {
     const { courseId } = req.params;
