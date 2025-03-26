@@ -33,6 +33,10 @@ const schema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    enrolledStudents: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    }],    
     assignedTeachers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
