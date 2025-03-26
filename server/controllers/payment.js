@@ -3,7 +3,7 @@ import { Payment } from '../models/Payment.js';
 import { User } from '../models/User.js';
 
 
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY); 
+const stripe = Stripe('sk_test_51PB5UvBTLGU4hBnYJhoqozCyCk65JL097Q0PDBRZOYAbymXG4x7StuwzgISeJpFGKiuI0KDFUYW56pS65lOjvBqR00YO0Ff7rU'); 
 
 
 export const createPayment = async (req, res) => {
