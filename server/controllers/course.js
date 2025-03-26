@@ -4,6 +4,23 @@ import { Courses } from "../models/Courses.js";
 import { Lecture } from "../models/Lecture.js";
 import { User } from "../models/User.js";
 
+export const getEnrolledStudents = TryCatch(async (req, res) => {
+    const { courseId } = req.params;
+    const teacherId = req.user._id;
+
+    const course = await Courses.findById(courseId).populate("enrolledStudents");
+    if (!course) return res.status(404).json({ message: "Course not found" });
+
+    if (!course.assignedTeachers.includes(teacherId.toString())) {
+        return res.status(403).json({ message: "You are not assigned to this course" });
+    }
+
+    res.json({
+        students: course.enrolledStudents,
+    });
+});
+
+
 export const getAllCourses = TryCatch(async (req, res) => {
     const courses = await Courses.find();
     res.json({
@@ -79,6 +96,7 @@ export const fetchLecture = TryCatch(async(req, res)=>{
     res.json({lecture});   
 });
 
+
 export const getMyCourses = TryCatch(async (req, res)=> {
     const courses = await Courses.find({_id: req.user.subscription});
 
@@ -113,7 +131,3 @@ export const checkout = TryCatch(async(req, res)=>{
     });
 });
 
-
-// export const paymentVerification = TryCatch(async(req, res)=> {
-//     const {} = req.body;  
-// })
