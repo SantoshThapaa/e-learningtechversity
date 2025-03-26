@@ -6,6 +6,28 @@ import { promisify } from 'util';
 import fs from 'fs';
 import { User } from "../models/User.js";
 
+
+export const teacherJoinCourse = TryCatch(async(req, res)=>{
+    const {courseId} = req.params;
+    const teacherId = req.user._id;
+
+    const course = await Courses.findById(courseId);
+    if(!course){
+        return res.status(404).json({
+            message: "Course not found"
+        });
+    }
+    if(!course.assignedTeachers.includes(teacherId.toString())){
+        return res.status(403).json({
+            message: "You are not assigned to this course",
+        });
+    }
+    res.json({
+        message: "You are successfully joined to this course",
+    })
+});
+
+
 export const createCourse = TryCatch(async (req, res) => {
     const { title,
         description,
@@ -39,7 +61,7 @@ export const addLectures = TryCatch(async (req, res) => {
 
     const file = req.file;
 
-    const lecture = await lecture.create({
+    const lecture = await Lecture.create({
         title,
         description,
         video: file?.path,
