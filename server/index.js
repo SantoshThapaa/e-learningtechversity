@@ -7,6 +7,7 @@ import courseRoutes from "./routes/course.js";
 import teacherRoutes from "./routes/teacher.js";
 import adminRoutes from "./routes/admin.js";
 import testimonialRoutes from "./routes/testimonial.js";
+import paymentRoutes from "./routes/payment.js";
 
 const app= express();
 
@@ -26,6 +27,7 @@ app.use("/api", courseRoutes);
 app.use("/api", teacherRoutes);
 app.use("/api", adminRoutes);
 app.use("/api", testimonialRoutes);
+app.use('/api/payments', paymentRoutes);
 
 app.listen(port, ()=>{
     console.log(`Server is running on http://localhost:${port}`);
