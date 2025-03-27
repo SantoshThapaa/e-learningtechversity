@@ -39,8 +39,6 @@ export default function TeamSection() {
             MEET THE PASSIONATE TEAM
             <br /> DRIVING EXCELLENCE
           </h2>
-
-          {/* View All Button */}
           <div className="flex items-center justify-center bg-[#00D96A] w-[150px] h-[150px] rounded-full">
             <Link href="#" className="text-[#000] text-[16px] font-[poppins] text-center">
               <span className="text-[20px] leading-[24px]">View All<br />Members</span>
