@@ -1,7 +1,7 @@
-"use client";
-import Image from "next/image";
-import React from "react";
-import { motion } from "framer-motion";
+"use client"
+import Image from "next/image"
+import React from "react"
+import { motion } from "framer-motion"
 
 export default function LogoContent() {
   const logos = [
@@ -11,19 +11,28 @@ export default function LogoContent() {
     "/logo.png",
     "/logo.png",
     "/logo.png",
-  ];
+    "/logo.png",
+    "/logo.png",
+  ]
+
+  // Duplicate logos for seamless looping
+  const scrollingLogos = [...logos, ...logos]
 
   return (
-    <div className="mt-[30px] flex items-center justify-center bg-[#f1fffb]">
-      <div className="flex flex-wrap justify-center gap-x-12 gap-y-10">
-        {logos.map((src, index) => (
-          <motion.div
+    <div className="mt-[30px] overflow-hidden bg-[#f1fffb] py-6">
+      <motion.div
+        className="flex gap-16 w-max"
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{
+          repeat: Infinity,
+          duration: 20,
+          ease: "linear",
+        }}
+      >
+        {scrollingLogos.map((src, index) => (
+          <div
             key={index}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            viewport={{ once: true }}
-            className="flex items-center justify-center"
+            className="flex items-center justify-center min-w-[200px]"
           >
             <Image
               src={src}
@@ -32,9 +41,9 @@ export default function LogoContent() {
               height={140}
               className="object-contain grayscale hover:grayscale-0 transition duration-300"
             />
-          </motion.div>
+          </div>
         ))}
-      </div>
+      </motion.div>
     </div>
-  );
+  )
 }
