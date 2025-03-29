@@ -1,12 +1,12 @@
-import HeroBanner from '@/components/custom/Hero'
 import React from 'react'
+import Home from './home/page'
 
-const StudentDashboard = () => {
+const page = () => {
   return (
     <>
-    <HeroBanner/>
+    <Home/>
     </>
   )
 }
 
-export default StudentDashboard
+export default page
