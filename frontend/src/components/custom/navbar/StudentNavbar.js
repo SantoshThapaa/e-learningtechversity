@@ -28,31 +28,31 @@ export default function StudentNavbar() {
 
                 <ul className="hidden lg:flex gap-6 items-center">
                     <li className="relative group">
-                        <Link href="#" className="text-blue-600 font-medium">
+                        <Link href="/student/home" className="text-blue-600 font-medium">
                             Home
                         </Link>
                     </li>
 
                     <li>
-                        <Link href="/about">About</Link>
+                        <Link href="/student/about">About</Link>
                     </li>
 
                     <li className="relative group">
-                        <Link href="/courses">Courses</Link>
+                        <Link href="/student/courses">Courses</Link>
                     </li>
 
                     <li className="relative group">
-                        <Link href="/updates">Updates</Link>
+                        <Link href="/student/updates">Updates</Link>
                         
                     </li>
 
                     <li>
-                        <Link href="/contact">Contact</Link>
+                        <Link href="/student/contact">Contact</Link>
                     </li>
 
                     <li>
                         <Button asChild>
-                            <Link className='bg-[#00C853]' href="/courses">Enroll Now</Link>
+                            <Link className='bg-[#00C853]' href="/student/courses">Enroll Now</Link>
                         </Button>
                     </li>
                 </ul>
@@ -66,14 +66,14 @@ export default function StudentNavbar() {
                     className="lg:hidden bg-white px-6 py-4 shadow-md"
                 >
                     <ul className="space-y-4">
-                        <li><Link href="#">Home</Link></li>
-                        <li><Link href="/about">About</Link></li>
-                        <li><Link href="/courses">Courses</Link></li>
-                        <li><Link href="/not-found">Updates</Link></li>
-                        <li><Link href="/contact">Contact</Link></li>
+                        <li><Link href="/student/home">Home</Link></li>
+                        <li><Link href="/student/about">About</Link></li>
+                        <li><Link href="/student/courses">Courses</Link></li>
+                        <li><Link href="/student/updates">Updates</Link></li>
+                        <li><Link href="/student/contact">Contact</Link></li>
                         <li>
                             <Button asChild className="w-full">
-                                <Link className='bg-[#00C853]' href="/courses">Enroll Now</Link>
+                                <Link className='bg-[#00C853]' href="/student/courses">Enroll Now</Link>
                             </Button>
                         </li>
                     </ul>
