@@ -15,7 +15,8 @@ const userSchema = new Schema({
     },
     email: {
         required: true,
-        type: String
+        type: String,
+        unique: true
     },
     role: {
         type: String,
@@ -26,8 +27,8 @@ const userSchema = new Schema({
         type: String
     },
     socialMedia: {
-        required: false,
-        type: Object
+        type: Map,
+        of: String,
     },
 
     profilePicture: {
