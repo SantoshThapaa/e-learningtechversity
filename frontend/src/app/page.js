@@ -1,10 +1,10 @@
+import TeacherDashboard from '@/components/custom/TeacherDashboard';
 import React from 'react';
-import Home from './student/home/page';
 
-export const page = () => {
+export const Page = () => {
   return (
     <>
-     <Home/>
+     <TeacherDashboard/>
     </>
   );
 };
