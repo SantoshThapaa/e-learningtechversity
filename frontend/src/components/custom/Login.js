@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Input } from '@/components/ui/input'
@@ -30,7 +29,7 @@ export default function Login({ variants }) {
       alert('Login successful!')
       localStorage.setItem('token', response.data.token)
       localStorage.setItem('user', JSON.stringify({
-        name: response.data.name,git 
+        name: response.data.name,
         photo: response.data.photoUrl,
       }))
 

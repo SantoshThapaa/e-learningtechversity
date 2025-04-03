@@ -1,7 +1,7 @@
 import React from 'react'
 import Home from './home/page'
 
-const page = () => {
+const Dashboard = () => {
   return (
     <>
     <Home/>
@@ -9,4 +9,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Dashboard

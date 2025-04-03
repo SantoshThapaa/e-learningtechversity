@@ -1,10 +1,14 @@
-import TeacherDashboard from '@/components/custom/TeacherDashboard';
 import React from 'react';
+import Dashboard from './student/page';
+import StudentNavbar from '@/components/custom/navbar/StudentNavbar';
 
-export const Page = () => {
+const Page = () => {
   return (
     <>
-     <TeacherDashboard/>
+      <StudentNavbar/>
+     <Dashboard/>
     </>
   );
 };
+
+export default Page;
