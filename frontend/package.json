@@ -36,6 +36,8 @@
     "react-icons": "^5.5.0",
     "react-progressbar": "^15.4.1",
     "react-quill": "^2.0.0",
+    "react-rater": "^6.0.5",
+    "react-rating-stars-component": "^2.2.0",
     "react-router-dom": "^7.4.1",
     "react-slider": "^2.0.6",
     "react-star-rating-component": "^1.4.1",
