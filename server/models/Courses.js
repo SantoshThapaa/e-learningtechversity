@@ -18,7 +18,7 @@ const schema = new mongoose.Schema({
         required:true,
     },
     duration: {
-        type: Number,
+        type: String,
         required:true,
     },
     category:{
@@ -27,7 +27,7 @@ const schema = new mongoose.Schema({
     },
     createdBy:{
         type: String,
-        required:true,
+        required:false,
     },
     createdAt:{
         type: Date,
@@ -37,7 +37,7 @@ const schema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }],    
-    assignedTeachers: [{
+    assignedTo: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }]
