@@ -39,7 +39,7 @@ export default function HeroBanner() {
                                 Get In Touch
                             </a>
                             <a
-                                href="/courses"
+                                href="/student/enrollnow"
                                 className="px-6 py-3 rounded-md border border-black text-black font-medium hover:bg-black hover:text-white transition"
                             >
                                 Enroll Now
