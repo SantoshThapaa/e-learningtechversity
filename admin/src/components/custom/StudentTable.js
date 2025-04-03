@@ -1,22 +1,33 @@
+"use client";
 import { Avatar } from "../../../../frontend/src/components/ui/avatar";
 import { Button } from "../../../../frontend/src/components/ui/button";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function StudentTable() {
-    const students = [
-        { name: 'Jane Cooper', email: 'example1@mail.com', course: 'UI/UX', joinDate: '2024/2/3', status: 'In Progress', mentor: 'Teacher 1' },
-        { name: 'Guy Hawkins', email: 'example2@mail.com', course: 'Mern Stack', joinDate: '2024/2/3', status: 'In Progress', mentor: 'Teacher 1' },
-        { name: 'Dianne Russell', email: 'example3@mail.com', course: 'UI/UX', joinDate: '2024/2/3', status: 'In Progress', mentor: 'Teacher 2' },
-        { name: 'Ronald Richards', email: 'example4@mail.com', course: 'Graphic', joinDate: '2024/2/3', status: 'Completed', mentor: 'Jane Cooper' },
-        // Add more students...
-    ];
+    const [students, setStudents] = useState([]);
 
     const statusColors = {
         'In Progress': 'bg-orange-300 text-orange-800',
         Completed: 'bg-green-300 text-green-800',
     };
 
+    useEffect(() => {
+        const fetchStudents = async () => {
+            try {
+                const res = await axios.get("http://localhost:4000/api/students");
+                setStudents(res.data.users || []);  
+            } catch (err) {
+                console.error("Failed to fetch students:", err);
+            }
+        };
+    
+        fetchStudents();
+    }, []);
+    
+
     return (
-        <div className="overflow-x-auto bg-white shadow-md rounded-lg mt-20 pl-50">
+        <div className="overflow-x-auto bg-white shadow-md rounded-lg mt-20 ml-50">
             <table className="min-w-full text-sm text-left text-gray-500">
                 <thead className="bg-gray-50 text-xs uppercase text-gray-700">
                     <tr>
@@ -40,7 +51,7 @@ export default function StudentTable() {
                             </td>
                             <td className="px-6 py-4">
                                 <div className="flex items-center space-x-3">
-                                    <Avatar src="/path/to/avatar.png" alt={student.name} />
+                                    <Avatar src={student.profilePicture || "/path/to/avatar.png"} alt={student.name} />
                                     <span>{student.name}</span>
                                 </div>
                             </td>
@@ -64,7 +75,7 @@ export default function StudentTable() {
             {/* Pagination */}
             <div className="flex justify-between items-center p-4">
                 <span className="text-sm text-gray-700">
-                    Showing 1 to 10 of 12 entries
+                    Showing 1 to {students.length} of {students.length} entries
                 </span>
                 <div className="inline-flex items-center">
                     <Button variant="outline">1</Button>
