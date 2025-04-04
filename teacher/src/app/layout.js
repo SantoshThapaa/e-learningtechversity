@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import "../globals.css";
-import TeacherNavbar from "@/components/custom/navbar/TeacherNavbar";
-
+import "./globals.css";
+import TeacherNavbar from "@/components/custom/Navbar/TeacherNavbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Teacher Dashboard",
-  description: "This is the teacher dashboard",
+  description: "This is the teacher dashboard.",
 };
 
 export default function RootLayout({ children }) {
@@ -27,8 +26,6 @@ export default function RootLayout({ children }) {
         <TeacherNavbar/>
         {children}
       </body>
-      
     </html>
-    
   );
 }

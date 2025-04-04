@@ -1,6 +1,5 @@
 import TeacherDashboard from '@/components/custom/TeacherDashboard';
 import React from 'react';
-// import Home from './student/home/page';
 
 const Page = () => {
   return (
@@ -9,5 +8,5 @@ const Page = () => {
     </>
   );
 };
-export default Page;
 
+export default Page;
