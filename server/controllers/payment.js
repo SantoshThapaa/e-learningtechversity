@@ -3,10 +3,7 @@ import { Payment } from '../models/Payment.js';
 import { User } from '../models/User.js';
 import { stripe_key } from '../config/config.js';
 
-
-
 const stripe = Stripe(stripe_key); 
-
 
 export const createPayment = async (req, res) => {
     try {
@@ -21,16 +18,16 @@ export const createPayment = async (req, res) => {
             userId,
             paymentPlan,
             amount,
-            cardDetails,
             paymentMethod: 'Stripe'
         });
 
         await payment.save();
 
+
         const paymentIntent = await stripe.paymentIntents.create({
             amount: amount * 100,  
-            currency: 'usd',      
-            payment_method: cardDetails.cardNumber,
+            currency: 'usd',
+            payment_method: token,  
             confirmation_method: 'manual',
             confirm: true
         });
