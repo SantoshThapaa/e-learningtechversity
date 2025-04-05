@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { User } from "../models/User.js";
+import mongoose from 'mongoose';
 
 export const isAuth = async (req, res, next) => {
     try {
@@ -13,7 +14,8 @@ export const isAuth = async (req, res, next) => {
 
         const decodeData = jwt.verify(token, process.env.jwt_secret);
         console.log('Decoded Token:', decodeData);
-        req.user = await User.findById(decodeData._id);
+        req.user = await User.findById(new mongoose.Types.ObjectId(decodeData.userId));
+        console.log('User found in DB:', req.user); 
         if (!req.user) {
             return res.status(404).json({
                 message: "User not found",
