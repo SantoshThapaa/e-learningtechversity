@@ -33,7 +33,7 @@ export default function HeroBanner() {
                         </div>
                         <div className="flex justify-center gap-4">
                             <a
-                                href="/contact"
+                                href="/student/contact"
                                 className="px-6 py-3 rounded-md bg-[#00C853] text-white font-medium hover:bg-green-600 transition"
                             >
                                 Get In Touch
