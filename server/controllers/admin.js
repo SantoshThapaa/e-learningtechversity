@@ -100,7 +100,7 @@ export const getAllTeachers = TryCatch(async (req, res) => {
 
 export const getAllCourses = TryCatch(async (req, res) => {
   const courses = await Courses.find()
-    .populate('assignedTo', 'name') 
+    .populate('assignedTo', 'name')
     .sort({ createdAt: -1 });
   res.status(200).json({
     message: "Courses fetched successfully",
@@ -135,7 +135,7 @@ export const registerTeacher = TryCatch(async (req, res) => {
   const existing = await User.findOne({ email });
   if (existing) return res.status(400).json({ message: "Email already exists" });
 
-  const defaultPassword = "teacher@123"; 
+  const defaultPassword = "teacher@123";
   const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
   const teacher = await User.create({
@@ -164,7 +164,12 @@ export const Teacherlogin = TryCatch(async (req, res) => {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
-  const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  const token = jwt.sign({
+    id: user._id,
+    photoUrl: user.photoUrl || '',
+    role: user.role
+  },
+    process.env.JWT_SECRET, { expiresIn: "7d" });
 
   res.status(200).json({ token, user });
 });
