@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 export default function Login({ variants }) {
   const [formData, setFormData] = useState({ email: '', password: '' })
@@ -26,16 +28,26 @@ export default function Login({ variants }) {
         password: formData.password.trim(),
       })
 
-      alert('Login successful!')
-      localStorage.setItem('token', response.data.token)
-      localStorage.setItem('user', JSON.stringify({
-        name: response.data.name,
-        photo: response.data.photoUrl,
-      }))
+      const { token, name, photoUrl, role } = response.data
 
-      router.push('/student/courses')
+      // ✅ Save to localStorage
+      localStorage.setItem('token', token)
+      localStorage.setItem('user', JSON.stringify({ name, photo: photoUrl, role }))
+
+      // ✅ Show toast success
+      toast.success('Login successful!')
+
+      // ✅ Redirect based on role
+      if (role === 'teacher') {
+        router.push('/teacher/home')
+      } else {
+        router.push('/student/courses')
+      }
+
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed')
+      const message = err.response?.data?.message || 'Login failed'
+      setError(message)
+      toast.error(message)
     } finally {
       setLoading(false)
     }
