@@ -86,7 +86,7 @@ export const Testimonial = () => {
                   <p className="text-gray-600 text-[16px]">Instructor</p>
                 </div>
               </div>
-              <Link href="#" className="mt-4 inline-flex items-center text-[#0B944D] text-[14px] hover:underline">
+              <Link href="/student/courses" className="mt-4 inline-flex items-center text-[#0B944D] text-[14px] hover:underline">
                 <span>Explore All Courses</span>
                 <svg className="ml-2" width="12" height="12" viewBox="0 0 12 12">
                   <path d="M4.6 8L8 4.6 6.6 3 3 6.6l3.6 3.6z" fill="#0B944D" />
