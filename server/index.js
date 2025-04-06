@@ -4,7 +4,6 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-
 import { connectDb } from './database/db.js';
 //importing routes
 import userRoutes from "./routes/user.js";
@@ -22,7 +21,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
+const allowedOrigins = ["http://localhost:3000"];
 
 
 app.use(cors());
