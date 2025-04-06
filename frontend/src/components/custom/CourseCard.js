@@ -27,7 +27,7 @@ export default function CourseCard({ course }) {
           ${course.price}
         </div>
 
-        <Link href={`/payment/${course._id}`}>
+        <Link href={`/student/payment`}>
           <CardContent className="p-4 cursor-pointer">
             <h3 className="text-lg font-semibold text-black">{course.title}</h3>
 
