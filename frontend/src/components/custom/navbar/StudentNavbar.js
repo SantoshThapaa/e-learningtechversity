@@ -1,5 +1,6 @@
 'use client';
-
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -30,21 +31,17 @@ export default function StudentNavbar() {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch('http://localhost:4000/api/user/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      if (res.ok) {
-        localStorage.removeItem('user');
-        window.location.href = '/student/enrollnow';
-      } else {
-        alert('Logout failed');
-      }
+      await axios.post('http://localhost:4000/api/user/logout');
+  
+      localStorage.removeItem('user');
+      setUser(null);
+      toast.success('Logout successful!');
     } catch (error) {
-      console.error('Logout error:', error);
+      toast.error('Logout failed. Please try again.');
+      console.error(error);
     }
   };
+  
 
   return (
     <motion.div
