@@ -78,39 +78,43 @@ export const verifyUser = TryCatch(async (req, res) => {
 
 export const loginUser = TryCatch(async (req, res) => {
     const { email, password } = req.body;
-
+  
     const user = await User.findOne({ email });
     if (!user) {
-        return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ message: "User not found" });
     }
-
-    if (!user.isVerified) {
-        return res.status(400).json({ message: "Please verify your email first" });
+  
+    // ✅ Skip email verification if role is 'teacher'
+    if (user.role !== 'teacher' && !user.isVerified) {
+      return res.status(400).json({ message: "Please verify your email first" });
     }
-
+  
     const trimmedPassword = password.trim();
-
     const isMatch = await bcrypt.compare(trimmedPassword, user.password);
-
+  
     if (!isMatch) {
-        return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
-
+  
     const token = jwt.sign(
-        { 
-            userId: user._id, 
-            role: user.role 
-        },
-        process.env.jwt_secret,  
-        { expiresIn: "1h" }  
+      { 
+        userId: user._id, 
+        role: user.role 
+      },
+      process.env.jwt_secret,  
+      { expiresIn: "1h" }
     );
-
+  
     return res.status(200).json({
-        message: "Login successful",
-        success: true,
-        token, 
+      message: "Login successful",
+      success: true,
+      token,
+      name: user.name,
+      photoUrl: user.photoUrl || '',
+      role: user.role
     });
-});
+  });
+  
 
 // **LOGOUT USER**
 export const logoutUser = TryCatch(async (req, res) => {
