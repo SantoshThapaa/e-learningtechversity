@@ -101,7 +101,7 @@ export default function FeaturesSection() {
                                         {/* Right: Enroll Button */}
                                         <div className="w-1/5 flex justify-end">
                                             <a
-                                                href="#"
+                                                href="/students/enrollnow"
                                                 className="bg-green-400 text-black w-30 h-30 rounded-full flex items-center justify-center shadow-xl text-sm font-medium hover:scale-105 transition"
                                             >
                                                 Enroll Now ↗
