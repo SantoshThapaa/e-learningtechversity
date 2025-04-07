@@ -150,3 +150,60 @@ export const myProfile = TryCatch(async (req, res) => {
     const user = await User.findById(req.user._id);
     res.status(200).json({ user });
 });
+
+// **VIEW USER PROFILE**
+export const viewUserProfile = TryCatch(async (req, res) => {
+    const { userId } = req.params;  
+
+    const user = await User.findById(userId); 
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+        message: "User profile retrieved successfully",
+        success: true,
+        user,
+    });
+});
+
+// **EDIT USER PROFILE**
+export const editUserProfile = TryCatch(async (req, res) => {
+    const { userId } = req.params;  
+    const { name, email, bio, profilePicture } = req.body;  
+
+    const user = await User.findById(userId); 
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (bio) user.profile.bio = bio;
+    if (profilePicture) user.profile.profilePicture = profilePicture;
+
+    await user.save();
+
+    return res.status(200).json({
+        message: "User profile updated successfully",
+        success: true,
+        user,
+    });
+});
+   
+// **DELETE USER PROFILE**
+export const deleteUserProfile = TryCatch(async (req, res) => {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+    await User.findByIdAndDelete(userId);  
+    return res.status(200).json({
+        message: "User deleted successfully",
+        success: true,
+    });
+});
+
+
