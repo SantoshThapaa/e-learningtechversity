@@ -11,15 +11,16 @@ export default function StudentTable() {
   const [students, setStudents] = useState([]);
 
   useEffect(() => {
-    // Replace with actual student API
+    
     const fetchStudents = async () => {
-      try {
-        const res = await axios.get('http://localhost:4000/api/students');
-        setStudents(res.data.students || []);
-      } catch (err) {
-        console.error('Failed to fetch students:', err);
-      }
-    };
+        try {
+          const res = await axios.get('http://localhost:4000/api/students');
+          console.log("Fetched users:", res.data.users); // helpful debug
+          setStudents(res.data.users || []);
+        } catch (err) {
+          console.error('Failed to fetch students:', err);
+        }
+      };
     fetchStudents();
   }, []);
 
@@ -81,7 +82,7 @@ export default function StudentTable() {
                   <td className="p-4 flex items-center gap-2">
                     <Avatar className="h-7 w-7">
                       <AvatarImage src={student.mentorAvatar || "/avatar-default.jpg"} />
-                      <AvatarFallback>{student.mentor[0]}</AvatarFallback>
+                      {/* <AvatarFallback>{student.mentor[0]}</AvatarFallback> */}
                     </Avatar>
                     {student.mentor}
                   </td>
