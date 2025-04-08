@@ -1,22 +1,46 @@
-"use client";
-import { useState } from 'react';
+"use client"
+import { useState } from "react";
+import { UploadCloud } from "lucide-react";
+import { TextEditor } from "@/components/custom/TextEditor";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 const EditCoursePage = () => {
-  const [courseTitle, setCourseTitle] = useState('');
-  const [courseDuration, setCourseDuration] = useState('');
-  const [courseDescription, setCourseDescription] = useState('');
+  const [courseTitle, setCourseTitle] = useState("");
+  const [courseDuration, setCourseDuration] = useState("");
+  const [courseDescription, setCourseDescription] = useState("");
   const [thumbnailImage, setThumbnailImage] = useState(null);
-  const [videoLink, setVideoLink] = useState('');
-  const [hashtags, setHashtags] = useState('');
-  const [language, setLanguage] = useState('');
-  const [level, setLevel] = useState('');
+  const [videoLink, setVideoLink] = useState("");
+  const [hashtags, setHashtags] = useState("");
+  const [language, setLanguage] = useState("");
+  const [level, setLevel] = useState("");
 
   const handleThumbnailChange = (e) => {
-    setThumbnailImage(URL.createObjectURL(e.target.files[0]));
+    const file = e.target.files[0];
+    if (file) {
+      setThumbnailImage(URL.createObjectURL(file));
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      setThumbnailImage(URL.createObjectURL(file));
+    }
   };
 
   const handleSave = () => {
-    console.log('Course Saved:', {
+    console.log("Course Saved:", {
       courseTitle,
       courseDuration,
       courseDescription,
@@ -24,135 +48,122 @@ const EditCoursePage = () => {
       videoLink,
       hashtags,
       language,
-      level
+      level,
     });
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-6">
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-        {/* Save Button at the top */}
-        <div className="flex justify-end mb-4">
-          <button
-            className="px-6 py-2 bg-blue-600 text-white rounded-md"
-            onClick={handleSave}
-          >
-            Save
-          </button>
-        </div>
+    <div className="min-h-screen bg-[#F2F6FF] p-8">
+      <h2 className="text-xl font-semibold mb-2">Edit Course</h2>
+      <p className="text-sm text-muted-foreground mb-6">Home &gt; Edit Course</p>
 
-        {/* Breadcrumb Navigation */}
-        <div className="text-sm text-gray-500 mb-4">
-          <span>Home</span> &gt; <span>Edit Course</span>
-        </div>
+      {/* Save Button at the top */}
+      <div className="flex justify-end mb-4">
+        <Button className="px-6 py-2 bg-blue-600 text-white rounded-md" onClick={handleSave}>
+          Save
+        </Button>
+      </div>
 
-        {/* Course Details Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          {/* Left Column: 40% width for Course Details */}
-          <div className="md:col-span-1">
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Thumbnail Image (Required)</label>
-              <input
-                type="file"
-                accept="image/*"
-                className="mt-1 block w-full text-sm text-gray-700"
-                onChange={handleThumbnailChange}
-              />
+      <Card className="p-6">
+        <h3 className="text-lg font-medium mb-6">Course Details</h3>
+
+        <div className="flex flex-col md:flex-row gap-6 mb-6">
+          {/* Left 35% */}
+          <div className="md:w-[35%] w-full space-y-4">
+            <div>
+              <Label>Thumbnail Image <span className="text-red-500">(Required)</span></Label>
+              <div
+                className="border border-dashed border-gray-400 rounded-lg h-40 flex flex-col items-center justify-center text-center bg-white relative"
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+              >
+                <UploadCloud className="w-8 h-8 text-gray-500 mb-2" />
+                <span>Drag or <span className="text-blue-600 cursor-pointer">Browse</span></span>
+                <p className="text-sm text-muted-foreground">PNG, JPEG (max 5mb size)</p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="absolute inset-0 opacity-0"
+                  onChange={handleThumbnailChange}
+                />
+              </div>
               {thumbnailImage && (
-                <img src={thumbnailImage} alt="Thumbnail" className="mt-4 w-32 h-32 object-cover" />
+                <img
+                  src={thumbnailImage}
+                  alt="Thumbnail"
+                  className="mt-4 w-32 h-32 object-cover"
+                />
               )}
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Course Title (Required)</label>
-              <input
-                type="text"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                value={courseTitle}
-                onChange={(e) => setCourseTitle(e.target.value)}
-                placeholder="Enter course title"
-              />
+            <div>
+              <Label>Intro Video Link</Label>
+              <Input placeholder="www.youtube674849.com" />
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Course Join Link (Gmeet or Zoom)</label>
-              <input
-                type="text"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                value={videoLink}
-                onChange={(e) => setVideoLink(e.target.value)}
-                placeholder="Enter course link"
-              />
+            <div>
+              <Label>Hashtags</Label>
+              <Input placeholder="Enter course category" />
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Course Duration</label>
-              <input
-                type="text"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                value={courseDuration}
-                onChange={(e) => setCourseDuration(e.target.value)}
-                placeholder="e.g., 6 weeks"
-              />
+            <div>
+              <Label>Language</Label>
+              <Select defaultValue="english">
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="english">English</SelectItem>
+                  <SelectItem value="nepali">Nepali</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label>Level</Label>
+              <Select defaultValue="advance">
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="beginner">Beginner</SelectItem>
+                  <SelectItem value="intermediate">Intermediate</SelectItem>
+                  <SelectItem value="advance">Advance</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          {/* Right Column: Remaining width for the About Course text editor */}
-          <div className="md:col-span-2">
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700">About Course</label>
-              <textarea
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                value={courseDescription}
-                onChange={(e) => setCourseDescription(e.target.value)}
-                placeholder="Enter course description"
-                rows="6"
-              ></textarea>
+          {/* Right Remaining Width */}
+          <div className="flex-1 space-y-4">
+            <div>
+              <Label htmlFor="title">Course Title <span className="text-red-500">(Required)</span></Label>
+              <Input id="title" placeholder="Full Stack Development" />
+              <div className="text-right text-sm text-muted-foreground">18 / 100</div>
             </div>
 
-            {/* Extra Fields Section (Hashtags, Language, and Level) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Hashtags</label>
-                <input
-                  type="text"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                  value={hashtags}
-                  onChange={(e) => setHashtags(e.target.value)}
-                  placeholder="Enter course hashtags"
-                />
+                <Label>Course Join Link <span className="text-muted-foreground">(Gmeet or Zoom)</span></Label>
+                <Input placeholder="Paste meeting link here" />
               </div>
+              <div>
+                <Label>Course Time</Label>
+                <Input placeholder="time picker" />
+              </div>
+              <div>
+                <Label>Course Duration</Label>
+                <Input placeholder="6 weeks" />
+              </div>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Language</label>
-                <select
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                >
-                  <option>English</option>
-                  <option>Spanish</option>
-                  <option>French</option>
-                  <option>German</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Level</label>
-                <select
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                  value={level}
-                  onChange={(e) => setLevel(e.target.value)}
-                >
-                  <option>Beginner</option>
-                  <option>Intermediate</option>
-                  <option>Advanced</option>
-                </select>
-              </div>
+            <div>
+              <Label>About Course</Label>
+              <TextEditor defaultValue="Here will be a text editor. Student will be allowed to submit their task from here." />
             </div>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };
