@@ -69,7 +69,6 @@ export default function AddCourseForm({ onClose }) {
       alert(err?.response?.data?.message || 'Failed to add course');
     }
   };
-
   return (
     <Card className="w-[600px]">
       <CardHeader>
@@ -110,14 +109,15 @@ export default function AddCourseForm({ onClose }) {
                         key={teacher._id}
                         value={teacher.name}
                         onSelect={() => {
-                          setForm({ ...form, assignedTo: teacher.name });
+                          // Save the teacher's ObjectId instead of name
+                          setForm({ ...form, assignedTo: teacher._id });
                           setOpen(false);
                         }}
                       >
                         <Check
                           className={cn(
                             "mr-2 h-4 w-4",
-                            teacher.name === form.assignedTo ? "opacity-100" : "opacity-0"
+                            teacher._id === form.assignedTo ? "opacity-100" : "opacity-0"
                           )}
                         />
                         {teacher.name}
@@ -126,6 +126,7 @@ export default function AddCourseForm({ onClose }) {
                   </CommandGroup>
                 </Command>
               </PopoverContent>
+
             </Popover>
           </div>
           <div>
