@@ -1,25 +1,49 @@
 import mongoose from "mongoose";
 
 const schema = new mongoose.Schema({
-    title:{
-        type:String,
+    title: {
+        type: String,
         required: true,
     },
-    description:{
-        type:String,
+    description: {
+        type: String,
         required: true,
     },
-    video:{
-        type:String,
-        required: true,
+    video: {
+        type: String,
+        required: false,
     },
-    course:{
+    videoLink: {
+        type: String,
+        required: false,
+    },
+    thumbnail: {
+        type: String,
+        required: false,
+    },
+    course: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Course',
         required: true,
-        },
-    createdAt:{
-        type:Date,
+    },
+    courseDuration: {
+        type: String,
+        required: false,
+    },
+    hashtags: {
+        type: String,
+        required: false,
+    },
+    language: {
+        type: String,
+        required: false,
+    },
+    level: {
+        type: String,
+        required: false,
+    },
+    createdAt: {
+        type: Date,
         default: Date.now,
     },
 });
