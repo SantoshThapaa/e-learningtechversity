@@ -110,12 +110,18 @@ export const getAllCourses = TryCatch(async (req, res) => {
 
 export const assignTeacherToCourse = TryCatch(async (req, res) => {
   const { courseId, teacherId } = req.body;
+  if (!courseId || !teacherId) {
+    return res.status(400).json({ message: 'Course ID and Teacher ID are required.' });
+  }
 
   const course = await Courses.findById(courseId);
   if (!course) {
     return res.status(404).json({ message: "Course not found" });
   }
-
+  const teacher = await User.findById(teacherId);
+  if (!teacher) {
+    return res.status(404).json({ message: 'Teacher not found' });
+  }
   if (course.assignedTo.includes(teacherId)) {
     return res.status(400).json({ message: "Teacher already assigned" });
   }
