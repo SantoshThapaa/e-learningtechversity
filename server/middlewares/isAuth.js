@@ -1,35 +1,34 @@
 import jwt from 'jsonwebtoken';
 import { User } from "../models/User.js";
-import mongoose from 'mongoose';
-
 export const isAuth = async (req, res, next) => {
     try {
         const token = req.headers.authorization?.split(" ")[1]; 
-        
 
-        if (!token)
+        if (!token) {
             return res.status(403).json({
                 message: "Please Login",
             });
+        }
 
         const decodeData = jwt.verify(token, process.env.jwt_secret);
         console.log('Decoded Token:', decodeData);
-        req.user = await User.findById(new mongoose.Types.ObjectId(decodeData.userId));
+        req.user = await User.findById(decodeData.userId);
         console.log('User found in DB:', req.user); 
+
         if (!req.user) {
             return res.status(404).json({
                 message: "User not found",
             });
         }
-
-        next()
+        next();
     } catch (error) {
         console.error('JWT Verification Error:', error);
         res.status(500).json({
             message: "Login first",
-        })
+        });
     }
-}
+};
+
 
 export const isTeacher = (req, res, next) =>{
     try{
