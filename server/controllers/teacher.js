@@ -6,72 +6,62 @@ import { promisify } from 'util';
 import fs from 'fs';
 import { User } from "../models/User.js";
 
+export const getAssignedCourses = TryCatch(async (req, res) => {
+    const { teacherId } = req.params;  
+    const courses = await Courses.find({ assignedTo: teacherId }).populate('assignedTo', 'name email');
 
-export const teacherJoinCourse = TryCatch(async(req, res)=>{
-    const {courseId} = req.params;
-    const teacherId = req.user._id;
+   
+    if (!courses || courses.length === 0) {
+        return res.json({ courses: [] });
+    }
 
-    const course = await Courses.findById(courseId);
-    if(!course){
-        return res.status(404).json({
-            message: "Course not found"
-        });
-    }
-    if(!course.assignedTeachers.includes(teacherId.toString())){
-        return res.status(403).json({
-            message: "You are not assigned to this course",
-        });
-    }
-    res.json({
-        message: "You are successfully joined to this course",
-    })
+    return res.json({ courses });
 });
 
+export const createLecture = TryCatch(async (req, res) => {
+    const { courseId } = req.params;
+    console.log('Request Parameters:', req.params);
+    const { title, courseDuration, videoLink, hashtags, language, level, description } = req.body;
+    console.log('Request Body:', req.body);
+    const courseExists = await Courses.findById(courseId);
+    if (!courseExists) {
+        return res.status(404).json({ message: "Course not found" });
+    }
 
-export const createCourse = TryCatch(async (req, res) => {
-    const { title,
-        description,
-        category,
-        createdBy,
-        duration,
-        price } = req.body;
-    const image = req.file;
-    await Courses.create({
+    if (!title || !description) {
+        return res.status(400).json({ message: "Title and description are required" });
+    }
+
+
+    let thumbnailPath;
+    if (req.file && req.file.fieldname === 'thumbnail') {
+        thumbnailPath = `/uploads/thumbnail/${req.file.filename}`; 
+    }
+    let videoPath;
+    if (req.file && req.file.fieldname === 'video') {
+        videoPath = `/uploads/video/${req.file.filename}`; 
+    }
+    console.log('Uploaded Files:', req.file);
+    const finalVideoPath = videoPath || videoLink;
+    const newLecture = new Lecture({
         title,
         description,
-        category,
-        createdBy,
-        image: image?.path,
-        duration,
-        price
+        video: finalVideoPath, 
+        thumbnail: thumbnailPath,
+        videoLink, 
+        course: courseId, 
+        courseDuration, 
+        hashtags,
+        language,
+        level, 
     });
-    res.status(201).json({
-        message: "Course created successfully"
-    });
-});
 
-
-export const addLectures = TryCatch(async (req, res) => {
-    const course = await Courses.findById(req.params.id)
-    if (!course)
-        return res.status(404).json({
-            message: "No course with this id",
-        });
-    const { title, description } = req.body;
-
-    const file = req.file;
-
-    const lecture = await Lecture.create({
-        title,
-        description,
-        video: file?.path,
-        course: course._id,
-    });
+    await newLecture.save();
 
     return res.status(201).json({
-        message: "Lecture added successfully",
-        lecture,
-    })
+        message: "Lecture uploaded successfully",
+        newLecture,
+    });
 });
 
 export const deleteLecture = TryCatch(async(req, res)=> {
@@ -83,7 +73,6 @@ export const deleteLecture = TryCatch(async(req, res)=> {
     res.json({message: "Lecture Deleted"})
 });
 
-const unlinkAsync = promisify(fs.unlink)
 
 export const deleteCourse = TryCatch(async(req, res)=> {
     const course = await Courses.findById(req.params.id);
@@ -108,3 +97,5 @@ export const deleteCourse = TryCatch(async(req, res)=> {
         message: "Course Deleted",
     });
 });
+
+
