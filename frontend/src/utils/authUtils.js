@@ -1,26 +1,23 @@
-import jwt from 'jsonwebtoken';
-
 export const getUserIdFromToken = () => {
-  const token = localStorage.getItem('token'); 
+  const token = localStorage.getItem('token');
   if (token) {
     try {
-      
-      const decoded = jwt.decode(token); 
-      console.log("Decoded token:", decoded); 
-      return decoded ? decoded.userId : null; 
+      const base64Payload = token.split('.')[1];
+      const decodedPayload = JSON.parse(atob(base64Payload));
+      return decodedPayload.userId || null;
     } catch (error) {
       console.error("Failed to decode token:", error);
-      return null; 
+      return null;
     }
   }
-  return null;  
+  return null;
 };
 
 export const getCourseIdFromLocalStorage = () => {
-  const courseId = localStorage.getItem("courseId"); 
+  const courseId = localStorage.getItem("courseId");
   if (courseId) {
-    console.log("Course ID from localStorage:", courseId); 
-    return courseId; 
+    console.log("Course ID from localStorage:", courseId);
+    return courseId;
   }
-  return null; 
+  return null;
 };
