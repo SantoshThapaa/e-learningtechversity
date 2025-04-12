@@ -16,7 +16,6 @@ export default function ProfilePage() {
   const [photo, setPhoto] = useState(null);
 
   const handleSaveChanges = () => {
-    // Handle save changes logic
     console.log({
       firstName,
       lastName,
