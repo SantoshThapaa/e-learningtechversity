@@ -20,50 +20,61 @@ export const getAssignedCourses = TryCatch(async (req, res) => {
 
 export const createLecture = TryCatch(async (req, res) => {
     const { courseId } = req.params;
-    console.log('Request Parameters:', req.params);
-    const { title, courseDuration, videoLink, hashtags, language, level, description } = req.body;
-    console.log('Request Body:', req.body);
+  
     const courseExists = await Courses.findById(courseId);
     if (!courseExists) {
-        return res.status(404).json({ message: "Course not found" });
+      return res.status(404).json({ message: "Course not found" });
     }
-
-    if (!title || !description) {
-        return res.status(400).json({ message: "Title and description are required" });
+  
+    const {
+      title,
+      description,
+      videoLink,
+      courseDuration,
+      courseTime,
+      hashtags,
+      language,
+      level,
+      meetLink,
+    } = req.body;
+  
+    if (!title || !description || !videoLink || !meetLink || !courseTime) {
+      return res.status(400).json({
+        message: "Title, description, videoLink, meetLink, and courseTime are required",
+      });
     }
-
-
-    let thumbnailPath;
-    if (req.file && req.file.fieldname === 'thumbnail') {
-        thumbnailPath = `/uploads/thumbnail/${req.file.filename}`; 
+  
+    let thumbnailPath = null;
+    if (req.file && req.file.fieldname === "thumbnail") {
+      thumbnailPath = `/uploads/thumbnails/${req.file.filename}`;
     }
-    let videoPath;
-    if (req.file && req.file.fieldname === 'video') {
-        videoPath = `/uploads/video/${req.file.filename}`; 
+  
+    if (!thumbnailPath) {
+      return res.status(400).json({ message: "Thumbnail is required" });
     }
-    console.log('Uploaded Files:', req.file);
-    const finalVideoPath = videoPath || videoLink;
+  
     const newLecture = new Lecture({
-        title,
-        description,
-        video: finalVideoPath, 
-        thumbnail: thumbnailPath,
-        videoLink, 
-        course: courseId, 
-        courseDuration, 
-        hashtags,
-        language,
-        level, 
+      title,
+      description,
+      videoLink,
+      thumbnail: thumbnailPath,
+      meetLink,
+      course: courseId,
+      courseDuration,
+      courseTime,
+      hashtags,
+      language,
+      level,
     });
-
+  
     await newLecture.save();
-
+  
     return res.status(201).json({
-        message: "Lecture uploaded successfully",
-        newLecture,
+      message: "Lecture uploaded successfully",
+      newLecture,
     });
-});
-
+  });
+ 
 export const deleteLecture = TryCatch(async(req, res)=> {
     const lecture = await Lecture.findById(req.params.id); 
     rm(lecture.video, ()=>{
