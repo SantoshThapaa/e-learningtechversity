@@ -19,7 +19,6 @@ const EditCoursePage = () => {
   const [courseDuration, setCourseDuration] = useState("");
   const [courseDescription, setCourseDescription] = useState("");
   const [thumbnailImage, setThumbnailImage] = useState(null);
-  const [videoFile, setVideoFile] = useState(null);
   const [videoLink, setVideoLink] = useState("");
   const [hashtags, setHashtags] = useState("");
   const [language, setLanguage] = useState("");
@@ -27,6 +26,9 @@ const EditCoursePage = () => {
   const [editorValue, setEditorValue] = useState("");
   const [userId, setUserId] = useState(null);
   const [courseId, setCourseId] = useState(null);
+  const [meetLink, setMeetLink] = useState("");
+  const [courseTime, setCourseTime] = useState("");
+
 
   const router = useRouter();
 
@@ -53,17 +55,6 @@ const EditCoursePage = () => {
     e.preventDefault();
     e.stopPropagation();
   };
-  const handleVideoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 450 * 1024 * 1024) {
-        toast.error("File size exceeds 450MB. Please select a smaller video.");
-        return;
-      }
-      setVideoFile(file);
-    }
-  };
-
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -81,25 +72,16 @@ const EditCoursePage = () => {
     const file = e.dataTransfer.files[0];
 
 
-    if (file) {
-      if (file.type.startsWith('video/')) {
-
-        if (file.size > 450 * 1024 * 1024) {
-          toast.error("Video file size exceeds 450MB. Please select a smaller video.");
-          return;
-        }
-        setVideoFile(file);
-      } else if (file.type.startsWith('image/')) {
-
-        if (file.size > 150 * 1024 * 1024) {
-          toast.error("Image file size exceeds 150MB. Please select a smaller image.");
-          return;
-        }
-        setThumbnailImage(file);
-      } else {
-        toast.error("Invalid file type. Please select an image or video.");
+    if (file.type.startsWith('image/')) {
+      if (file.size > 150 * 1024 * 1024) {
+        toast.error("Image file size exceeds 150MB. Please select a smaller image.");
+        return;
       }
+      setThumbnailImage(file);
+    } else {
+      toast.error("Invalid file type. Please select an image or video.");
     }
+
   };
 
 
@@ -120,14 +102,11 @@ const EditCoursePage = () => {
     formData.append("language", language);
     formData.append("level", level);
     formData.append("description", editorValue);
-
+    formData.append("meetLink", meetLink);
+    formData.append("courseTime", courseTime);
     if (thumbnailImage) {
       formData.append("thumbnail", thumbnailImage);
     }
-    if (videoFile) {
-      formData.append("video", videoFile);
-    }
-
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error("Please log in first");
@@ -155,8 +134,9 @@ const EditCoursePage = () => {
       setLanguage("");
       setLevel("");
       setEditorValue("");
-      setThumbnailImage(null);
-      setVideoFile(null);
+      setMeetLink("");
+      setCourseTime("");
+      setThumbnailImage("");
     } catch (error) {
       console.error("Error creating lecture:", error.response ? error.response.data : error.message);
       toast.error("Failed to create lecture. Please try again.");
@@ -203,24 +183,6 @@ const EditCoursePage = () => {
                   alt="Thumbnail"
                   className="mt-4 w-32 h-32 object-cover"
                 />
-              )}
-            </div>
-            <div>
-              <Label>Video File</Label>
-              <div className="border border-dashed border-gray-400 rounded-lg h-40 flex flex-col items-center justify-center text-center bg-white relative"
-              >
-                <UploadCloud className="w-8 h-8 text-gray-500 mb-2" />
-                <span>Drag or <span className="text-blue-600 cursor-pointer">Browse</span></span>
-                <input
-                  type="file"
-                  name="video"
-                  accept="video/*"
-                  className="absolute inset-0 opacity-0"
-                  onChange={handleVideoChange}
-                />
-              </div>
-              {videoFile && (
-                <p className="mt-4">Video File: {videoFile.name}</p>
               )}
             </div>
 
@@ -284,12 +246,22 @@ const EditCoursePage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label>Course Join Link <span className="text-muted-foreground">(Gmeet or Zoom)</span></Label>
-                <Input placeholder="Paste meeting link here" />
+                <Input
+                  value={meetLink}
+                  onChange={(e) => setMeetLink(e.target.value)}
+                  placeholder="Paste meeting link here"
+                />
               </div>
+
               <div>
                 <Label>Course Time</Label>
-                <Input placeholder="time picker" />
+                <Input
+                  value={courseTime}
+                  onChange={(e) => setCourseTime(e.target.value)}
+                  placeholder="e.g. 8:00 PM"
+                />
               </div>
+
               <div>
                 <Label>Course Duration</Label>
                 <Input

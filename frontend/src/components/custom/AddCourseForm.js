@@ -25,6 +25,7 @@ export default function AddCourseForm({ onClose }) {
     title: '',
     batchNo: '',
     assignedTo: '',
+    price: '',
     duration: '',
     image: null,
     category: '',
@@ -132,6 +133,10 @@ export default function AddCourseForm({ onClose }) {
           <div>
             <Label>Course Duration</Label>
             <Input name="duration" placeholder="6 weeks" value={form.duration} onChange={handleChange} />
+          </div>
+          <div>
+            <Label>Course Price</Label>
+            <Input name="price" placeholder="$ " value={form.price} onChange={handleChange} />
           </div>
         </div>
         <div>

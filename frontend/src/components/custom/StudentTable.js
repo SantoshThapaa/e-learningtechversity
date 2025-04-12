@@ -15,7 +15,7 @@ export default function StudentTable() {
     const fetchStudents = async () => {
         try {
           const res = await axios.get('http://localhost:4000/api/students');
-          console.log("Fetched users:", res.data.users); // helpful debug
+          console.log("Fetched users:", res.data.users);  
           setStudents(res.data.users || []);
         } catch (err) {
           console.error('Failed to fetch students:', err);

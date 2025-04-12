@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Grid3X3, LayoutList, Trash2 } from "lucide-react";
+import ButtonPage from "./ButtonPage";
+
 
 const files = [
   { name: "Design & Art", type: "xls" },
@@ -17,21 +18,12 @@ const files = [
   { name: "Budget.xls", type: "xls" },
 ];
 
+
 const CourseManagementPage = () => {
   const [selectedTab, setSelectedTab] = useState("study-material");
 
   return (
     <div className="p-6 bg-blue-50 min-h-screen">
-      {/* Tabs */}
-      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="mb-6">
-        <TabsList className="bg-white shadow-sm">
-          <TabsTrigger value="study-material">Study Material</TabsTrigger>
-          <TabsTrigger value="resources">Resources</TabsTrigger>
-          <TabsTrigger value="task">Task</TabsTrigger>
-        </TabsList>
-      </Tabs>
-
-      {/* Breadcrumb */}
       <div className="text-sm text-gray-500 mb-4">Home &gt; Files & Resources</div>
 
       {/* Search & Actions */}
