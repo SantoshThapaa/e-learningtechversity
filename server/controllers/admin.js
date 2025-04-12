@@ -108,6 +108,19 @@ export const getAllCourses = TryCatch(async (req, res) => {
   });
 });
 
+export const getTeacherById = TryCatch(async (req, res) => {
+  const teacher = await User.findById(req.params.id).select('-password');
+
+  if (!teacher || teacher.role !== 'teacher') {
+    return res.status(404).json({ message: 'Teacher not found' });
+  }
+
+  res.status(200).json({
+    message: "Teacher fetched successfully",
+    teacher
+  });
+});
+
 export const assignTeacherToCourse = TryCatch(async (req, res) => {
   const { courseId, teacherId } = req.body;
   if (!courseId || !teacherId) {
