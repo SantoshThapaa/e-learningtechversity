@@ -1,16 +1,24 @@
 'use client';
 
 import React from 'react';
+import { useEffect } from "react";
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Bold, Italic, Underline, AlignCenter, List, Pilcrow } from 'lucide-react';
 
-export const TextEditor = ({ defaultValue }) => {
+export const TextEditor = ({ defaultValue, onChange }) => {
   const editor = useEditor({
     extensions: [StarterKit],
     content: defaultValue || '<p>Start writing here...</p>',
   });
 
+  useEffect(() => {
+    if (editor) {
+      editor.on('update', () => {
+        onChange(editor.getHTML());  
+      });
+    }
+  }, [editor, onChange]);
   if (!editor) return null;
 
   return (
