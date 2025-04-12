@@ -4,6 +4,8 @@ import { User } from "../models/User.js";
 import TryCatch from "../middlewares/TryCatch.js";
 import { OTP } from "../models/OTP.js";
 import sendMail from "../middlewares/sendMail.js";
+import { Lecture } from "../models/Lecture.js";
+import { Courses } from "../models/Courses.js";
 
 // **REGISTER**
 export const register = TryCatch(async (req, res) => {
@@ -29,7 +31,7 @@ export const register = TryCatch(async (req, res) => {
     await user.save();
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); 
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
     const otpRecord = new OTP({
         userId: user._id,
         otp,
@@ -78,43 +80,43 @@ export const verifyUser = TryCatch(async (req, res) => {
 
 export const loginUser = TryCatch(async (req, res) => {
     const { email, password } = req.body;
-  
+
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+        return res.status(400).json({ message: "User not found" });
     }
-  
+
     // ✅ Skip email verification if role is 'teacher'
     if (user.role !== 'teacher' && !user.isVerified) {
-      return res.status(400).json({ message: "Please verify your email first" });
+        return res.status(400).json({ message: "Please verify your email first" });
     }
-  
+
     const trimmedPassword = password.trim();
     const isMatch = await bcrypt.compare(trimmedPassword, user.password);
-  
+
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+        return res.status(400).json({ message: "Invalid credentials" });
     }
-  
+
     const token = jwt.sign(
-      { 
-        userId: user._id, 
-        role: user.role 
-      },
-      process.env.jwt_secret,  
-      { expiresIn: "1h" }
+        {
+            userId: user._id,
+            role: user.role
+        },
+        process.env.jwt_secret,
+        { expiresIn: "1h" }
     );
-  
+
     return res.status(200).json({
-      message: "Login successful",
-      success: true,
-      token,
-      name: user.name,
-      photoUrl: user.photoUrl || '',
-      role: user.role
+        message: "Login successful",
+        success: true,
+        token,
+        name: user.name,
+        photoUrl: user.photoUrl || '',
+        role: user.role
     });
-  });
-  
+});
+
 
 // **LOGOUT USER**
 export const logoutUser = TryCatch(async (req, res) => {
@@ -153,9 +155,9 @@ export const myProfile = TryCatch(async (req, res) => {
 
 // **VIEW USER PROFILE**
 export const viewUserProfile = TryCatch(async (req, res) => {
-    const { userId } = req.params;  
+    const { userId } = req.params;
 
-    const user = await User.findById(userId); 
+    const user = await User.findById(userId);
     if (!user) {
         return res.status(404).json({ message: "User not found" });
     }
@@ -167,30 +169,52 @@ export const viewUserProfile = TryCatch(async (req, res) => {
     });
 });
 
-// **EDIT USER PROFILE**
-export const editUserProfile = TryCatch(async (req, res) => {
-    const { userId } = req.params;  
-    const { name, email, bio, profilePicture } = req.body;  
 
-    const user = await User.findById(userId); 
-    if (!user) {
-        return res.status(404).json({ message: "User not found" });
+export const updateUserProfile = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        // Prepare profile update object
+        const updatedProfile = {
+            bio: req.body.bio,
+            zipCode: req.body.zipCode,
+            socialMedia: req.body.socialMedia ? JSON.parse(req.body.socialMedia) : undefined,
+        };
+
+        // Handle profile picture and cover image
+        if (req.files) {
+            if (req.files.profilePicture && req.files.profilePicture[0]) {
+                updatedProfile.profilePicture = `/uploads/images/${req.files.profilePicture[0].filename}`;
+            }
+            if (req.files.coverImage && req.files.coverImage[0]) {
+                updatedProfile.coverImage = `/uploads/images/${req.files.coverImage[0].filename}`;
+            }
+        }
+
+        // Final user update object
+        const update = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            phone: req.body.phone,
+            profile: updatedProfile,
+        };
+
+        // Update in DB
+        const updatedUser = await User.findByIdAndUpdate(userId, update, {
+            new: true,
+        });
+
+        res.status(200).json({
+            message: 'Profile updated successfully',
+            user: updatedUser,
+        });
+    } catch (err) {
+        console.error('Profile update failed:', err);
+        res.status(500).json({ message: 'Failed to update profile' });
     }
+};
 
-    if (name) user.name = name;
-    if (email) user.email = email;
-    if (bio) user.profile.bio = bio;
-    if (profilePicture) user.profile.profilePicture = profilePicture;
 
-    await user.save();
-
-    return res.status(200).json({
-        message: "User profile updated successfully",
-        success: true,
-        user,
-    });
-});
-   
 // **DELETE USER PROFILE**
 export const deleteUserProfile = TryCatch(async (req, res) => {
     const { userId } = req.params;
@@ -199,11 +223,25 @@ export const deleteUserProfile = TryCatch(async (req, res) => {
     if (!user) {
         return res.status(404).json({ message: "User not found" });
     }
-    await User.findByIdAndDelete(userId);  
+    await User.findByIdAndDelete(userId);
     return res.status(200).json({
         message: "User deleted successfully",
         success: true,
     });
 });
+
+export const getLecturesByCourse = TryCatch(async (req, res) => {
+    const { courseId } = req.params;
+    const courseExists = await Courses.findById(courseId);
+    if (!courseExists) {
+        return res.status(404).json({ message: "Course not found" });
+    }
+    const lectures = await Lecture.find({ course: courseId });
+
+    return res.status(200).json({
+        lectures,
+    });
+});
+
 
 
