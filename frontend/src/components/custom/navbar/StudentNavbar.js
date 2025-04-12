@@ -15,8 +15,22 @@ export default function StudentNavbar() {
   const toggleMenu = () => setIsOpen(!isOpen);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) setUser(storedUser);
+    const updateUserFromStorage = () => {
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      if (storedUser) {
+        setUser(storedUser);
+      }
+    };
+
+    updateUserFromStorage();
+
+    window.addEventListener('storage', updateUserFromStorage);
+    window.addEventListener('focus', updateUserFromStorage);
+
+    return () => {
+      window.removeEventListener('storage', updateUserFromStorage);
+      window.removeEventListener('focus', updateUserFromStorage);
+    };
   }, []);
 
   useEffect(() => {
