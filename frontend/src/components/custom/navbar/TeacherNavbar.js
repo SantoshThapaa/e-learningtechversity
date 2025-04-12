@@ -1,53 +1,158 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+'use client';
 
-const TeacherNavbar = () => {
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { motion } from 'framer-motion';
+import { Menu, X, Bell } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+export default function TeacherNavbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [user, setUser] = useState(null);
+
+  const toggleMenu = () => setIsOpen(!isOpen);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) setUser(storedUser);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.profile-dropdown')) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await axios.post('http://localhost:4000/api/user/logout');
+      localStorage.removeItem('user');
+      setUser(null);
+      toast.success('Logout successful!');
+    } catch (error) {
+      toast.error('Logout failed. Please try again.');
+      console.error(error);
+    }
   };
 
   return (
-    <nav className="bg-white shadow-md px-6 flex items-center justify-between rounded-lg border border-gray-200">
-      {/* Left Side: Logo */}
-      <div className="flex items-center space-x-4">
-        <img
-          src="/logo.png"
-          alt="Logo"
-          className="w-12 h-12"
-        />
-      </div>
+    <motion.div
+      className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md"
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <div className="container mx-auto flex items-center justify-between py-3 px-6">
+        {/* Logo */}
+        <Link href="/">
+          <img src="/logo.png" alt="logo" className="h-12" />
+        </Link>
 
-      {/* Right Side: Notifications Icon and Avatar with Dropdown */}
-      <div className="relative flex items-center space-x-3">
-        {/* Notifications Icon */}
-        <Button variant="outline" className="text-blue-600 border-0 p-0">
-          <FontAwesomeIcon icon={faBell} />
-        </Button>
+        {/* Desktop Nav */}
+        <ul className="hidden lg:flex gap-6 items-center">
+          <li><Link href="/teacher/dashboard">Dashboard</Link></li>
+          <li><Link href="/teacher/assignments">Assignments</Link></li>
+          <li><Link href="/teacher/courses">Courses</Link></li>
 
-        {/* Avatar */}
-        <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 cursor-pointer" onClick={toggleDropdown}>
-          <img
-            src="/path-to-avatar-image.jpg"
-            alt="User Avatar"
-            className="w-full h-full object-cover"
-          />
+          {user && (
+            <>
+              <li>
+                <Bell className="w-5 h-5" />
+              </li>
+              <li className="relative profile-dropdown">
+                <img
+                  src={user.photo || '/default-profile.jpg'}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                  onClick={() => setShowDropdown(prev => !prev)}
+                />
+                {showDropdown && (
+                  <ul className="absolute right-0 mt-2 w-40 bg-white shadow-md rounded-md z-50">
+                    <li>
+                      <Link
+                        href="/teacher/profile"
+                        className="block px-4 py-2 hover:bg-gray-100"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        My Profile
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        onClick={async () => {
+                          await handleLogout();
+                          setShowDropdown(false);
+                        }}
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500"
+                      >
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
+                )}
+              </li>
+            </>
+          )}
+        </ul>
+
+        {/* Mobile Menu Toggle */}
+        <div className="lg:hidden">
+          <button onClick={toggleMenu}>
+            {isOpen ? <X /> : <Menu />}
+          </button>
         </div>
-
-        {/* Dropdown Menu */}
-        {isOpen && (
-          <div className="absolute right-0 mt-40 w-48 bg-white shadow-lg rounded-lg border border-gray-100">
-            <div className="py-2 px-4 cursor-pointer hover:bg-gray-100 rounded-t-lg">Profile</div>
-            <div className="py-2 px-4 cursor-pointer hover:bg-gray-100">Settings</div>
-            <div className="py-2 px-4 cursor-pointer hover:bg-gray-100 rounded-b-lg">Logout</div>
-          </div>
-        )}
       </div>
-    </nav>
-  );
-};
 
-export default TeacherNavbar;
+      {/* Mobile Dropdown Menu */}
+      {isOpen && (
+        <motion.div
+          initial={{ height: 0 }}
+          animate={{ height: 'auto' }}
+          className="lg:hidden bg-white px-6 py-4 shadow-md"
+        >
+          <ul className="space-y-4">
+            <li><Link href="/teacher/dashboard">Dashboard</Link></li>
+            <li><Link href="/teacher/assignments">Assignments</Link></li>
+            <li><Link href="/teacher/courses">Courses</Link></li>
+
+            {user && (
+              <>
+                <li className="flex items-center gap-3">
+                  <Bell className="w-5 h-5" />
+                  <img
+                    src={user.photo || '/default-profile.jpg'}
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                </li>
+                <li>
+                  <Link
+                    href="/teacher/profile"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    My Profile
+                  </Link>
+                </li>
+                <li>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500"
+                  >
+                    Logout
+                  </button>
+                </li>
+              </>
+            )}
+          </ul>
+        </motion.div>
+      )}
+    </motion.div>
+  );
+}
