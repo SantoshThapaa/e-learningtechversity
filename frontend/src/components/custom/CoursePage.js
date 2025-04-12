@@ -1,5 +1,5 @@
 'use client';
-
+import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
@@ -47,12 +47,17 @@ export default function CoursePage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
         {courses.map((course, index) => (
-          <Card key={index} className="p-4 space-y-3 border rounded-xl">
-            <img
+          <Card key={index} className="p-4 space-y-3 border rounded-xl relative">
+            <Image
               src={`http://localhost:4000/${course.image}`}
-              alt="course thumbnail"
-              className="w-full h-32 object-cover rounded"
+              alt={course.title}
+              width={500}
+              height={300}
+              className="object-cover w-full h-[200px]"
             />
+            <div className="absolute top-4 left-4 bg-green-500 text-white text-sm px-2 py-1 rounded-full">
+              ${course.price}
+            </div>
             <span className="text-xs font-medium text-gray-700 px-2 py-1 rounded">
               <span className="bg-[#16A34A] px-1 text-white rounded">
                 {course.category}

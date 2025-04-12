@@ -2,10 +2,16 @@
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
-import { FaStar, FaClock, FaChalkboardTeacher } from 'react-icons/fa';
-import Link from 'next/link';
+import { FaStar, FaClock } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 
 export default function CourseCard({ course }) {
+  const router = useRouter();
+  const handleRedirect = () => {
+    localStorage.setItem('courseId', course._id);
+    router.push('/student/payment');
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -14,7 +20,10 @@ export default function CourseCard({ course }) {
       viewport={{ once: true }}
       className="w-full p-4"
     >
-      <Card className="shadow-lg rounded-xl overflow-hidden relative">
+      <Card
+        onClick={handleRedirect}
+        className="shadow-lg rounded-xl overflow-hidden relative cursor-pointer"
+      >
         <Image
           src={`http://localhost:4000/${course.image}`}
           alt={course.title}
@@ -27,47 +36,38 @@ export default function CourseCard({ course }) {
           ${course.price}
         </div>
 
-        <Link href={`/student/payment`}>
-          <CardContent className="p-4 cursor-pointer">
-            <h3 className="text-lg font-semibold text-black">{course.title}</h3>
+        <CardContent className="p-4">
+          <h3 className="text-lg font-semibold text-black">{course.title}</h3>
+          <p className="text-sm text-gray-600 mb-2">
+            <span className="inline-block bg-gray-100 px-2 py-1 rounded">
+              {course.category}
+            </span>
+          </p>
 
-            {/* Category */}
-            <p className="text-sm text-gray-600 mb-2">
-              <span className="inline-block bg-gray-100 px-2 py-1 rounded">
-                {course.category}
-              </span>
-            </p>
-
-            <div className="flex items-center space-x-4 mb-4">
-              {/* Duration */}
-              <div className="flex items-center text-sm text-gray-600">
-                <FaClock className="text-green-500 mr-1" />
-                {course.duration}
-              </div>
-
-              {/* Static Rating */}
-              <div className="flex items-center text-sm text-gray-600">
-                <FaStar className="text-yellow-500" size={16} />
-                <span className="ml-2">4.9</span>
-              </div>
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="flex items-center text-sm text-gray-600">
+              <FaClock className="text-green-500 mr-1" />
+              {course.duration}
             </div>
+            <div className="flex items-center text-sm text-gray-600">
+              <FaStar className="text-yellow-500" size={16} />
+              <span className="ml-2">4.9</span>
+            </div>
+          </div>
 
-            {/* Optional: Display assigned mentor */}
-            <p className="text-sm text-gray-600">
-              Mentor:{" "}
-              <span className="font-medium text-black">
-                {course.assignedTo?.length > 0
-                  ? course.assignedTo.map(t => t.name).join(", ")
-                  : "N/A"}
-              </span>
-            </p>
+          <p className="text-sm text-gray-600">
+            Mentor:{' '}
+            <span className="font-medium text-black">
+              {course.assignedTo?.length > 0
+                ? course.assignedTo.map((t) => t.name).join(', ')
+                : 'N/A'}
+            </span>
+          </p>
 
-            {/* Seats based on enrolled count */}
-            <p className="text-sm text-gray-600 mt-1">
-              Seats Available: {30 - (course.enrolledStudents?.length || 0)}
-            </p>
-          </CardContent>
-        </Link>
+          <p className="text-sm text-gray-600 mt-1">
+            Seats Available: {30 - (course.enrolledStudents?.length || 0)}
+          </p>
+        </CardContent>
       </Card>
     </motion.div>
   );

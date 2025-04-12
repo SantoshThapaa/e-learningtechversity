@@ -1,55 +1,41 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 export const paymentSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',  
+        ref: 'User',
         required: true
     },
     paymentPlan: {
         type: String,
-        enum: ['Full Pay', 'EMI'],  
-        required: true
+        enum: ['Full Pay', 'EMI'],
+        required: true,
+        trim: true
     },
     amount: {
         type: Number,
-        required: true  
-    },
-    cardDetails: {
-        cardNumber: {
-            type: String,
-            required: true
-        },
-        expiry: {
-            type: String,  
-            required: true
-        },
-        cvc: {
-            type: String,
-            required: true
-        },
-        country: {
-            type: String,
-            required: true
-        },
-        postalCode: {
-            type: String,
-            required: true
-        }
+        required: true,
+        min: [0, 'Amount must be positive']
     },
     paymentStatus: {
         type: String,
         enum: ['Pending', 'Completed', 'Failed'],
-        default: 'Pending'
+        default: 'Pending',
+        trim: true
     },
     paymentMethod: {
         type: String,
-        enum: ['Stripe'],  
+        enum: ['Stripe'],
+        required: true,
+        trim: true
+    },
+    paymentMethodToken: {
+        type: String,
         required: true
     },
     transactionId: {
-        type: String,  
-        required: false
+        type: String,
+        default: null
     },
     createdAt: {
         type: Date,
@@ -58,4 +44,3 @@ export const paymentSchema = new mongoose.Schema({
 });
 
 export const Payment = mongoose.model('Payment', paymentSchema);
-

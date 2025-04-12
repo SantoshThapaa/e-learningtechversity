@@ -9,17 +9,17 @@ const schema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    video: {
-        type: String,
-        required: false,
-    },
     videoLink: {
         type: String,
-        required: false,
+        required: true,
     },
     thumbnail: {
         type: String,
-        required: false,
+        required: true,
+    },
+    meetLink: {
+        type: String,
+        required: true,
     },
     course: {
         type: mongoose.Schema.Types.ObjectId,
@@ -29,6 +29,10 @@ const schema = new mongoose.Schema({
     courseDuration: {
         type: String,
         required: false,
+    },
+    courseTime: {
+        type: String,
+        required: true,
     },
     hashtags: {
         type: String,

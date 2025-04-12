@@ -14,6 +14,7 @@ import testimonialRoutes from "./routes/testimonial.js";
 import paymentRoutes from "./routes/payment.js";
 import resourceRoutes from "./routes/resource.js";
 import messageRoutes from "./routes/message.js";
+import assignmentRoutes from "./routes/assignment.js";
 
 const app = express();
 dotenv.config();
@@ -40,6 +41,7 @@ app.use("/api", testimonialRoutes);
 app.use('/api/', paymentRoutes);
 app.use('/api/', resourceRoutes);
 app.use('/api/', messageRoutes);
+app.use('/api/assignment', assignmentRoutes);
 
 app.get('/', (req, res) => {
     res.send("Server is working");
