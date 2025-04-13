@@ -6,6 +6,11 @@ export const paymentSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    courseId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course', // Reference your course model
+        required: true
+    },
     paymentPlan: {
         type: String,
         enum: ['Full Pay', 'EMI'],
@@ -36,6 +41,14 @@ export const paymentSchema = new mongoose.Schema({
     transactionId: {
         type: String,
         default: null
+    },
+    paidAt: {
+        type: Date,
+        default: null
+    },
+    accessGranted: {
+        type: Boolean,
+        default: false
     },
     createdAt: {
         type: Date,
