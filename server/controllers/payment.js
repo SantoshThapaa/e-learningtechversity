@@ -7,8 +7,9 @@ const stripe = new Stripe(stripe_key);
 
 export const createPayment = async (req, res) => {
     try {
-        const { userId, paymentPlan, amount, paymentMethodToken } = req.body;
-        if (!userId || !paymentPlan || !amount || !paymentMethodToken) {
+        const { userId, paymentPlan, amount, paymentMethodToken, courseId } = req.body;
+
+        if (!userId || !paymentPlan || !amount || !paymentMethodToken || !courseId) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
@@ -27,16 +28,18 @@ export const createPayment = async (req, res) => {
 
         const payment = new Payment({
             userId,
+            courseId,
             paymentPlan,
             amount,
             paymentMethod: 'Stripe',
-            paymentMethodToken
+            paymentMethodToken,
+            accessGranted: false, 
         });
 
         await payment.save();
 
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: Math.round(amount * 100), // cents
+            amount: Math.round(amount * 100),
             currency: 'usd',
             payment_method: paymentMethodToken,
             confirmation_method: 'manual',
@@ -47,6 +50,8 @@ export const createPayment = async (req, res) => {
         if (paymentIntent.status === 'succeeded') {
             payment.paymentStatus = 'Completed';
             payment.transactionId = paymentIntent.id;
+            payment.paidAt = new Date();
+            payment.accessGranted = true; 
             await payment.save();
 
             return res.status(200).json({
@@ -72,6 +77,21 @@ export const createPayment = async (req, res) => {
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+
+export const getUserPayments = async (req, res) => {
+    try {
+        const payments = await Payment.find({ userId: req.params.userId })
+            .populate('courseId', 'title')
+            .sort({ createdAt: -1 });
+
+        res.status(200).json(payments);
+    } catch (error) {
+        console.error('Get user payments error:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
 
 export const getPayments = async (req, res) => {
     try {
