@@ -1,12 +1,14 @@
 'use client';
-import { useEffect, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button'
 import { useStripe, useElements, CardElement, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js'
 import Details from './Details'
 import { getCourseIdFromLocalStorage, getUserIdFromToken } from '@/utils/authUtils';
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Paymentplan() {
     const [isFullPay, setIsFullPay] = useState(true);
@@ -18,8 +20,10 @@ export default function Paymentplan() {
     const elements = useElements();
     const router = useRouter();
     const postalRef = useRef();
+    const params = useParams();
+    const courseId = params.coursepageId;
 
-    // ✅ Fetch course details using courseId from localStorage
+
     useEffect(() => {
         const courseId = getCourseIdFromLocalStorage();
         if (!courseId) {
@@ -33,6 +37,23 @@ export default function Paymentplan() {
                 const data = await res.json();
                 setCourse(data.course);
                 setIsLoading(false);
+                const userId = getUserIdFromToken();
+                const accessRes = await fetch('http://localhost:4000/api/check-access', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                    body: JSON.stringify({ userId, courseId })
+                });
+
+                const accessData = await accessRes.json();
+                if (accessRes.status === 200 && accessData.message === 'Access granted') {
+                    toast.info('You already purchased this course. Redirecting...');
+                    setTimeout(() => {
+                        router.push(`/student/coursepage/${courseId}`);
+                    }, 1500);
+                }
             } catch (err) {
                 console.error('Error fetching course:', err);
                 setIsLoading(false);
@@ -40,7 +61,7 @@ export default function Paymentplan() {
         };
 
         fetchCourse();
-    }, []);
+    }, [courseId, router]);
 
     const handlePayment = async (event) => {
         event.preventDefault();
@@ -80,6 +101,7 @@ export default function Paymentplan() {
             body: JSON.stringify({
                 paymentMethodToken: paymentMethod.id,
                 userId,
+                courseId: course?._id,
                 paymentPlan: isFullPay ? 'Full Pay' : 'EMI',
                 amount: course.price,
             }),
@@ -89,18 +111,19 @@ export default function Paymentplan() {
         setIsProcessing(false);
 
         if (data.message === 'Payment successful') {
-            alert('Payment Successful');
+            toast.success('Payment Successful 🎉');
             elements.getElement(CardNumberElement)?.clear();
             elements.getElement(CardExpiryElement)?.clear();
             elements.getElement(CardCvcElement)?.clear();
             if (postalRef.current) postalRef.current.value = '';
             setTimeout(() => {
-                router.push('/student/coursepage');
+                router.push(`/student/coursepage/${course._id}`);
             }, 100);
+
         } else if (data.message === 'Further action required') {
-            alert('Additional authentication needed');
+            toast.warn('Additional authentication needed');
         } else {
-            alert('Payment Failed');
+            toast.error('Payment Failed ');
         }
     };
 
@@ -331,6 +354,7 @@ export default function Paymentplan() {
                 </div>
                 <Details />
             </div>
+            <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
         </section>
     )
 }
