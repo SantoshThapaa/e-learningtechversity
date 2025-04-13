@@ -1,10 +1,15 @@
 import express from 'express';
-import { createPayment, getPayments } from '../controllers/payment.js';
-import { isAdmin, isAuth } from '../middlewares/isAuth.js';
+import { createPayment, getPayments, getUserPayments } from '../controllers/payment.js';
+import { isAuth, isAdmin } from '../middlewares/isAuth.js';
+import { checkCourseAccess } from '../middlewares/checkCourseAccess.js';
 
 const router = express.Router();
 
 router.post('/createpayments', isAuth, createPayment);
 router.get('/getallpayments', isAuth, isAdmin, getPayments);
+router.get('/user/:userId', isAuth, getUserPayments);
+router.post('/check-access', isAuth, checkCourseAccess, (req, res) => {
+    res.status(200).json({ message: 'Access granted' });
+});
 
 export default router;
