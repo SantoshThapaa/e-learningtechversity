@@ -10,10 +10,10 @@ import { getUserIdFromToken } from "@/utils/authUtils";
 
 const TeacherDashboard = () => {
     const router = useRouter();
+    const [teacherId, setTeacherId] = useState(null);
     const [courses, setCourses] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false);
 
-    const teacherId = getUserIdFromToken(); 
 
     const fetchAssignedCourses = async () => {
         try {
@@ -23,30 +23,36 @@ const TeacherDashboard = () => {
             console.error("Error fetching assigned courses:", error);
         }
     };
-
     useEffect(() => {
-        if (!teacherId) {
-            router.push("/student/enrollnow"); // Redirect to enroll page if teacherId is not found
-            return;
+        if (typeof window !== 'undefined') {
+          const id = getUserIdFromToken()
+          if (!id) {
+            router.push('/student/enrollnow')
+          } else {
+            setTeacherId(id)
+            fetchAssignedCourses(id)
+          }
         }
-        fetchAssignedCourses(); // Fetch courses when the component mounts
-    }, [teacherId, router]);
+      }, [router])
+    
 
     const handleEditCourse = (courseId) => {
-        // Store the courseId in localStorage when the teacher selects a course
-        localStorage.setItem("courseId", courseId);
-        router.push('/teacher/editcourse'); // Redirect to the edit course page
-    };
-
-    const handleManageCourse = (courseId) => {
-        // Store the courseId in localStorage when the teacher clicks on manage course
-        localStorage.setItem("courseId", courseId);
-        router.push('/teacher/managecourse'); // Redirect to the manage course page
-    };
+        if (typeof window !== "undefined") {
+          localStorage.setItem("courseId", courseId);
+          router.push('/teacher/editcourse');
+        }
+      };
+      
+      const handleManageCourse = (courseId) => {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("courseId", courseId);
+          router.push('/teacher/managecourse');
+        }
+      };
+      
 
     return (
         <div className="bg-gray-100 lg:p-20">
-            {/* First row: New Course and Calendar side by side */}
             <div className="flex flex-wrap justify-between gap-10 mb-6">
                 {courses.length > 0 ? (
                     courses.map((course, index) => (

@@ -1,66 +1,97 @@
-'use client'
+'use client';
 import Image from 'next/image';
-import { useEffect, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button'
 import { useStripe, useElements, CardElement, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js'
 import Details from './Details'
-import { getUserIdFromToken } from '@/utils/authUtils';
+import { getCourseIdFromLocalStorage, getUserIdFromToken } from '@/utils/authUtils';
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-export default function PaymentPlan() {
-    const [isFullPay, setIsFullPay] = useState(true)
-    const searchParams = useSearchParams()
-    const stripe = useStripe()
-    const elements = useElements()
-    const [isProcessing, setIsProcessing] = useState(false)
-    const [course, setCourse] = useState(null)
+export default function Paymentplan() {
+    const [isFullPay, setIsFullPay] = useState(true);
+    const [course, setCourse] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isProcessing, setIsProcessing] = useState(false);
 
+    const stripe = useStripe();
+    const elements = useElements();
     const router = useRouter();
+    const postalRef = useRef();
+    const params = useParams();
+    const courseId = params.coursepageId;
+
+
     useEffect(() => {
-        const id = searchParams.get('id');
-        if (!id) return;
+        const courseId = getCourseIdFromLocalStorage();
+        if (!courseId) {
+            console.error("Course ID not found in localStorage.");
+            return;
+        }
 
         const fetchCourse = async () => {
             try {
-                const res = await fetch(`http://localhost:4000/api/course/${id}`);
+                const res = await fetch(`http://localhost:4000/api/course/${courseId}`);
                 const data = await res.json();
-                console.log("Fetched course data from backend:", data);
                 setCourse(data.course);
+                setIsLoading(false);
+                const userId = getUserIdFromToken();
+                const accessRes = await fetch('http://localhost:4000/api/check-access', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                    body: JSON.stringify({ userId, courseId })
+                });
+
+                const accessData = await accessRes.json();
+                if (accessRes.status === 200 && accessData.message === 'Access granted') {
+                    toast.info('You already purchased this course. Redirecting...');
+                    setTimeout(() => {
+                        router.push(`/student/coursepage/${courseId}`);
+                    }, 1500);
+                }
             } catch (err) {
                 console.error('Error fetching course:', err);
+                setIsLoading(false);
             }
         };
 
         fetchCourse();
-    }, [searchParams]);
+    }, [courseId, router]);
 
-    const postalRef = useRef();
     const handlePayment = async (event) => {
-        event.preventDefault()
-        if (!stripe || !elements) {
-            return
-        }
+        event.preventDefault();
 
-        const cardElement = elements.getElement(CardElement)
+        if (!stripe || !elements) return;
+
         const { paymentMethod, error } = await stripe.createPaymentMethod({
             type: 'card',
             card: elements.getElement(CardNumberElement),
-        })
+        });
+
         if (error) {
-            console.error(error)
-            alert(error.message)
-            return
+            console.error(error);
+            alert(error.message);
+            return;
         }
 
-        const userId = getUserIdFromToken()
+        const userId = getUserIdFromToken();
         if (!userId) {
-            alert('User not logged in')
-            return
+            alert('User not logged in');
+            return;
         }
 
-        setIsProcessing(true)
+        if (!course?.price) {
+            alert('Course price not available.');
+            return;
+        }
+
+        setIsProcessing(true);
 
         const response = await fetch('http://localhost:4000/api/createpayments', {
             method: 'POST',
@@ -71,30 +102,31 @@ export default function PaymentPlan() {
             body: JSON.stringify({
                 paymentMethodToken: paymentMethod.id,
                 userId,
+                courseId: course?._id,
                 paymentPlan: isFullPay ? 'Full Pay' : 'EMI',
-                amount: course?.price || 0,
+                amount: course.price,
             }),
-        })
+        });
 
-        const data = await response.json()
-
-        setIsProcessing(false)
+        const data = await response.json();
+        setIsProcessing(false);
 
         if (data.message === 'Payment successful') {
-            alert('Payment Successful');
+            toast.success('Payment Successful 🎉');
             elements.getElement(CardNumberElement)?.clear();
             elements.getElement(CardExpiryElement)?.clear();
             elements.getElement(CardCvcElement)?.clear();
             if (postalRef.current) postalRef.current.value = '';
             setTimeout(() => {
-                router.push('/student/coursepage');
+                router.push(`/student/coursepage/${course._id}`);
             }, 100);
+
         } else if (data.message === 'Further action required') {
-            alert('Additional authentication needed')
+            toast.warn('Additional authentication needed');
         } else {
-            alert('Payment Failed')
+            toast.error('Payment Failed ');
         }
-    }
+    };
 
     return (
         <section className="py-20 px-6">
@@ -136,11 +168,9 @@ export default function PaymentPlan() {
                                                 <p className="text-sm mb-2 text-[#2ECA7F] text-left">Stripe</p>
                                             </div>
                                         </div>
-                                        <div className='w-[40%] text-right right-0 justify-end'>
-                                            <h1 className="text-lg font-semibold ml-2">
-                                                {course ? `$${course.price}` : 'Loading...'}
-                                            </h1>
-                                            <p className="text-sm text-gray-600">For 4 months</p>
+                                        <div className='text-lg font-semibold w-[40%] text-right right-0 justify-end'>
+                                            {isLoading ? 'Loading...' : `$ ${course?.price ?? N / A}`}
+                                            {/* <p className="text-sm text-gray-600">For 4 months</p> */}
                                         </div>
                                     </div>
 
@@ -234,7 +264,7 @@ export default function PaymentPlan() {
                                 <div className="border p-4 rounded-md">
                                     <div className="flex">
                                         <div className="border border-[#2ECA7F] w-[30%] items-left pl-4 pt-2">
-                                            <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2">
                                                 <Image
                                                     src="/Vector.png"
                                                     alt="Stripe Logo"
@@ -247,7 +277,7 @@ export default function PaymentPlan() {
                                         </div>
                                         <div className='w-[40%] text-right right-0 justify-end'>
                                             <h1 className="text-lg font-semibold ml-2">
-                                                {course ? `$${course.price}` : 'Loading...'}
+                                                {course ? `$${Math.round(course.price / 4)}` : 'Loading...'}
                                             </h1>
                                             <p className="text-sm text-gray-600">For 4 months</p>
                                         </div>
@@ -341,6 +371,7 @@ export default function PaymentPlan() {
                 </div>
                 <Details />
             </div>
+            <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
         </section>
     )
 }

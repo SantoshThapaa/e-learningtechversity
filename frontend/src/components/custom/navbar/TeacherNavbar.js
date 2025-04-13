@@ -6,7 +6,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import { Menu, X, Bell } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 export default function TeacherNavbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,12 +14,24 @@ export default function TeacherNavbar() {
   const [user, setUser] = useState(null);
 
   const toggleMenu = () => setIsOpen(!isOpen);
-
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) setUser(storedUser);
-  }, []);
+    const updateUserFromStorage = () => {
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      if (storedUser) {
+        setUser(storedUser);
+      }
+    };
 
+    updateUserFromStorage();
+
+    window.addEventListener('storage', updateUserFromStorage);
+    window.addEventListener('focus', updateUserFromStorage);
+
+    return () => {
+      window.removeEventListener('storage', updateUserFromStorage);
+      window.removeEventListener('focus', updateUserFromStorage);
+    };
+  }, []);
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (!e.target.closest('.profile-dropdown')) {
@@ -52,15 +64,17 @@ export default function TeacherNavbar() {
       <div className="container mx-auto flex items-center justify-between py-3 px-6">
         {/* Logo */}
         <Link href="/">
-          <img src="/logo.png" alt="logo" className="h-12" />
+          <Image
+            src="/logo.png"
+            alt="logo"
+            width={48}
+            height={48}
+            className="h-12"
+          />
         </Link>
 
         {/* Desktop Nav */}
         <ul className="hidden lg:flex gap-6 items-center">
-          <li><Link href="/teacher/dashboard">Dashboard</Link></li>
-          <li><Link href="/teacher/assignments">Assignments</Link></li>
-          <li><Link href="/teacher/courses">Courses</Link></li>
-
           {user && (
             <>
               <li>
@@ -118,10 +132,6 @@ export default function TeacherNavbar() {
           className="lg:hidden bg-white px-6 py-4 shadow-md"
         >
           <ul className="space-y-4">
-            <li><Link href="/teacher/dashboard">Dashboard</Link></li>
-            <li><Link href="/teacher/assignments">Assignments</Link></li>
-            <li><Link href="/teacher/courses">Courses</Link></li>
-
             {user && (
               <>
                 <li className="flex items-center gap-3">

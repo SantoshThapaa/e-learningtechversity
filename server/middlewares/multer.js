@@ -87,3 +87,11 @@ export const uploadDocument = multer({
     }
   },
 }).single('document');
+
+export const uploadProfileFiles = multer({
+  storage: imageStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+}).fields([
+  { name: 'profilePicture', maxCount: 1 },
+  { name: 'coverImage', maxCount: 1 },
+]);

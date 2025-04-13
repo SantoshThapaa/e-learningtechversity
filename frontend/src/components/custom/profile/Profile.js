@@ -1,17 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { TextEditor } from '../TextEditor';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ProfilePage() {
   const [coverImage, setCoverImage] = useState('/cover.jpg');
   const [coverImageFile, setCoverImageFile] = useState(null);
   const [profileImageFile, setProfileImageFile] = useState(null);
+  const [profileImageUrl, setProfileImageUrl] = useState('');
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -19,6 +22,44 @@ export default function ProfilePage() {
   const [role, setRole] = useState('');
   const [zipCode, setZipCode] = useState('');
   const [bio, setBio] = useState('');
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await axios.get('http://localhost:4000/api/user/me', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const user = res.data.user;
+        const fullName = user.name || '';
+        const [fName, lName] = fullName.split(' ');
+
+        setFirstName(fName || '');
+        setLastName(lName || '');
+        setEmail(user.email || '');
+        setPhone(user.phone || '');
+        setRole(user.role || '');
+        setZipCode(user.profile?.zipCode || '');
+        setBio(user.profile?.bio || '');
+        if (user.profile?.coverImage) {
+          setCoverImage(`http://localhost:4000${user.profile.coverImage}`);
+        }
+
+        if (user.profile?.profilePicture) {
+          setProfileImageFile(null);
+          setProfileImageUrl(`http://localhost:4000${user.profile.profilePicture}`);
+        }
+
+      }catch (error) {
+        console.error("Failed to fetch user profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   const handleCoverChange = (e) => {
     const file = e.target.files[0];
@@ -46,11 +87,11 @@ export default function ProfilePage() {
       formData.append('zipCode', zipCode);
 
       if (coverImageFile) {
-        formData.append('image', coverImageFile);
+        formData.append('coverImage', coverImageFile);
       }
 
       if (profileImageFile) {
-        formData.append('image', profileImageFile);
+        formData.append('profilePicture', profileImageFile);
       }
 
       const token = localStorage.getItem('token');
@@ -71,12 +112,16 @@ export default function ProfilePage() {
   return (
     <div className="max-w-7xl mx-auto mt-10 px-4">
       <div className="bg-white rounded-xl overflow-hidden shadow">
-        {/* Cover Photo */}
         <div
           className="h-52 bg-cover bg-center relative rounded-t-xl"
-          style={{ backgroundImage: `url(${coverImage})` }}
+          style={{
+            backgroundImage: `url(${coverImageFile
+                ? URL.createObjectURL(coverImageFile)
+                : coverImage || '/cover.jpg'
+              })`
+          }}
+
         >
-          {/* Edit Cover Button */}
           <div className="absolute top-4 right-4">
             <label className="text-sm text-white bg-black/40 hover:bg-black/60 px-3 py-1 rounded cursor-pointer">
               Edit Cover
@@ -89,16 +134,20 @@ export default function ProfilePage() {
             </label>
           </div>
 
-          {/* Profile Image */}
           <div className="absolute bottom-[-40px] left-6">
             <label className="cursor-pointer relative group">
               <Image
-                src={profileImageFile ? URL.createObjectURL(profileImageFile) : "/profile-pic.jpg"}
+                src={
+                  profileImageFile
+                    ? URL.createObjectURL(profileImageFile)
+                    : profileImageUrl || "/profile-pic.jpg"
+                }
                 alt="Profile"
                 width={80}
                 height={80}
                 className="rounded-full border-4 border-white shadow"
               />
+
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-full transition">
                 <span className="text-white text-xs">Change</span>
               </div>
@@ -112,13 +161,11 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Profile Header */}
         <div className="mt-16 px-6">
-          <h2 className="text-xl font-semibold">Donald Trump</h2>
-          <p className="text-sm text-gray-500">UX Designer • Sans Francisco • Join August 2024</p>
+          <h2 className="text-xl font-semibold">{firstName} {lastName}</h2>
+          <p className="text-sm text-gray-500">{role || 'Your role'}</p>
         </div>
 
-        {/* Tabs */}
         <div className="mt-6 px-6 border-b border-gray-200">
           <div className="flex space-x-4 text-sm">
             <button className="border-b-2 border-blue-600 text-blue-600 pb-2">My Details</button>
@@ -127,7 +174,6 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Form Section */}
         <div className="px-6 py-6">
           <h3 className="text-lg font-semibold mb-1">My Details</h3>
           <p className="text-sm text-gray-500 mb-6">Please fill full details about yourself</p>
@@ -172,7 +218,6 @@ export default function ProfilePage() {
             <Input placeholder="Enter ZIP Code" value={zipCode} onChange={(e) => setZipCode(e.target.value)} />
           </div>
 
-          {/* Text Editor for Bio */}
           <div className="mb-6">
             <label className="block mb-2 font-medium text-sm">Bio</label>
             <TextEditor value={bio} onChange={setBio} />
@@ -186,6 +231,7 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnHover />
     </div>
   );
 }

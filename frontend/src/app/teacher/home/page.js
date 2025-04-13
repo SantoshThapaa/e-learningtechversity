@@ -1,4 +1,4 @@
-
+"use client"
 import TeacherSidebar from '@/components/custom/navbar/TeacherSidebar';
 import TeacherDashboard from '@/components/custom/TeacherDashboard';
 import React from 'react'

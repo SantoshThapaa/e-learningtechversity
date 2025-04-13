@@ -1,5 +1,5 @@
 "use client";
-
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { HiOutlinePlus } from 'react-icons/hi';
@@ -13,7 +13,13 @@ const TaskCard = ({ task, onClickView, onClickSubmission }) => (
         </div>
         <div className="flex justify-center mb-4">
             <div className="bg-green-100 p-3 rounded-sm">
-                <img src="/famicons_book.png" alt="Book" className="w-20 h-20" />
+                <Image
+                    src="/famicons_book.png"
+                    alt="Book"
+                    width={80}
+                    height={80}
+                    className="w-20 h-20"
+                />
             </div>
         </div>
         <div className="mb-4 text-center">

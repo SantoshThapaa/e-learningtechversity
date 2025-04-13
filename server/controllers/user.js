@@ -173,15 +173,11 @@ export const viewUserProfile = TryCatch(async (req, res) => {
 export const updateUserProfile = async (req, res) => {
     try {
         const userId = req.user._id;
-
-        // Prepare profile update object
         const updatedProfile = {
             bio: req.body.bio,
             zipCode: req.body.zipCode,
             socialMedia: req.body.socialMedia ? JSON.parse(req.body.socialMedia) : undefined,
         };
-
-        // Handle profile picture and cover image
         if (req.files) {
             if (req.files.profilePicture && req.files.profilePicture[0]) {
                 updatedProfile.profilePicture = `/uploads/images/${req.files.profilePicture[0].filename}`;
@@ -190,8 +186,6 @@ export const updateUserProfile = async (req, res) => {
                 updatedProfile.coverImage = `/uploads/images/${req.files.coverImage[0].filename}`;
             }
         }
-
-        // Final user update object
         const update = {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
@@ -199,7 +193,6 @@ export const updateUserProfile = async (req, res) => {
             profile: updatedProfile,
         };
 
-        // Update in DB
         const updatedUser = await User.findByIdAndUpdate(userId, update, {
             new: true,
         });

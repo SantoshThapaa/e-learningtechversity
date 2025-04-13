@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image';
 import { motion } from 'framer-motion'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'

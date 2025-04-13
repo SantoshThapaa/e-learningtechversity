@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
@@ -46,7 +47,7 @@ export default function StudentNavbar() {
   const handleLogout = async () => {
     try {
       await axios.post('http://localhost:4000/api/user/logout');
-  
+
       localStorage.removeItem('user');
       setUser(null);
       toast.success('Logout successful!');
@@ -55,7 +56,7 @@ export default function StudentNavbar() {
       console.error(error);
     }
   };
-  
+
 
   return (
     <motion.div
@@ -67,7 +68,13 @@ export default function StudentNavbar() {
       <div className="container mx-auto flex items-center justify-between py-3 px-6">
         {/* Logo */}
         <Link href="/">
-          <img src="/logo.png" alt="logo" className="h-12" />
+          <Image
+            src="/logo.png"
+            alt="logo"
+            width={48}
+            height={48}
+            className="h-12"
+          />
         </Link>
 
         {/* Desktop Nav */}

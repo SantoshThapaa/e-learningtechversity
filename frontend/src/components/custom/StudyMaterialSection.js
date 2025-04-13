@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Grid3X3, LayoutList, Trash2 } from "lucide-react";
+import Image from 'next/image';
 
 const files = [
   { name: "Design & Art", type: "xls" },
@@ -46,7 +47,13 @@ const StudyMaterialSection = () => {
             className="flex flex-col items-center justify-center bg-white rounded-md p-3 shadow-sm text-center"
           >
             <input type="checkbox" className="mb-2" />
-            <img src={`/icons/${file.type}.png`} alt={file.type} className="h-12 mb-2" />
+            <Image
+              src={`/icons/${file.type}.png`}
+              alt={file.type}
+              width={48}
+              height={48}
+              className="h-12 mb-2"
+            />
             <p className="text-sm font-medium text-gray-700 truncate w-full">{file.name}</p>
             <span className="text-xs text-gray-400">32 Files</span>
           </div>

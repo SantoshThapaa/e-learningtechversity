@@ -1,21 +1,5 @@
 import mongoose from 'mongoose';
-
-const profileSchema = new mongoose.Schema({
-    profilePicture: {
-        type: String,
-        required: false,
-    },
-    bio: {
-        type: String,
-        required: false,
-    },
-    subscription: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Course",
-        },
-    ],
-}, { _id: false });
+import profileSchema from './Profile.js';
 
 const userSchema = new mongoose.Schema({
     name: {

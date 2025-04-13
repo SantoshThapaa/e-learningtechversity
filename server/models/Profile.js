@@ -1,4 +1,4 @@
-// models/schemas/profileSchema.js
+
 import mongoose from 'mongoose';
 
 const profileSchema = new mongoose.Schema({
@@ -21,6 +21,7 @@ const profileSchema = new mongoose.Schema({
   socialMedia: {
     type: Map,
     of: String,
+    required: false,
   },
   subscription: [
     {
