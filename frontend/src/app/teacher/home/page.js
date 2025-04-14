@@ -7,7 +7,7 @@ const Page = () => {
   return (
     <div className="flex">
       <TeacherSidebar />
-      <main className="ml-60 w-full p-6 bg-gray-100 min-h-screen">
+      <main className="ml-60 bg-gray-100 w-full min-h-screen mt-18">
         <TeacherDashboard />
       </main>
     </div>

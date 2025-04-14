@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
-import { getCourseIdFromLocalStorage, getUserIdFromToken } from "@/utils/authUtils";
+import { getUserIdFromToken } from "@/utils/authUtils";
 
 export default function AssignmentForm() {
   const [title, setTitle] = useState("");
@@ -14,7 +14,8 @@ export default function AssignmentForm() {
   const [brief, setBrief] = useState("");
   const [token, setToken] = useState(null);
   const [userId, setUserId] = useState(null);
-  const [courseId, setCourseId] = useState(null);
+  const [courseId, setCourseId] = useState("");
+  const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
@@ -22,19 +23,33 @@ export default function AssignmentForm() {
   useEffect(() => {
     try {
       const localToken = localStorage.getItem("token");
-      const uid = getUserIdFromToken(); 
-      const cid = getCourseIdFromLocalStorage();
+      const uid = getUserIdFromToken();
 
-      if (!localToken) {
-        console.error("Token not found in localStorage");
+      if (!localToken || !uid) {
+        console.error("Token or user ID missing");
         return;
       }
 
       setToken(localToken);
-      setUserId(uid); 
-      setCourseId(cid);
+      setUserId(uid);
+
+      // Fetch assigned courses
+      fetch(`http://localhost:4000/api/teacher/assigned-courses/${uid}`, {
+        headers: {
+          Authorization: `Bearer ${localToken}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setCourses(data);
+            if (data.length > 0) setCourseId(data[0]._id); // default to first
+          } else {
+            console.error("Unexpected course response:", data);
+          }
+        });
     } catch (err) {
-      console.error("Error reading from localStorage or decoding token:", err);
+      console.error("Error initializing form:", err);
     }
   }, []);
 
@@ -85,14 +100,30 @@ export default function AssignmentForm() {
       onSubmit={handleSubmit}
       className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg space-y-6"
     >
+      {/* Course Dropdown */}
+      <div className="space-y-2">
+        <Label htmlFor="courseId" className="text-lg font-medium">Course</Label>
+        <select
+          id="courseId"
+          value={courseId}
+          onChange={(e) => setCourseId(e.target.value)}
+          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700"
+        >
+          {courses.map((course) => (
+            <option key={course._id} value={course._id}>
+              {course.title}
+            </option>
+          ))}
+          {courses.length === 0 && <option disabled>No courses assigned</option>}
+        </select>
+      </div>
+
       {/* Title */}
       <div className="space-y-2">
-        <Label htmlFor="title" className="text-lg font-medium">
-          Title
-        </Label>
+        <Label htmlFor="title" className="text-lg font-medium">Title</Label>
         <Input
           id="title"
-          placeholder="New project of ui/ux"
+          placeholder="New project of UI/UX"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
@@ -100,9 +131,7 @@ export default function AssignmentForm() {
 
       {/* Due Date */}
       <div className="space-y-2">
-        <Label htmlFor="dueDate" className="text-lg font-medium">
-          Due Date
-        </Label>
+        <Label htmlFor="dueDate" className="text-lg font-medium">Due Date</Label>
         <Input
           id="dueDate"
           type="date"
@@ -113,9 +142,7 @@ export default function AssignmentForm() {
 
       {/* Brief */}
       <div className="space-y-2">
-        <Label htmlFor="brief" className="text-lg font-medium">
-          Brief
-        </Label>
+        <Label htmlFor="brief" className="text-lg font-medium">Brief</Label>
         <Textarea
           id="brief"
           placeholder="Write the assignment brief here..."

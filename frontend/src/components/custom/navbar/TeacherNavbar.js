@@ -137,10 +137,16 @@ export default function TeacherNavbar() {
                 <li className="flex items-center gap-3">
                   <Bell className="w-5 h-5" />
                   <img
-                    src={user.photo || '/default-profile.jpg'}
+                    src={
+                      user.profile?.profilePicture
+                        ? `http://localhost:4000${user.profile.profilePicture}`
+                        : '/default-profile.jpg'
+                    }
+                    onError={(e) => (e.target.src = '/default-profile.jpg')}
                     alt="Profile"
                     className="w-8 h-8 rounded-full object-cover"
                   />
+
                 </li>
                 <li>
                   <Link

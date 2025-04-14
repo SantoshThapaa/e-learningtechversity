@@ -1,11 +1,11 @@
-'use client'
-import VerifyComponent from "@/components/custom/VerifyComponent";
-import { Suspense } from 'react'
+'use client';
+import { Suspense } from 'react';
+import VerifyOtpPage from "@/components/custom/VerifyComponent";
 
-export default function Page() {
+export default function StudentProfilePage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <VerifyComponent/>
+      <VerifyOtpPage />
     </Suspense>
-  )
+  );
 }

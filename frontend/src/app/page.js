@@ -5,8 +5,8 @@ import StudentNavbar from '@/components/custom/navbar/StudentNavbar';
 const Page = () => {
   return (
     <>
-      <StudentNavbar/>
-     <Dashboard/>
+    <StudentNavbar/>
+    <Dashboard/>
     </>
   );
 };

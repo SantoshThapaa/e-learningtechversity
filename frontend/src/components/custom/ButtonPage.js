@@ -12,7 +12,7 @@ const ButtonPage = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 mt-20">
       <ButtonGroup activeButton={activeButton} onButtonClick={handleButtonClick} />
       <div className="content mt-4">
         {activeButton === 'Study Material' && <StudyMaterialSection />}

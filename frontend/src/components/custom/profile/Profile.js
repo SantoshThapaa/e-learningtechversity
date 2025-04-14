@@ -47,13 +47,12 @@ export default function ProfilePage() {
         if (user.profile?.coverImage) {
           setCoverImage(`http://localhost:4000${user.profile.coverImage}`);
         }
-
         if (user.profile?.profilePicture) {
-          setProfileImageFile(null);
           setProfileImageUrl(`http://localhost:4000${user.profile.profilePicture}`);
         }
+        
 
-      }catch (error) {
+      } catch (error) {
         console.error("Failed to fetch user profile:", error);
       }
     };
@@ -116,8 +115,8 @@ export default function ProfilePage() {
           className="h-52 bg-cover bg-center relative rounded-t-xl"
           style={{
             backgroundImage: `url(${coverImageFile
-                ? URL.createObjectURL(coverImageFile)
-                : coverImage || '/cover.jpg'
+              ? URL.createObjectURL(coverImageFile)
+              : coverImage || '/cover.jpg'
               })`
           }}
 
@@ -164,6 +163,7 @@ export default function ProfilePage() {
         <div className="mt-16 px-6">
           <h2 className="text-xl font-semibold">{firstName} {lastName}</h2>
           <p className="text-sm text-gray-500">{role || 'Your role'}</p>
+          <p className="text-sm text-gray-500">{bio || 'Your bio'}</p>
         </div>
 
         <div className="mt-6 px-6 border-b border-gray-200">

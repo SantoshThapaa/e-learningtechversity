@@ -9,7 +9,7 @@ import { Bold, Italic, Underline, AlignCenter, List, Pilcrow } from 'lucide-reac
 export const TextEditor = ({ defaultValue, onChange }) => {
   const editor = useEditor({
     extensions: [StarterKit],
-    content: defaultValue || '<p>Start writing here...</p>',
+    content: defaultValue || 'Start writing here...',
   });
 
   useEffect(() => {
