@@ -62,12 +62,8 @@ export const submitAssignment = TryCatch(async (req, res) => {
     const { assignmentId } = req.params;
     const { fileUrl } = req.body;
     const studentId = req.user._id;
-
-    // Check if assignment exists
     const assignment = await Assignment.findById(assignmentId);
     if (!assignment) return res.status(404).json({ message: "Assignment not found" });
-
-    // Check if student has already submitted
     const alreadySubmitted = await Submission.findOne({
         assignment: assignmentId,
         student: studentId
@@ -75,8 +71,6 @@ export const submitAssignment = TryCatch(async (req, res) => {
     if (alreadySubmitted) {
         return res.status(400).json({ message: "You have already submitted this assignment" });
     }
-
-    // Create new submission
     const submission = await Submission.create({
         assignment: assignmentId,
         student: studentId,
