@@ -31,6 +31,12 @@ const links = [
     label: 'Communication',
     icon: Users,
   },
+  ,
+  {
+    href: '/admin/updates',
+    label: 'Updates',
+    icon: Users,
+  }
 ];
 
 export default function AdminSidebar () { 
