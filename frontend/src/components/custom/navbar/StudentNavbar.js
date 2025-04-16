@@ -1,3 +1,4 @@
+
 'use client';
 import Image from 'next/image';
 import axios from 'axios';
@@ -14,7 +15,13 @@ export default function StudentNavbar() {
   const [user, setUser] = useState(null);
 
   const toggleMenu = () => setIsOpen(!isOpen);
-
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    console.log(storedUser);
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
   useEffect(() => {
     const updateUserFromStorage = () => {
       const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -99,8 +106,8 @@ export default function StudentNavbar() {
                 <Bell className="w-5 h-5" />
               </li>
               <li className="relative profile-dropdown">
-                <img
-                  src={user.photo || '/default-profile.jpg'}
+              <img
+                  src={user.photo && user.photo !== "" ? user.photo : '/default-profile.jpg'}
                   alt="Profile"
                   className="w-8 h-8 rounded-full object-cover cursor-pointer"
                   onClick={() => setShowDropdown(prev => !prev)}
