@@ -56,7 +56,7 @@ export default function TeacherNavbar() {
 
   return (
     <motion.div
-      className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md"
+      className="fixed top-0 left-0 right-0 z-50 bg-black-50 bg-white shadow-md"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.4 }}
