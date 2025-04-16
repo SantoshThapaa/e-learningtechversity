@@ -14,6 +14,7 @@ export const postAssignment = TryCatch(async (req, res) => {
     if (!course.assignedTo || !course.assignedTo.includes(teacherId.toString())) {
         return res.status(403).json({ message: "You are not assigned to this course" });
     }
+
     const currentCount = await Assignment.countDocuments({ course: courseId });
     const taskNumber = currentCount + 1;
 
@@ -28,29 +29,34 @@ export const postAssignment = TryCatch(async (req, res) => {
 
     res.status(201).json({
         message: "Assignment posted successfully",
-        assignment,
+        assignment: {
+            ...assignment.toObject(),
+            course: {
+                _id: course._id,
+                title: course.title,
+            }
+        },
     });
 });
-
 
 export const getTeacherAssignments = TryCatch(async (req, res) => {
     const teacherId = req.user._id;
     const courses = await Courses.find({ assignedTo: teacherId });
     const courseIds = courses.map(course => course._id);
     const assignments = await Assignment.find({
-      course: { $in: courseIds },
-      createdBy: teacherId
+        course: { $in: courseIds },
+        createdBy: teacherId
     })
-      .populate("course", "title") 
-      .sort({ createdAt: -1 });
-  
+        .populate("course", "title")
+        .sort({ createdAt: -1 });
+
     res.json({
-      teacherId,
-      count: assignments.length,
-      assignments
+        teacherId,
+        count: assignments.length,
+        assignments
     });
-  });
-  
+});
+
 
 export const submitAssignment = TryCatch(async (req, res) => {
     const { assignmentId } = req.params;
@@ -87,11 +93,40 @@ export const getSubmissionsForAssignment = TryCatch(async (req, res) => {
     const { assignmentId } = req.params;
 
     const submissions = await Submission.find({ assignment: assignmentId })
-        .populate("student", "name email") 
+        .populate("student", "name email")
         .sort({ submittedAt: -1 });
 
     res.json({
         assignmentId,
         submissions
     });
+});
+
+export const getAssignmentsByCourse = TryCatch(async (req, res) => {
+    const { courseId } = req.params;
+    try {
+        const course = await Courses.findById(courseId);
+        if (!course) {
+            return res.status(404).json({
+                message: "Course not found"
+            });
+        }
+
+        const assignments = await Assignment.find({ course: courseId })
+            .populate("createdBy", "name email")
+            .sort({ createdAt: -1 });
+
+        if (assignments.length === 0) {
+            return res.status(200).json({
+                message: "No assignments found for this course"
+            });
+        }
+
+        return res.status(200).json({ assignments });
+    } catch (error) {
+        console.error("Error fetching assignments:", error);
+        return res.status(500).json({
+            message: "Server error while fetching assignments"
+        });
+    }
 });
