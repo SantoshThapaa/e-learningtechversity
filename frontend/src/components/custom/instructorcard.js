@@ -28,7 +28,7 @@ export default function InstructorCard() {
       }
 
       try {
-        // Fetch lecture
+
         const resLecture = await fetch(`http://localhost:4000/api/lectures/${courseId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -37,14 +37,12 @@ export default function InstructorCard() {
           setLecture(lectureData.lectures[0]);
         }
 
-        // Fetch course with assignedTo
         const resCourse = await fetch(`http://localhost:4000/api/course/${courseId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const courseData = await resCourse.json();
         const assignedTo = courseData.course?.assignedTo;
 
-        // Fetch full teacher details for each assigned teacher
         if (Array.isArray(assignedTo)) {
           const teacherDetails = await Promise.all(
             assignedTo.map(async (teacherId) => {
@@ -149,7 +147,12 @@ export default function InstructorCard() {
 
           {/* Join Section */}
           <Card className="p-6 text-center shadow-lg">
-            <Button className="w-full bg-green-500 hover:bg-green-600 text-white text-lg">Join</Button>
+            <Button
+              className="w-full bg-green-500 hover:bg-green-600 text-white text-lg"
+              onClick={() => window.open(lecture.meetLink, "_blank")} // Open meet link in a new tab
+            >
+              Join
+            </Button>
             <p className="text-sm text-gray-500 mt-3">The class at {lecture.courseTime}</p>
             <a
               href={lecture.meetLink}
@@ -160,6 +163,7 @@ export default function InstructorCard() {
               {lecture.meetLink}
             </a>
           </Card>
+
         </div>
       </div>
       <div className='mt-20 bg-white'>
