@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GraduationCap, LayoutGrid, Users } from 'lucide-react';
+import { GraduationCap, LayoutGrid, Phone, UploadCloud, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const links = [
@@ -29,13 +29,12 @@ const links = [
   {
     href: '/admin/communication',
     label: 'Communication',
-    icon: Users,
+    icon: Phone,
   },
-  ,
   {
     href: '/admin/updates',
     label: 'Updates',
-    icon: Users,
+    icon: UploadCloud,
   }
 ];
 
