@@ -4,14 +4,14 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
 
-const Blog = () => {
+const AdminBlog = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [image, setImage] = useState(null);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) setImage(URL.createObjectURL(file)); // Show image preview
+    if (file) setImage(URL.createObjectURL(file)); 
   };
 
   const handleSave = () => {
@@ -78,4 +78,4 @@ const Blog = () => {
   );
 };
 
-export default Blog;
+export default AdminBlog;
