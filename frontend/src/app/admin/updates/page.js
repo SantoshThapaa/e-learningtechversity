@@ -1,7 +1,6 @@
 
-import AdminBlog from '@/components/custom/adminBlog';
-import AdminTestimonial from '@/components/custom/adminTestimonial';
-import AdminSidebar from '@/components/custom/navbar/AdminSidebar';
+import AdminBlog from '@/components/custom/AdminBlog';
+import AdminTestimonial from '@/components/custom/AdminTestimonial';
 import React from 'react'
 
 const Page = () => {

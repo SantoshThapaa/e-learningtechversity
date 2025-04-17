@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-
+import Image from 'next/image';
 export default function ContactUs() {
     return (
         <motion.div
@@ -55,10 +55,13 @@ export default function ContactUs() {
 
                 {/* Image Section (35% width) */}
                 <div className="lg:w-1/3 bg-gray-50 rounded-lg shadow-lg flex justify-center items-center">
-                    <img
+                    <Image
                         src="/contact.png"
                         alt="Woman with whiteboard"
                         className="w-full h-auto rounded-lg"
+                        width={500}
+                        height={300}
+                        layout="intrinsic"
                     />
                 </div>
             </div>

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
+import Image from 'next/image';
 
 const AdminBlog = () => {
   const [title, setTitle] = useState('');
@@ -11,7 +12,7 @@ const AdminBlog = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) setImage(URL.createObjectURL(file)); 
+    if (file) setImage(URL.createObjectURL(file));
   };
 
   const handleSave = () => {
@@ -21,7 +22,7 @@ const AdminBlog = () => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md max-w-4xl mx-auto mt-6">
       <h2 className="text-2xl font-semibold text-gray-700 mb-6">Blog</h2>
-      
+
       <div className="flex space-x-6">
         {/* Left Section (40%) */}
         <div className="w-1/5">
@@ -29,11 +30,19 @@ const AdminBlog = () => {
             <label htmlFor="image" className="mr-4">
               <div className="flex items-center justify-center w-16 h-16 rounded-full border bg-blue-100">
                 {image ? (
-                  <img src={image} alt="Blog" className="w-full h-full rounded-full object-cover" />
+                  <Image
+                    src={image}
+                    alt="Blog"
+                    className="w-full h-full rounded-full object-cover"
+                    width={64}
+                    height={64}
+                    layout="intrinsic"
+                  />
                 ) : (
                   <span className="text-lg text-gray-500">+</span>
                 )}
               </div>
+
             </label>
             <input
               type="file"
@@ -50,18 +59,18 @@ const AdminBlog = () => {
         {/* Right Section (60%) */}
         <div className="w-4/5">
           {/* Blog Title Input */}
-          <Input 
-            value={title} 
-            onChange={(e) => setTitle(e.target.value)} 
-            placeholder="Blog Title" 
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Blog Title"
             className="w-full p-3 mb-4 border rounded-md"
           />
-          
+
           {/* Blog Content Textarea */}
-          <Textarea 
-            value={content} 
-            onChange={(e) => setContent(e.target.value)} 
-            placeholder="More about blog" 
+          <Textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="More about blog"
             className="w-full p-3 mb-4 border rounded-md"
             rows={8} // Increased height for the content textarea
           />

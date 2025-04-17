@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-
+import Image from 'next/image';
 const AdminTopNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleDropdown = () => {
@@ -14,10 +14,13 @@ const AdminTopNavbar = () => {
     <nav className="bg-white shadow-md px-6 flex items-center justify-between rounded-lg border border-gray-200 z-100">
       {/* Left Side: Logo */}
       <div className="flex items-center space-x-4">
-        <img
+        <Image
           src="/logo.png"
           alt="Logo"
           className="w-15 h-15"
+          width={60}
+          height={60}
+          layout="intrinsic"
         />
       </div>
 
@@ -29,10 +32,13 @@ const AdminTopNavbar = () => {
 
         {/* Avatar */}
         <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 cursor-pointer" onClick={toggleDropdown}>
-          <img
+          <Image
             src="/path-to-avatar-image.jpg"
             alt="User Avatar"
             className="w-full h-full object-cover"
+            width={500}
+            height={500}
+            layout="intrinsic"
           />
         </div>
 

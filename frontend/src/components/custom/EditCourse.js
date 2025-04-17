@@ -1,5 +1,5 @@
 'use client';
-
+import Image from 'next/image';
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { UploadCloud } from "lucide-react";
@@ -178,10 +178,13 @@ const EditCoursePage = () => {
                 />
               </div>
               {thumbnailImage && (
-                <img
+                <Image
                   src={URL.createObjectURL(thumbnailImage)}
                   alt="Thumbnail"
                   className="mt-4 w-32 h-32 object-cover"
+                  width={128}
+                  height={128}
+                  layout="intrinsic"
                 />
               )}
             </div>

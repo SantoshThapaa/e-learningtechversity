@@ -7,7 +7,7 @@ export default function CourseBanner() {
       <Image
         src="/Background-10.png"
         alt="Course Details Banner"
-        fill
+        layout="fill" // Correctly apply the layout "fill"
         className="object-cover w-full h-full"
       />
       <div className="absolute inset-0 bg-black/40 flex items-center justify-center">

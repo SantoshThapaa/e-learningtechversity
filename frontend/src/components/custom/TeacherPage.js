@@ -1,5 +1,5 @@
 'use client';
-
+import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
@@ -92,16 +92,22 @@ export default function TeacherPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-10">
                 {teachers.slice(0, 5).map((teacher, index) => (
                     <Card key={index} className="overflow-hidden rounded-xl shadow-lg bg-white">
-                        <img
+                        <Image
                             src={`http://localhost:4000/${teacher?.profile?.backgroundImage || 'uploads/default-bg.jpg'}`}
                             alt="background"
                             className="w-full h-32 object-cover"
+                            width={1280}
+                            height={128}
+                            layout="intrinsic"
                         />
                         <div className="flex flex-col items-center p-4 -mt-12">
-                            <img
+                            <Image
                                 src={`http://localhost:4000/${teacher?.profile?.profilePicture || 'uploads/default-avatar.png'}`}
-                                className="w-24 h-24 rounded-full border-4 border-white shadow-lg"
                                 alt={teacher.name}
+                                className="w-24 h-24 rounded-full border-4 border-white shadow-lg"
+                                width={96}
+                                height={96}
+                                layout="intrinsic"
                             />
                             <h3 className="font-semibold mt-2 text-lg">{teacher.name}</h3>
                             <p className="text-sm text-gray-500">{teacher.role}</p>
@@ -138,10 +144,13 @@ export default function TeacherPage() {
                         {teachers.map((teacher, i) => (
                             <tr key={i} className="border-t">
                                 <td className="p-3 flex items-center gap-2">
-                                    <img
+                                    <Image
                                         src={`http://localhost:4000/${teacher?.profile?.profilePicture || 'uploads/default-avatar.png'}`}
                                         alt="pic"
                                         className="w-8 h-8 rounded-full"
+                                        width={32}
+                                        height={32}
+                                        layout="intrinsic"
                                     />
                                     {teacher.name}
                                 </td>

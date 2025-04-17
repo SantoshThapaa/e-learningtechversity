@@ -1,5 +1,6 @@
 
 'use client';
+
 import Image from 'next/image';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -106,10 +107,13 @@ export default function StudentNavbar() {
                 <Bell className="w-5 h-5" />
               </li>
               <li className="relative profile-dropdown">
-              <img
+                <Image
                   src={user.photo && user.photo !== "" ? user.photo : '/default-profile.jpg'}
                   alt="Profile"
                   className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                  width={32}
+                  height={32}
+                  layout="intrinsic"
                   onClick={() => setShowDropdown(prev => !prev)}
                 />
                 {showDropdown && (
@@ -175,10 +179,13 @@ export default function StudentNavbar() {
               <>
                 <li className="flex items-center gap-3">
                   <Bell className="w-5 h-5" />
-                  <img
+                  <Image
                     src={user.photo || '/default-profile.jpg'}
                     alt="Profile"
                     className="w-8 h-8 rounded-full object-cover"
+                    width={32}
+                    height={32}
+                    layout="intrinsic"
                   />
                 </li>
                 <li>

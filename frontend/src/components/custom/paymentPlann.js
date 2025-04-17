@@ -192,10 +192,13 @@ export default function Paymentplan() {
                                             }}
                                             className="w-full p-2 border rounded-md"
                                         />
-                                        <img
+                                        <Image
                                             src="/banks.png"
                                             alt="Card Icons"
                                             className="absolute right-0 top-1/2 transform -translate-y-1/2 w-15 h-4 pr-1"
+                                            width={60}
+                                            height={16}
+                                            layout="intrinsic"
                                         />
                                     </div>
 
@@ -264,7 +267,7 @@ export default function Paymentplan() {
                                 <div className="border p-4 rounded-md">
                                     <div className="flex">
                                         <div className="border border-[#2ECA7F] w-[30%] items-left pl-4 pt-2">
-                                        <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-2">
                                                 <Image
                                                     src="/Vector.png"
                                                     alt="Stripe Logo"
@@ -301,10 +304,13 @@ export default function Paymentplan() {
                                             }}
                                             className="w-full p-2 border rounded-md"
                                         />
-                                        <img
+                                        <Image
                                             src="/banks.png"
                                             alt="Card Icons"
                                             className="absolute right-0 top-1/2 transform -translate-y-1/2 w-15 h-4 pr-1"
+                                            width={60}
+                                            height={16}
+                                            layout="intrinsic"
                                         />
                                     </div>
 

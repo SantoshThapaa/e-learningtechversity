@@ -81,12 +81,15 @@ export default function TeacherNavbar() {
                 <Bell className="w-5 h-5" />
               </li>
               <li className="relative profile-dropdown">
-                <img
+                <Image
                   src={user.photo || '/default-profile.jpg'}
                   alt="Profile"
                   className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                  width={32}
+                  height={32}
                   onClick={() => setShowDropdown(prev => !prev)}
                 />
+
                 {showDropdown && (
                   <ul className="absolute right-0 mt-2 w-40 bg-white shadow-md rounded-md z-50">
                     <li>
@@ -136,15 +139,18 @@ export default function TeacherNavbar() {
               <>
                 <li className="flex items-center gap-3">
                   <Bell className="w-5 h-5" />
-                  <img
+                  <Image
                     src={
                       user.profile?.profilePicture
                         ? `http://localhost:4000${user.profile.profilePicture}`
                         : '/default-profile.jpg'
                     }
-                    onError={(e) => (e.target.src = '/default-profile.jpg')}
                     alt="Profile"
                     className="w-8 h-8 rounded-full object-cover"
+                    width={32}
+                    height={32}
+                    layout="intrinsic"
+                    onError={(e) => (e.target.src = '/default-profile.jpg')}
                   />
 
                 </li>

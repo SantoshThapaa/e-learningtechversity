@@ -5,6 +5,7 @@ import { Textarea } from '../ui/textarea';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Image from 'next/image';
 
 const AdminTestimonial = () => {
     const [testimonial, setTestimonial] = useState('');
@@ -58,11 +59,14 @@ const AdminTestimonial = () => {
                         <label htmlFor="image" className="mr-4">
                             <div className="flex items-center justify-center w-16 h-16 rounded-full border bg-blue-100">
                                 {image ? (
-                                    <img
-                                        src={URL.createObjectURL(image)}
-                                        alt="Testimonial"
-                                        className="w-full h-full rounded-full object-cover"
-                                    />
+                                    <Image
+                                    src={URL.createObjectURL(image)}
+                                    alt="Testimonial"
+                                    className="w-full h-full rounded-full object-cover"
+                                    width={150}
+                                    height={150} 
+                                    layout="intrinsic" 
+                                  />
                                 ) : (
                                     <span className="text-lg text-gray-500">+</span>
                                 )}

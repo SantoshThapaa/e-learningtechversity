@@ -1,7 +1,6 @@
 'use client';
-
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FaStar, FaCalendarAlt, FaDownload } from 'react-icons/fa';
@@ -72,10 +71,12 @@ export default function InstructorCard() {
       <div className="flex flex-col lg:flex-row gap-8 lg:mt-30 w-full">
         {/* Left Section */}
         <Card className="w-full lg:w-[70%] p-0 overflow-hidden">
-          <img
+          <Image
             src={`http://localhost:4000${lecture.thumbnail.replace('/thumbnail/', '/thumbnails/')}`}
             alt={lecture.title}
             className="w-full h-[300px] object-cover"
+            width={600}
+            height={300}
           />
 
           <CardContent className="p-6">
