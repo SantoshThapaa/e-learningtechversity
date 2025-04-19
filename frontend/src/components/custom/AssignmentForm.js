@@ -1,118 +1,118 @@
-'use client'
-import { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { useRouter } from "next/navigation";
-import { getUserIdFromToken } from "@/utils/authUtils";
-import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+'use client';
 
-export default function AssignmentForm() {
-  const [title, setTitle] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [brief, setBrief] = useState("");
-  const [token, setToken] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const [courseId, setCourseId] = useState(""); 
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { UploadCloud } from 'lucide-react';
+
+export default function SubheadingUploader() {
   const [courses, setCourses] = useState([]);
+  const [courseId, setCourseId] = useState('');
+  const [sectionTitle, setSectionTitle] = useState('');
+  const [subHeadingTitle, setSubHeadingTitle] = useState('');
+  const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter();
-
-  useEffect(() => {
+  const fetchCourses = async () => {
     try {
-      const localToken = localStorage.getItem("token");
-      const uid = getUserIdFromToken(); 
-      if (!localToken || !uid) {
-        console.error("Token or user ID missing");
+      const token = localStorage.getItem('token');
+      const teacherId = getUserIdFromToken();
+
+      if (!token || !teacherId) {
+        toast.error('Login required to upload resources.');
         return;
       }
 
-      setToken(localToken);
-      setUserId(uid);
-
-      fetch(`http://localhost:4000/api/assigned-courses/${uid}`, {
+      const res = await axios.get(`http://localhost:4000/api/assigned-courses/${teacherId}`, {
         headers: {
-          Authorization: `Bearer ${localToken}`,
+          Authorization: `Bearer ${token}`,
         },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (Array.isArray(data.courses)) {
-            setCourses(data.courses);
-            if (data.courses.length > 0) setCourseId(data.courses[0]._id); 
-          } else {
-            console.error("Unexpected course response:", data);
-          }
-        });
-    } catch (err) {
-      console.error("Error initializing form:", err);
+      });
+
+      if (res.data.courses?.length > 0) {
+        setCourses(res.data.courses);
+        setCourseId(res.data.courses[0]._id);
+      } else {
+        toast.warning('No courses assigned to you.');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to fetch courses');
     }
+  };
+
+  useEffect(() => {
+    fetchCourses();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    setVideo(file);
+  };
 
-    if (!token || !courseId) {
-      toast.error("Missing token or course ID");
+  const handleSubmit = async () => {
+    if (!courseId || !sectionTitle || !subHeadingTitle || !video) {
+      toast.error('Please fill all fields and upload a video.');
       return;
     }
 
-    const payload = {
-      title,
-      deadline: dueDate,
-      description: brief,
-    };
+    const formData = new FormData();
+    formData.append('sectionTitle', sectionTitle);
+    formData.append('subHeadingTitle', subHeadingTitle);
+    formData.append('video', video);
 
     try {
       setLoading(true);
 
-      const res = await fetch(`http://localhost:4000/api/assignment/create/${courseId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      await axios.post(
+        `http://localhost:4000/api/resources/${courseId}/add`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
 
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.message || "Something went wrong");
-
-      toast.success("Assignment created successfully!");
-      setTitle("");
-      setDueDate("");
-      setBrief("");
-      router.push("/teacher/coursemanagement");
-    } catch (err) {
-      console.error("Assignment creation failed:", err);
-      toast.error(err.message || "An error occurred while creating the assignment.");
+      toast.success('Resource uploaded successfully!');
+      setSectionTitle('');
+      setSubHeadingTitle('');
+      setVideo(null);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to upload resource.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-md mx-auto p-6 shadow-md rounded-lg space-y-6"
-      style={{
-        width: '100%',   
-        maxWidth: '500px', 
-        height: 'auto',   
-        minHeight: '450px', 
-        overflowY: 'auto', 
-      }}
-    >
-      <div className="space-y-2">
-        <Label htmlFor="courseId" className="text-lg font-medium">Course</Label>
+    <div className="bg-[#f5f8ff] rounded-2xl p-6 relative w-full max-w-xl mx-auto">
+      {/* Top-right Save Button */}
+      <div className="absolute top-4 right-4">
+        <Button
+          className="bg-blue-600 text-white"
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? 'Saving...' : 'Save'}
+        </Button>
+      </div>
+
+      <h2 className="text-2xl font-bold mb-1">Sub heading</h2>
+      <p className="text-sm text-gray-600 mb-6">Enter a sub heading and upload a video</p>
+
+      {/* Course Selection */}
+      <div className="mb-4">
+        <Label htmlFor="courseId" className="mb-1 block">Select Course</Label>
         <select
           id="courseId"
           value={courseId}
-          onChange={(e) => setCourseId(e.target.value)} 
+          onChange={(e) => setCourseId(e.target.value)}
           className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700"
         >
           {courses.map((course) => (
@@ -124,45 +124,47 @@ export default function AssignmentForm() {
         </select>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="title" className="text-lg font-medium">Title</Label>
+      {/* Section Title */}
+      <div className="mb-4">
+        <Label htmlFor="sectionTitle" className="mb-1 block">Section Title</Label>
         <Input
-          id="title"
-          placeholder="New project of UI/UX"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          id="sectionTitle"
+          value={sectionTitle}
+          placeholder="e.g. UI Basics"
+          onChange={(e) => setSectionTitle(e.target.value)}
         />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="dueDate" className="text-lg font-medium">Due Date</Label>
+      {/* Subheading Title */}
+      <div className="mb-4">
+        <Label htmlFor="subHeading" className="mb-1 block">Sub Heading Title</Label>
         <Input
-          id="dueDate"
-          type="date"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
+          id="subHeading"
+          value={subHeadingTitle}
+          placeholder="e.g. Introduction to UI"
+          onChange={(e) => setSubHeadingTitle(e.target.value)}
         />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="brief" className="text-lg font-medium">Brief</Label>
-        <Textarea
-          id="brief"
-          placeholder="Write the assignment brief here..."
-          value={brief}
-          onChange={(e) => setBrief(e.target.value)}
-          className="resize-none" 
-          rows="4"
-        />
-      </div>
-
-      <Button
-        type="submit"
-        disabled={loading}
-        className="bg-[#0E1A47] hover:bg-[#1a2b6a] text-white w-full text-base font-medium rounded-md"
+      {/* Video Upload */}
+      <label
+        htmlFor="video"
+        className="flex flex-col items-center justify-center border border-dashed border-blue-300 bg-blue-50 py-10 rounded-xl cursor-pointer transition hover:bg-blue-100"
       >
-        {loading ? "Saving..." : "Save"}
-      </Button>
-    </form>
+        <UploadCloud size={32} className="text-blue-500 mb-2" />
+        <p className="text-gray-500">Please upload a video</p>
+        <p className="text-sm text-blue-600 mt-1">MP4, Aspect ratio 16:9</p>
+        <input
+          type="file"
+          id="video"
+          accept="video/mp4"
+          className="hidden"
+          onChange={handleVideoChange}
+        />
+        {video && (
+          <p className="mt-2 text-sm text-green-600">{video.name}</p>
+        )}
+      </label>
+    </div>
   );
 }
