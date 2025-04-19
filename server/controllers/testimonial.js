@@ -31,16 +31,15 @@ export const createTestimonial = async (req, res) => {
 };
 
 export const getAllTestimonials = async (req, res) => {
-    try {
-      const testimonials = await Testimonial.find().limit(4);  
-      res.status(200).json(testimonials);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        message: 'Server error',
-      });
-    }
-  };
-  
+  try {
+    const testimonials = await Testimonial.find().sort({ createdAt: -1 }); 
+    res.status(200).json(testimonials);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: 'Server error',
+    });
+  }
+};
 
 
