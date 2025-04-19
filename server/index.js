@@ -16,7 +16,7 @@ import resourceRoutes from "./routes/resource.js";
 import messageRoutes from "./routes/message.js";
 import assignmentRoutes from "./routes/assignment.js";
 import studyMaterialRoutes from "./routes/studyMaterial.js";
-
+import courseResourceRoutes from './routes/courseResourceRoutes.js';
 const app = express();
 dotenv.config();
 
@@ -44,6 +44,7 @@ app.use('/api/', resourceRoutes);
 app.use('/api/', messageRoutes);
 app.use('/api/assignment', assignmentRoutes);
 app.use('/api/study-materials', studyMaterialRoutes);
+app.use('/api/resources', courseResourceRoutes);
 
 app.get('/', (req, res) => {
     res.send("Server is working");
