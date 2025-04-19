@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import ButtonGroup from './ButtonGroup';
 import StudyMaterialSection from './StudyMaterialSection';
-import ResourcesSection from './ResourcesSection';
+// import ResourcesSection from './ResourcesSection';
 import TaskSection from './TaskSection';
+import ResourceViewer from './ResourceViewer';
 
 const ButtonPage = () => {
   const [activeButton, setActiveButton] = useState('Study Material');
@@ -16,7 +17,7 @@ const ButtonPage = () => {
       <ButtonGroup activeButton={activeButton} onButtonClick={handleButtonClick} />
       <div className="content mt-4">
         {activeButton === 'Study Material' && <StudyMaterialSection />}
-        {activeButton === 'Resources' && <ResourcesSection />}
+        {activeButton === 'Resources' && <ResourceViewer />}
         {activeButton === 'Task' && <TaskSection />}
       </div>
     </div>
