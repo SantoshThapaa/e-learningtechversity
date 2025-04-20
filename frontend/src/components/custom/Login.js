@@ -30,14 +30,10 @@ export default function Login({ variants }) {
 
       const { token, name, photoUrl, role } = response.data
 
-      // ✅ Save to localStorage
       localStorage.setItem('token', token)
       localStorage.setItem('user', JSON.stringify({ name, photo: photoUrl, role }))
-
-      // ✅ Show toast success
       toast.success('Login successful!')
 
-      // ✅ Redirect based on role
       if (role === 'teacher') {
         router.push('/teacher/home')
       } else {
