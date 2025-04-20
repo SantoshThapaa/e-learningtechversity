@@ -170,7 +170,6 @@ export default function Paymentplan() {
                                         </div>
                                         <div className='text-lg font-semibold w-[40%] text-right right-0 justify-end'>
                                             {isLoading ? 'Loading...' : `$ ${course?.price ?? N / A}`}
-                                            {/* <p className="text-sm text-gray-600">For 4 months</p> */}
                                         </div>
                                     </div>
 
