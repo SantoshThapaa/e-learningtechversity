@@ -1,5 +1,4 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -116,7 +115,7 @@ export default function ResourceViewer() {
   }, []);
 
   return (
-    <div className="space-y-4 relative">
+    <div className="space-y-4 relative mt-10">
       <div className="flex justify-between items-center mb-4">
         <select
           className="border border-gray-300 rounded px-4 py-2 text-sm"
