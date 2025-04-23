@@ -1,0 +1,5 @@
+# Ignore node_modules and uploads directories
+server/node_modules/
+server/uploads/
+.DS_Store
+
