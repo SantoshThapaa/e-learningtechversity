@@ -1,6 +1,5 @@
 import express from "express";
 
-import { isAdmin } from "../middlewares/isAuth.js";
 import { createBlog, getAllBlogs, getBlogById } from "../controllers/blog.js";
 import { uploadImage } from "../middlewares/multer.js";
 
