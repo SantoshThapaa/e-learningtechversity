@@ -1,4 +1,5 @@
 'use client';
+
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -6,15 +7,21 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
+import { FaEye, FaTrash } from 'react-icons/fa';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function StudentTable() {
   const [students, setStudents] = useState([]);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
         const res = await axios.get('http://localhost:4000/api/students');
-        console.log("Fetched users:", res.data.users);  
+        console.log("Fetched students:", res.data.users);
         setStudents(res.data.users || []);
       } catch (err) {
         console.error('Failed to fetch students:', err);
@@ -22,6 +29,28 @@ export default function StudentTable() {
     };
     fetchStudents();
   }, []);
+
+  const handleView = (student) => {
+    setSelectedStudent(student);
+    setShowViewModal(true);
+  };
+
+  const handleDelete = (student) => {
+    setSelectedStudent(student);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:4000/api/user/${selectedStudent._id}`);
+      toast.success('Student deleted successfully!');
+      setStudents((prev) => prev.filter((student) => student._id !== selectedStudent._id));
+      setShowDeleteModal(false);
+    } catch (err) {
+      toast.error('Error deleting student.');
+      console.error('Error deleting student:', err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#f4f7ff] p-6">
@@ -54,12 +83,17 @@ export default function StudentTable() {
                 >
                   <td className="p-4"><Checkbox /></td>
                   <td className="p-4 flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={student.profile?.profilePicture || "/avatar-default.jpg"} />
-                      <AvatarFallback>{student.name[0]}</AvatarFallback>
-                    </Avatar>
+                    <Image
+                      src={`http://localhost:4000${student.profile?.profilePicture || '/uploads/default-avatar.png'}`}
+                      alt={student.name}
+                      className="w-8 h-8 rounded-full border-4 border-white shadow-lg"
+                      width={96}
+                      height={96}
+                      layout="intrinsic"
+                    />
                     {student.name}
                   </td>
+
                   <td className="p-4">{student.email}</td>
                   <td className="p-4">{student.phone || 'Not provided'}</td>
                   <td className="p-4">{student.profile?.bio || 'No bio'}</td>
@@ -78,10 +112,18 @@ export default function StudentTable() {
                     </span>
                   </td>
                   <td className="p-4">
-                    <Button variant="ghost" className="text-blue-600 hover:underline text-xs">
-                      View More
-                    </Button>
+                    <div className="flex gap-2 text-gray-500 cursor-pointer">
+                      <FaEye
+                        onClick={() => handleView(student)}
+                        className="text-blue-500 cursor-pointer"
+                      />
+                      <FaTrash
+                        onClick={() => handleDelete(student)}
+                        className="text-red-500 cursor-pointer"
+                      />
+                    </div>
                   </td>
+
                   <td className="p-4 flex items-center gap-2">
                     <Avatar className="h-7 w-7">
                       <AvatarImage src={student.mentorAvatar || "/avatar-default.jpg"} />
@@ -94,7 +136,6 @@ export default function StudentTable() {
           </table>
 
           <div className="flex justify-between items-center p-4 text-xs text-gray-500">
-            
             <div className="flex gap-1">
               {[1, 2, 3, '...', 10].map((p, idx) => (
                 <button
@@ -111,6 +152,56 @@ export default function StudentTable() {
           </div>
         </div>
       </div>
+
+      {/* View More Modal */}
+      {showViewModal && selectedStudent && selectedStudent.name && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-xl max-w-md w-full">
+            <h3 className="text-xl font-semibold">{selectedStudent.name}</h3>
+            <div className="flex items-center gap-4 mt-4">
+              <Image
+                src={selectedStudent.profile?.profilePicture || '/avatar-default.jpg'}
+                alt={selectedStudent.name}
+                className="w-24 h-24 rounded-full border-4 border-white shadow-lg"
+                width={96}
+                height={96}
+                layout="intrinsic"
+              />
+              <div>
+                <p><strong>Email:</strong> {selectedStudent.email}</p>
+                <p><strong>Phone:</strong> {selectedStudent.phone}</p>
+                <p><strong>Bio:</strong> {selectedStudent.profile?.bio || 'No bio available'}</p>
+                <p><strong>Courses:</strong> {selectedStudent.course || 'No courses assigned'}</p>
+                <p><strong>Mentor:</strong> {selectedStudent.mentor || 'No mentor assigned'}</p>
+              </div>
+            </div>
+            <div className="mt-4 flex justify-end">
+              <Button onClick={() => setShowViewModal(false)} className="bg-red-500 text-white rounded-full px-4 py-2">
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && selectedStudent && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-xl max-w-md w-full">
+            <h3 className="text-lg font-semibold text-center">Are you sure you want to delete {selectedStudent.name}?</h3>
+            <div className="mt-4 flex justify-around">
+              <Button onClick={confirmDelete} className="bg-red-500 text-white rounded-full px-4 py-2">
+                Yes, Delete
+              </Button>
+              <Button onClick={() => setShowDeleteModal(false)} className="bg-gray-500 text-white rounded-full px-4 py-2">
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <ToastContainer position="top-right" autoClose={5000} />
     </div>
   );
 }
