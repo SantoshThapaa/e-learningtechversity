@@ -1,7 +1,9 @@
 import Stripe from 'stripe';
 import { Payment } from '../models/Payment.js';
 import { User } from '../models/User.js';
+import { Courses } from '../models/Courses.js'; 
 import { stripe_key } from '../config/config.js';
+import sendMail from '../middlewares/sendMail.js';  
 
 const stripe = new Stripe(stripe_key);
 
@@ -51,11 +53,26 @@ export const createPayment = async (req, res) => {
             payment.paymentStatus = 'Completed';
             payment.transactionId = paymentIntent.id;
             payment.paidAt = new Date();
+
+            if (paymentPlan === 'EMI') {
+                payment.nextPaymentDue = new Date();
+                payment.nextPaymentDue.setMonth(payment.nextPaymentDue.getMonth() + 1);  
+                sendMail(user.email, 'EMI Payment Reminder', {
+                    name: user.name,
+                    nextPaymentDate: payment.nextPaymentDue.toLocaleDateString(),
+                });
+            }
+
             payment.accessGranted = true; 
             await payment.save();
+            const course = await Courses.findById(courseId);
+            if (course) {
+                course.enrolledStudents.push(userId);
+                await course.save();
+            }
 
             return res.status(200).json({
-                message: 'Payment successful',
+                message: 'Payment successful and user enrolled in course',
                 payment
             });
         } else if (paymentIntent.status === 'requires_action') {
@@ -77,6 +94,7 @@ export const createPayment = async (req, res) => {
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
 
 
 export const getUserPayments = async (req, res) => {
