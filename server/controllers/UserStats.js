@@ -58,22 +58,23 @@ export const getUserRegistrationStats = async (req, res) => {
     }
 };
 
-
 export const getCoursesStatus = async (req, res) => {
     try {
         const courses = await Courses.find();
-
         const currentDate = moment();
-
         let completedCourses = 0;
         let inProgressCourses = 0;
 
         courses.forEach(course => {
-            const endDate = moment(course.endDate);
-            if (endDate.isBefore(currentDate)) {
-                completedCourses++;
+            const endDate = moment(course.endDate); 
+            if (endDate.isValid()) {
+                if (endDate.isBefore(currentDate)) {
+                    completedCourses++;
+                } else {
+                    inProgressCourses++;
+                }
             } else {
-                inProgressCourses++;
+                console.log(`Invalid endDate for course: ${course.title}`);
             }
         });
 
@@ -86,4 +87,3 @@ export const getCoursesStatus = async (req, res) => {
         res.status(500).json({ message: 'Server error while fetching course status' });
     }
 };
-

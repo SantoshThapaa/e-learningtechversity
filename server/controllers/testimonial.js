@@ -42,4 +42,38 @@ export const getAllTestimonials = async (req, res) => {
   }
 };
 
+export const deleteTestimonial = async (req, res) => {
+  try {
+    const { testimonialId } = req.params;
+    await Testimonial.findByIdAndDelete(testimonialId);
+    res.status(200).json({ message: 'Testimonial deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting testimonial:', err);
+    res.status(500).json({ message: 'Error deleting testimonial' });
+  }
+};
+
+export const editTestimonial = async (req, res) => {
+  try {
+    const { testimonialId } = req.params;
+    const { review, rating, name, role } = req.body;
+    const profilePic = req.file ? req.file.path : '';
+
+    const updatedTestimonial = await Testimonial.findByIdAndUpdate(
+      testimonialId,
+      { review, rating, name, role, profilePic },
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: 'Testimonial updated successfully!',
+      testimonial: updatedTestimonial,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error updating testimonial' });
+  }
+};
+
+
 
