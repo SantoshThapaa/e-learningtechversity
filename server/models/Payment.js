@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { Courses } from './Courses.js';  // Import the Courses model
 
-export const paymentSchema = new mongoose.Schema({
+const paymentSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -53,6 +54,20 @@ export const paymentSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    }
+});
+
+paymentSchema.post('save', async function(doc) {
+    if (doc.paymentStatus === 'Completed') {
+        try {
+            const course = await Courses.findById(doc.courseId); 
+            course.enrolledStudents.push(doc.userId);
+            await course.save();
+            doc.accessGranted = true;
+            await doc.save();
+        } catch (error) {
+            console.error('Error updating course enrollment after payment:', error);
+        }
     }
 });
 
