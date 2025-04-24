@@ -2,9 +2,11 @@ import TryCatch from "../middlewares/TryCatch.js";
 import { Courses } from "../models/Courses.js";
 import { Lecture } from "../models/Lecture.js";
 import { rm } from "fs";
-import { promisify } from 'util';
-import fs from 'fs';
 import { User } from "../models/User.js";
+import fs from "fs";
+import { promisify } from "util";
+
+const unlinkAsync = promisify(fs.unlink);
 
 export const getAssignedCourses = TryCatch(async (req, res) => {
     const { teacherId } = req.params;  
@@ -74,39 +76,23 @@ export const createLecture = TryCatch(async (req, res) => {
       newLecture,
     });
   });
- 
-export const deleteLecture = TryCatch(async(req, res)=> {
-    const lecture = await Lecture.findById(req.params.id); 
-    rm(lecture.video, ()=>{
-        console.log("Video deleted");
-    });
-    await lecture.deleteOne()
-    res.json({message: "Lecture Deleted"})
+
+  export const deleteLecture = TryCatch(async (req, res) => {
+    const lecture = await Lecture.findById(req.params.id);
+    if (!lecture) return res.status(404).json({ message: "Lecture not found" });
+
+    const course = await Courses.findById(lecture.course);
+    if (!course.assignedTo.includes(req.user._id.toString())) {
+        return res.status(403).json({ message: "You are not allowed to delete this lecture" });
+    }
+
+    if (lecture.video) await unlinkAsync(lecture.video);
+    if (lecture.thumbnail) await unlinkAsync(lecture.thumbnail);
+
+    await lecture.deleteOne();
+
+    return res.json({ message: "Lecture Deleted" });
 });
 
-
-export const deleteCourse = TryCatch(async(req, res)=> {
-    const course = await Courses.findById(req.params.id);
-    const lectures = await Lecture.find({
-        course: course._id
-    })
-    await Promise.all(
-        lectures.map(async(lecture)=> {
-            await unlinkAsync(lecture.video);
-            console.log("Video Deleted");
-        })
-    );
-    rm(course.image, ()=>{
-        console.log("Image deleted");
-    });
-
-    await Lecture.find({course: req.params.id}).deleteMany()
-    await course.deleteOne()
-    await User.updateMany({}, {$pull:{subscription: req.params.id}});
-
-    res.json({
-        message: "Course Deleted",
-    });
-});
 
 
