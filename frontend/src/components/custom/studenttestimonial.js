@@ -14,19 +14,22 @@ export const StudentTestimonial = () => {
     try {
       const res = await axios.get('http://localhost:4000/api/allTestimonials');
       const sorted = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).reverse();
-      setTestimonials(sorted);
+      setTestimonials(sorted.slice(0, 4)); // Limit to only the first 4 testimonials
     } catch (error) {
       console.error('Error fetching testimonials:', error);
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchTestimonials();
     const interval = setInterval(fetchTestimonials, 10000);
     return () => clearInterval(interval);
   }, []);
+
   if (loading) return <div>Loading testimonials...</div>;
+
   return (
     <section className="bg-[#F6FFEB] py-20 px-4">
       <div className="max-w-6xl mx-auto text-center mb-12">
@@ -44,7 +47,7 @@ export const StudentTestimonial = () => {
             transition={{ duration: 0.6, delay: index * 0.1 }}
             viewport={{ once: true }}
           >
-            <Card className="w-[320px] bg-white shadow-md rounded-xl p-6">
+            <Card className="w-[320px] h-[250px] bg-white shadow-md rounded-xl p-6">
               <div className="flex mb-4 text-yellow-500">
                 {Array.from({ length: 5 }, (_, i) => (
                   <Star
@@ -81,11 +84,12 @@ export const StudentTestimonial = () => {
         ))}
       </div>
 
-      <div className="mt-10 flex justify-center">
-        <span className="w-20 h-[6px] bg-gray-300 rounded-full relative">
+      <div className="mt-10 flex justify-center overflow-x-auto">
+        <span className="w-max h-[6px] bg-gray-300 rounded-full relative">
           <span className="absolute left-0 top-0 h-full w-[40%] bg-blue-500 rounded-full"></span>
         </span>
       </div>
+
     </section>
   );
 };

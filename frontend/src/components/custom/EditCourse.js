@@ -137,6 +137,7 @@ const EditCoursePage = () => {
       setMeetLink("");
       setCourseTime("");
       setThumbnailImage("");
+      setEditorValue("");
     } catch (error) {
       console.error("Error creating lecture:", error.response ? error.response.data : error.message);
       toast.error("Failed to create lecture. Please try again.");
@@ -144,7 +145,7 @@ const EditCoursePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F2F6FF] p-8">
+    <div className="min-h-screen bg-[#F2F6FF] p-8 mt-10">
       <h2 className="text-xl font-semibold mb-2">Edit Course</h2>
       <p className="text-sm text-muted-foreground mb-6">Home &gt; Edit Course</p>
 
