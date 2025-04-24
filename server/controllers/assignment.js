@@ -150,3 +150,13 @@ export const getAllAssignments = TryCatch(async (req, res) => {
         });
     }
 });
+
+export const getSubmittedAssignmentIds = TryCatch(async (req, res) => {
+    const studentId = req.user._id;
+  
+    const submissions = await Submission.find({ student: studentId }).select("assignment");
+  
+    const submittedAssignmentIds = submissions.map((s) => s.assignment.toString());
+  
+    res.status(200).json({ submittedAssignmentIds });
+  });
