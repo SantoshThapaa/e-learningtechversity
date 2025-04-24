@@ -9,6 +9,8 @@ import AddCourseForm from '@/components/custom/AddCourseForm';
 export default function CoursePage() {
   const [courses, setCourses] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [completedCourses, setCompletedCourses] = useState(0);
+  const [inProgressCourses, setInProgressCourses] = useState(0);
 
   const fetchCourses = async () => {
     try {
@@ -21,6 +23,20 @@ export default function CoursePage() {
 
   useEffect(() => {
     fetchCourses();
+  }, []);
+  useEffect(() => {
+    const fetchCoursesStatus = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/api/courses/status');
+        const data = await response.json();
+        setCompletedCourses(data.completedCourses);
+        setInProgressCourses(data.inProgressCourses);
+      } catch (error) {
+        console.error("Error fetching course status:", error);
+      }
+    };
+
+    fetchCoursesStatus();
   }, []);
 
   const handleModalClose = () => {
@@ -40,14 +56,20 @@ export default function CoursePage() {
       </div>
 
       <div className="flex gap-4 mb-6 max-w-7xl mx-auto">
-        <Button variant="outline" className="rounded-full px-4">Ongoing (08)</Button>
-        <Button variant="outline" className="rounded-full px-4">Completed (10)</Button>
-        <Button variant="outline" className="rounded-full px-4">Saved (12)</Button>
+        <Button variant="outline" className="rounded-full px-4">
+          Ongoing ({inProgressCourses})
+        </Button>
+        <Button variant="outline" className="rounded-full px-4">
+          Completed ({completedCourses})
+        </Button>
+        <Button variant="outline" className="rounded-full px-4">
+          Saved ({completedCourses + inProgressCourses})
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
         {courses.map((course, index) => (
-          <Card key={index} className="p-4 space-y-3 border rounded-xl relative">
+          <Card key={index} className="p-4 border rounded-xl relative">
             <Image
               src={`http://localhost:4000/${course.image}`}
               alt={course.title}
@@ -58,7 +80,7 @@ export default function CoursePage() {
             <div className="absolute top-4 left-4 bg-green-500 text-white text-sm px-2 py-1 rounded-full">
               ${course.price}
             </div>
-            <span className="text-xs font-medium text-gray-700 px-2 py-1 rounded">
+            <span className="text-xs font-medium text-gray-700 px-2 rounded">
               <span className="bg-[#16A34A] px-1 text-white rounded">
                 {course.category}
               </span>
@@ -74,11 +96,11 @@ export default function CoursePage() {
                   ? course.assignedTo.map((teacher) => teacher.name).join(', ')
                   : 'N/A'}
               </span>
-              <div className="text-xs text-yellow-600 flex items-center">
+              {/* <div className="text-xs text-yellow-600 flex items-center">
                 ⭐ 4.9 (12k)
-              </div>
+              </div> */}
             </div>
-            <Button variant="outline" className="w-full mt-2">
+            <Button variant="outline" className="w-full mt-1">
               View Progress
             </Button>
           </Card>
