@@ -5,41 +5,46 @@ const schema = new mongoose.Schema({
        type: String,
        required: true,
     },
-    description:{
+    description: {
         type: String,
         required: true,
     },
-    image:{
+    image: {
         type: String,
         required: true,
     },
-    price:{
+    price: {
         type: Number,
+        required: true,
+    },
+    batchNo:{
+        type:Number,
         required:true,
     },
     duration: {
         type: String,
-        required:true,
+        required: true,
     },
-    category:{
+    category: {
         type: String,
-        required:true,
+        required: true,
     },
-    createdBy:{
+    createdBy: {
         type: String,
-        required:false,
+        required: false,
     },
-    createdAt:{
+    createdAt: {
         type: Date,
         default: Date.now,
     },
     startDate: {
-        type: Date, 
-        required: true,
+        type: Date,
+        default: function() {
+            return this.createdAt;
+        }
     },
     endDate: {
         type: Date, 
-        required: true,
     },
     enrolledStudents: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -49,6 +54,37 @@ const schema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }]
+});
+
+schema.pre('save', function(next) {
+    if (this.duration) {
+        const durationParts = this.duration.split(' ');
+        if (durationParts.length !== 2) {
+            return next(new Error("Invalid duration format. Expected format: '<number> <unit>'"));
+          }
+        const number = parseInt(durationParts[0]);
+        const unit = durationParts[1].toLowerCase();
+
+        let timeToAdd;
+
+        if (unit === 'weeks') {
+            timeToAdd = number * 7 * 24 * 60 * 60 * 1000;
+        } else if (unit === 'months') {
+            timeToAdd = number * 30 * 24 * 60 * 60 * 1000;
+        }
+
+        if (timeToAdd) {
+            const calculatedEndDate = new Date(this.createdAt.getTime() + timeToAdd);
+            this.endDate = calculatedEndDate;
+          } else {
+            return next(new Error("Invalid duration unit. Expected 'weeks' or 'months'."));
+          }
+        } else {
+         
+          return next(new Error("Duration is required"));
+        }
+
+    next();
 });
 
 export const Courses = mongoose.model("Courses", schema);
