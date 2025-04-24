@@ -49,10 +49,12 @@ export default function InstructorCard() {
                 headers: { Authorization: `Bearer ${token}` },
               });
               const data = await resTeacher.json();
+              console.log("IMAGE PATH:", data.teacher?.profile?.profilePicture);
               return data.teacher;
             })
           );
           setTeachers(teacherDetails);
+
         }
       } catch (err) {
         console.error("Fetch failed:", err);
@@ -65,6 +67,7 @@ export default function InstructorCard() {
 
   if (error) return <div className="text-center text-red-600 font-semibold mt-10">{error}</div>;
   if (!lecture) return <div className="text-center text-gray-500 font-medium mt-10">Loading lecture details...</div>;
+
 
   return (
     <div className='w-full bg-white'>
@@ -120,12 +123,13 @@ export default function InstructorCard() {
               <Card key={teacher._id || index} className="p-6 text-center shadow-lg">
                 <div className="flex justify-center">
                   <Image
-                    src={`http://localhost:4000/${teacher.profileImage || 'default.jpg'}`}
+                    src={`http://localhost:4000/${teacher?.profile?.profilePicture || 'uploads/default-bg.jpg'}`}
                     alt="Instructor"
                     width={80}
                     height={80}
                     className="rounded-full object-cover"
                   />
+
                 </div>
                 <h3 className="text-lg font-semibold mt-4">{teacher.fullName}</h3>
                 <p className="text-sm text-gray-500">{teacher.role}</p>

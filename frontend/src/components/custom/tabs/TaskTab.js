@@ -86,7 +86,7 @@ export default function TaskTab() {
                 className={`rounded-md ${
                   task.isActive
                     ? 'bg-green-600 text-white hover:bg-green-700'
-                    : 'text-black border border-gray-300'
+                    : 'text-white border border-gray-300'
                 }`}
               >
                 {task.isActive ? 'Submit' : 'Status'}
