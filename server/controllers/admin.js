@@ -8,6 +8,22 @@ import { promisify } from "util";
 const unlinkAsync = promisify(rm);
 
 
+const validateDuration = (duration) => {
+  const durationParts = duration.split(' ');
+  if (durationParts.length !== 2) {
+    throw new Error('Invalid duration format. Expected format: "<number> <unit>"');
+  }
+
+  const number = parseInt(durationParts[0]);
+  const unit = durationParts[1].toLowerCase();
+
+  if (isNaN(number) || !['weeks', 'months', 'years'].includes(unit)) {
+    throw new Error('Invalid duration format. Number and valid unit (weeks, months, or years) expected.');
+  }
+
+  return { number, unit };
+};
+
 export const createCourse = TryCatch(async (req, res) => {
   const {
     title,
@@ -21,6 +37,12 @@ export const createCourse = TryCatch(async (req, res) => {
   } = req.body;
 
   const image = req.file;
+
+  try {
+    const { number, unit } = validateDuration(duration);
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
 
   const course = await Courses.create({
     title,
@@ -210,3 +232,6 @@ export const Teacherlogin = TryCatch(async (req, res) => {
 
   res.status(200).json({ token, user });
 });
+
+
+
