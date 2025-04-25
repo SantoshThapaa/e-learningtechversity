@@ -4,12 +4,15 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
-import { TextEditor } from '../TextEditor';
 
 export default function TaskTab() {
   const [tasks, setTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [viewMode, setViewMode] = useState(null); // 'brief', 'submit', or 'status'
+  const [isClient, setIsClient] = useState(false); 
+
+  useEffect(() => {
+    setIsClient(true); 
+  }, []);
 
   useEffect(() => {
     const fetchAssignments = async () => {
@@ -34,7 +37,23 @@ export default function TaskTab() {
           description: assignment.description || 'No Description Provided',
           isActive: index === 0,
           createdAt: new Date(assignment.createdAt),
+          submitted: false, // Initially, set submission status to false
         })).sort((a, b) => b.createdAt - a.createdAt);
+
+        // Fetch submission status for each task
+        for (let task of assignments) {
+          try {
+            const submissionRes = await axios.get(
+              `http://localhost:4000/api/assignment/status/${task.taskId}`,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              }
+            );
+            task.submitted = submissionRes.data.submitted; // Set the submission status
+          } catch (error) {
+            console.error('Failed to fetch submission status:', error);
+          }
+        }
 
         setTasks(assignments);
       } catch (error) {
@@ -45,10 +64,21 @@ export default function TaskTab() {
     fetchAssignments();
   }, []);
 
-  const handleActionClick = (task) => {
+  const handleActionClick = (task, action) => {
     setSelectedTask(task);
-    setViewMode(task.isActive ? 'submit' : 'status');
+    localStorage.setItem('taskId', task.taskId);
+    if (action === 'submit') {
+      window.location.href = `/student/assignmentsubmission/${task.taskId}`;
+    } else if (action === 'brief') {
+      window.location.href = `/student/assignmentbrief/${task.taskId}`;
+    } else if (action === 'status') {
+      window.location.href = `/student/assignmentstatus/${task.taskId}`;
+    }
   };
+
+  if (!isClient) {
+    return null; 
+  }
 
   return (
     <div className="max-w-7xl mx-auto mt-16 px-4 mb-20">
@@ -75,22 +105,26 @@ export default function TaskTab() {
             <h3 className="text-center text-sm font-medium mb-4">{task.title}</h3>
 
             <div className="flex flex-col gap-2 mb-4">
-              <Button variant="outline" className="rounded-md" onClick={() => {
-                setSelectedTask(task);
-                setViewMode('brief');
-              }}>
+              <Button variant="outline" className="rounded-md" onClick={() => handleActionClick(task, 'brief')}>
                 View Brief
               </Button>
-              <Button
-                onClick={() => handleActionClick(task)}
-                className={`rounded-md ${
-                  task.isActive
-                    ? 'bg-green-600 text-white hover:bg-green-700'
-                    : 'text-white border border-gray-300'
-                }`}
-              >
-                {task.isActive ? 'Submit' : 'Status'}
-              </Button>
+              {task.submitted ? (
+                <Button
+                  onClick={() => handleActionClick(task, 'status')}
+                  className={`rounded-md text-white border border-gray-300`}
+                >
+                  View Status
+                </Button>
+              ) : (
+                task.isActive && (
+                  <Button
+                    onClick={() => handleActionClick(task, 'submit')}
+                    className={`rounded-md bg-green-600 text-white hover:bg-green-700`}
+                  >
+                    Submit
+                  </Button>
+                )
+              )}
             </div>
 
             <p className="text-center text-sm text-gray-600">
@@ -99,46 +133,6 @@ export default function TaskTab() {
           </div>
         ))}
       </div>
-
-      {/* Modal Section */}
-      {selectedTask && viewMode && (
-        <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white max-w-xl w-full p-6 rounded-lg shadow-lg relative">
-            <h2 className="text-xl font-bold mb-4">{selectedTask.taskNumber} - {selectedTask.title}</h2>
-
-            {viewMode === 'brief' && (
-              <div>
-                <p className="text-gray-600 mb-4">Posted on: {selectedTask.issueDate}</p>
-                <div className="text-gray-800 mb-6 whitespace-pre-line">
-                  {selectedTask.description}
-                </div>
-              </div>
-            )}
-
-            {viewMode === 'submit' && (
-              <div className="mt-6">
-                <TextEditor assignmentId={selectedTask.taskId} />
-              </div>
-            )}
-
-            {viewMode === 'status' && (
-              <div className="mt-6 text-sm">
-                <div className="border p-4 rounded-lg bg-green-50">
-                  <h3 className="text-md font-semibold mb-2">Submission Status</h3>
-                  <p className="mb-1"><strong>Status:</strong> <span className="text-green-600">Submitted</span></p>
-                  <p className="mb-1"><strong>Due:</strong> {selectedTask.dueDate}</p>
-                  <p className="mb-1"><strong>Last Change:</strong> 17/06/2024</p>
-                  <p><strong>Feedback:</strong> <span className="text-green-600">Nice</span></p>
-                </div>
-              </div>
-            )}
-
-            <div className="mt-6 text-center">
-              <Button onClick={() => setViewMode(null)} className="bg-[#1A2D62] text-white">Close</Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
