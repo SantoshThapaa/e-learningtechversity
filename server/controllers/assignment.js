@@ -60,28 +60,55 @@ export const getTeacherAssignments = TryCatch(async (req, res) => {
 
 export const submitAssignment = TryCatch(async (req, res) => {
     const { assignmentId } = req.params;
-    const { fileUrl } = req.body;
     const studentId = req.user._id;
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+    const fileUrl = `/uploads/${req.file.filename}`;
     const assignment = await Assignment.findById(assignmentId);
     if (!assignment) return res.status(404).json({ message: "Assignment not found" });
     const alreadySubmitted = await Submission.findOne({
-        assignment: assignmentId,
-        student: studentId
+      assignment: assignmentId,
+      student: studentId
     });
     if (alreadySubmitted) {
-        return res.status(400).json({ message: "You have already submitted this assignment" });
+      return res.status(400).json({ message: "You have already submitted this assignment" });
     }
     const submission = await Submission.create({
-        assignment: assignmentId,
-        student: studentId,
-        fileUrl
+      assignment: assignmentId,
+      student: studentId,
+      fileUrl,
     });
-
     res.status(201).json({
-        message: "Submission successful",
-        submission
+      message: "Submission successful",
+      submission,
     });
-});
+  });
+  
+  export const checkStatus = TryCatch(async (req, res) => {
+    const { assignmentId } = req.params;
+    const studentId = req.user._id;
+    const assignment = await Assignment.findById(assignmentId);
+    if (!assignment) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+    const submission = await Submission.findOne({
+      assignment: assignmentId,
+      student: studentId,
+    });
+    if (submission) {
+      return res.status(200).json({
+        message: "Assignment already submitted",
+        submitted: true,
+      });
+    }
+    res.status(200).json({
+      message: "Assignment not submitted",
+      submitted: false,
+    });
+  });
+  
+
 
 export const getSubmissionsForAssignment = TryCatch(async (req, res) => {
     const { assignmentId } = req.params;
@@ -159,4 +186,60 @@ export const getSubmittedAssignmentIds = TryCatch(async (req, res) => {
     const submittedAssignmentIds = submissions.map((s) => s.assignment.toString());
   
     res.status(200).json({ submittedAssignmentIds });
+  });
+
+  export const getSubmissionStatus = TryCatch(async (req, res) => {
+    const { assignmentId } = req.params;
+    const studentId = req.user._id;
+  
+    const assignment = await Assignment.findById(assignmentId);
+    if (!assignment) return res.status(404).json({ message: "Assignment not found" });
+  
+    const submission = await Submission.findOne({
+      assignment: assignmentId,
+      student: studentId,
+    }).populate("assignment", "title");
+  
+    if (!submission) {
+      return res.status(200).json({
+        status: "Not Submitted",
+        dueDate: assignment.dueDate,
+        lastChange: "N/A",
+        feedback: "No feedback yet",
+      });
+    }
+  
+    const { fileUrl, submittedAt, feedback } = submission;
+    const lastChange = new Date(submittedAt).toISOString().split('T')[0]; 
+    const status = fileUrl ? "Submitted" : "Not Submitted";
+  
+    res.status(200).json({
+      status,
+      dueDate: assignment.dueDate,
+      lastChange,
+      feedback: feedback || "No feedback yet",
+    });
+  });
+
+  export const updateSubmissionStatus = TryCatch(async (req, res) => {
+    const { assignmentId } = req.params;
+    const { feedback } = req.body;
+    const teacherId = req.user._id;
+    const submission = await Submission.findOne({
+      assignment: assignmentId,
+      createdBy: teacherId,  
+    });
+  
+    if (!submission) {
+      return res.status(404).json({ message: "Submission not found" });
+    }
+    submission.feedback = feedback;
+    submission.submittedAt = new Date();
+  
+    await submission.save();
+  
+    res.status(200).json({
+      message: "Feedback updated successfully",
+      submission,
+    });
   });
