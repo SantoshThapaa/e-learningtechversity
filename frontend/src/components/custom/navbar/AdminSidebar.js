@@ -54,8 +54,8 @@ export default function AdminSidebar () {
     return (
         <aside
           className={cn(
-            'fixed top-15 left-0 h-full bg-white border-r border-gray-200 p-4 shadow-sm z-50',
-            isSidebarOpen ? 'w-60' : 'w-0', 
+            'fixed top-14 left-0 h-full bg-white border-r border-gray-200 p-4 shadow-sm z-50 rounded-sm',
+            isSidebarOpen ? 'w-50' : 'w-0', 
             'transition-all ease-in-out duration-300'
           )}
         >
