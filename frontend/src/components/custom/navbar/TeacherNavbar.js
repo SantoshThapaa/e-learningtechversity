@@ -50,12 +50,12 @@ export default function TeacherNavbar() {
 
   return (
     <motion.div
-      className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md"
+      className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md h-[55px]"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="container mx-auto flex items-center justify-between py-3 px-6">
+      <div className="container mx-auto flex items-center justify-between py-3 px-4">
         <Link href="/">
           <img src="/logo.png" alt="logo" className="h-12" />
         </Link>
@@ -85,7 +85,7 @@ export default function TeacherNavbar() {
                 />
 
                 {showDropdown && (
-                  <ul className="absolute right-0 mt-2 w-40 bg-white shadow-md rounded-md z-50">
+                  <ul className="absolute right-0 mt-2 w-50 bg-white shadow-md rounded-md z-50">
                     <li>
                       <Link
                         href="/teacher/profile"
