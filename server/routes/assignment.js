@@ -1,6 +1,6 @@
 import express from "express";
 import { uploadDocument } from '../middlewares/multer.js'; 
-import { checkStatus, getAllAssignments, getAssignmentsByCourse, getSubmissionsForAssignment, getSubmissionStatus, getTeacherAssignments, postAssignment, submitAssignment, updateSubmissionStatus } from "../controllers/assignment.js";
+import { checkStatus, getAllAssignments, getAssignmentsByCourse,  getSingleStudentSubmissionsForTeacher,  getSubmissionsForAssignment, getSubmissionStatus, getTeacherAssignments, postAssignment, submitAssignment, updateSubmissionStatus } from "../controllers/assignment.js";
 import { isAuth } from "../middlewares/isAuth.js";
 
 
@@ -14,5 +14,9 @@ router.get("/assignments", getAllAssignments);
 router.get('/status/:assignmentId', isAuth, checkStatus);
 router.get('/assignment/status/:assignmentId', isAuth, getSubmissionStatus);
 router.post('/assignment/status/update/:assignmentId', isAuth, updateSubmissionStatus);
+router.get("/teacher/submissions/student/:studentId", isAuth, getSingleStudentSubmissionsForTeacher);
+
+
+
 
 export default router;
