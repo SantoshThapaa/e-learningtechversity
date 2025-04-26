@@ -95,7 +95,7 @@ export default function StudyMaterialUpload({ onClose, onUploadSuccess }) {
     <>
       <ToastContainer position="top-center" autoClose={2000} />
 
-      <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 z-50 flex justify-center items-center">
+      <div className="fixed top-0 left-0 w-full bg-white h-full bg-opacity-60 z-50 flex justify-center items-center">
         <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg relative">
           <button onClick={onClose} className="absolute top-2 right-2 text-gray-600 text-xl">
             &times;
