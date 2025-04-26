@@ -1,4 +1,3 @@
-// models/Submission.js
 import mongoose from "mongoose";
 
 const submissionSchema = new mongoose.Schema({
@@ -11,6 +10,10 @@ const submissionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
+    },
+    descriptions:{
+        type: String,
+        required: false,
     },
     fileUrl: {
         type: String,
