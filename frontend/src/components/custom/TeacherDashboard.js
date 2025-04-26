@@ -57,7 +57,7 @@ const TeacherDashboard = () => {
   };
 
   return (
-    <div className="bg-gray-100 px-4 py-2 sm:px-6 md:px-10 lg:px-20 mt-10">
+    <div className="px-4 py-2 sm:px-6 md:px-10 lg:px-20 mt-10">
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Assigned Courses */}
         <div className="flex flex-col gap-6">
