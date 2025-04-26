@@ -1,85 +1,72 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import axios from "axios";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function AssignmentStudentStatus({ taskId }) {
-  const [statusData, setStatusData] = useState({
-    status: '',
-    dueDate: '',
-    lastChange: '',
-    feedback: '',
-  });
-  const [isLoading, setIsLoading] = useState(true);
+export default function AssignmentSubmissions() {
+  const { assignmentId } = useParams();
+  const [submissions, setSubmissions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStatus = async () => {
-      const token = localStorage.getItem('token');
-
+    const fetchAssignmentSubmissions = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:4000/api/assignment/status/${taskId}`,
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          `http://localhost:4000/api/assignment/submissions/${assignmentId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setStatusData(response.data);
-        setIsLoading(false);
+        setSubmissions(res.data.submissions || []);
       } catch (error) {
-        console.error("Error fetching status:", error);
-        setIsLoading(false);
+        console.error("Failed to fetch assignment submissions", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchStatus();
-  }, [taskId]);
-
-  const handleUpdateFeedback = async () => {
-    const token = localStorage.getItem('token');
-    const feedback = prompt("Enter feedback:");
-
-    if (!feedback) return;
-
-    try {
-      const response = await axios.post(
-        `http://localhost:4000/api/assignment/status/update/${taskId}`,
-        { feedback },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setStatusData(response.data.submission);
-      alert("Feedback updated!");
-    } catch (error) {
-      console.error("Error updating feedback:", error);
+    if (assignmentId) {
+      fetchAssignmentSubmissions();
     }
-  };
+  }, [assignmentId]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <p className="p-4">Loading submissions...</p>;
 
   return (
-    <div className="max-w-7xl mx-auto mt-16 px-4 mb-20">
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-xl font-bold mb-4">{statusData.status} - {taskId}</h2>
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold">Submission Status</h3>
-          <p><strong>Status:</strong> {statusData.status}</p>
-          <p><strong>Due:</strong> {statusData.dueDate}</p>
-          <p><strong>Last Change:</strong> {statusData.lastChange}</p>
-          <p><strong>Feedback:</strong> {statusData.feedback}</p>
-        </div>
-        <button 
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-          onClick={handleUpdateFeedback}
-        >
-          Update Feedback
-        </button>
+    <div className="p-8">
+      <h2 className="text-2xl font-semibold mb-6">Assignment Submissions</h2>
+      <div className="grid grid-cols-1 gap-6">
+        {submissions.length > 0 ? (
+          submissions.map((sub) => (
+            <Card key={sub._id}>
+              <CardHeader>
+                <CardTitle>{sub.student.name}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <p><strong>Email:</strong> {sub.student.email}</p>
+                <p><strong>Submitted On:</strong> {new Date(sub.submittedAt).toLocaleDateString()}</p>
+                <p>
+                  <strong>File:</strong>{" "}
+                  <a
+                    href={sub.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline"
+                  >
+                    View Submission
+                  </a>
+                </p>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <p>No submissions found.</p>
+        )}
       </div>
     </div>
   );
