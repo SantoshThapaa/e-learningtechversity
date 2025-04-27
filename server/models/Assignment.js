@@ -1,4 +1,3 @@
-// models/Assignment.js
 import mongoose from "mongoose";
 
 const assignmentSchema = new mongoose.Schema({
