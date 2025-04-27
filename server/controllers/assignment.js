@@ -64,7 +64,7 @@ export const submitAssignment = TryCatch(async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
-    const fileUrl = `/uploads/${req.file.filename}`;
+    const fileUrl = `/uploads/documents/${req.file.filename}`;
     const assignment = await Assignment.findById(assignmentId);
     if (!assignment) return res.status(404).json({ message: "Assignment not found" });
     const alreadySubmitted = await Submission.findOne({
@@ -178,39 +178,24 @@ export const getAllAssignments = TryCatch(async (req, res) => {
     }
 });
 
-export const getSingleStudentSubmissionsForTeacher = TryCatch(async (req, res) => {
-  const teacherId = req.user._id;
-  const { studentId } = req.params;
-  const assignments = await Assignment.find({ createdBy: teacherId }).select("_id");
-  const assignmentIds = assignments.map(a => a._id);
-const submissions = await Submission.find({
-    assignment: { $in: assignmentIds },
-    student: studentId
-  })
-    .populate("assignment", "title taskNumber")
-    .populate("student", "name email")
-    .sort({ submittedAt: -1 });
+export const getSingleSubmissionOfStudentForAssignment = TryCatch(async (req, res) => {
+  const { assignmentId, studentId } = req.params;
 
-  if (submissions.length === 0) {
-    return res.status(200).json({
-      message: "No submissions found for this student",
-      submissions: [],
+  const submission = await Submission.findOne({
+    assignment: assignmentId,
+    student: studentId,
+  })
+  .populate("assignment", "title taskNumber")
+  .populate("student", "name email");
+
+  if (!submission) {
+    return res.status(404).json({
+      message: "No submission found for this assignment and student",
     });
   }
 
   res.status(200).json({
-    count: submissions.length,
-    submissions: submissions.map(sub => ({
-      submissionId: sub._id,
-      assignmentId: sub.assignment._id,
-      assignmentTitle: sub.assignment.title,
-      taskNumber: sub.assignment.taskNumber,
-      studentId: sub.student._id,
-      studentName: sub.student.name,
-      studentEmail: sub.student.email,
-      fileUrl: sub.fileUrl,
-      submittedAt: sub.submittedAt,
-    })),
+    submission,
   });
 });
 
@@ -258,27 +243,52 @@ export const getSubmittedAssignmentIds = TryCatch(async (req, res) => {
     });
   });
 
-  export const updateSubmissionStatus = TryCatch(async (req, res) => {
-    const { assignmentId } = req.params;
+  export const submitFeedbackForAssignmentAndStudent = TryCatch(async (req, res) => {
+    const { assignmentId, studentId } = req.params;
     const { feedback } = req.body;
-    const teacherId = req.user._id;
+  
     const submission = await Submission.findOne({
       assignment: assignmentId,
-      createdBy: teacherId,  
+      student: studentId,
     });
   
     if (!submission) {
-      return res.status(404).json({ message: "Submission not found" });
+      return res.status(404).json({ message: "Submission not found for this assignment and student." });
     }
-    submission.feedback = feedback;
-    submission.submittedAt = new Date();
   
+    submission.feedback = feedback;
     await submission.save();
   
     res.status(200).json({
-      message: "Feedback updated successfully",
+      message: "Feedback submitted successfully.",
       submission,
     });
   });
+  
+  export const getSubmissionStatusForStudent = TryCatch(async (req, res) => {
+    const { assignmentId } = req.params;
+    const studentId = req.user._id; 
+    const submission = await Submission.findOne({
+      assignment: assignmentId,
+      student: studentId,
+    }).populate("assignment", "title taskNumber");
+  
+    if (!submission) {
+      return res.status(404).json({ message: "No submission found for this assignment and student." });
+    }
+  
+    res.status(200).json({
+      message: "Submission fetched successfully.",
+      submission: {
+        feedback: submission.feedback || null,
+        submittedAt: submission.submittedAt || null,
+        assignmentTitle: submission.assignment.title,
+        taskNumber: submission.assignment.taskNumber,
+        fileUrl: submission.fileUrl,
+      },
+    });
+  });
+  
+
 
   
