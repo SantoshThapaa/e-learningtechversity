@@ -2,7 +2,7 @@ import AssignmentInstructorCard from "@/components/custom/assignmentInstructorCa
 import StudentNavbar from "@/components/custom/navbar/StudentNavbar";
 import AssignmentSubmissionTab from "@/components/custom/tabs/AssignmentSubmissionTab";
 
-export default function CoursePage() {
+export default function TaskPage() {
   return (
     <div className="max-w-screen-lg mx-auto">
       <StudentNavbar />
