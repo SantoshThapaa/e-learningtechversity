@@ -39,8 +39,8 @@ export default function SubmissionPage() {
     }
   }, [assignmentId]);
 
-  const handleViewMore = (submissionId) => {
-    router.push(`/teacher/assignmentstudentstatus/${submissionId}`);
+  const handleViewMore = (assignmentId, studentId) => {
+    router.push(`/teacher/assignmentstudentstatus/${assignmentId}/${studentId}`);
   };
 
   return (
@@ -72,11 +72,10 @@ export default function SubmissionPage() {
                   <td className="p-4 border">{submission.student?.email || "N/A"}</td>
                   <td className="p-4 border">
                     <span
-                      className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${
-                        submission.fileUrl
+                      className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${submission.fileUrl
                           ? "bg-green-100 text-green-800"
                           : "bg-orange-100 text-orange-800"
-                      }`}
+                        }`}
                     >
                       {submission.fileUrl ? "Completed" : "In Progress"}
                     </span>
@@ -84,12 +83,13 @@ export default function SubmissionPage() {
                   <td className="p-4 border">
                     <button
                       className="text-blue-600 underline"
-                      onClick={() => handleViewMore(submission._id)} // Navigate to the AssignmentStudentStatus page
+                      onClick={() => handleViewMore(submission.assignment, submission.student._id)}  // ✅ corrected
                       disabled={!submission.fileUrl}
                     >
                       View More
                     </button>
                   </td>
+
                 </tr>
               ))}
             </tbody>
