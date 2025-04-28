@@ -1,87 +1,71 @@
 "use client";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-
-export default function AssignmentStatusTab({ task }) {
-  const [statusData, setStatusData] = useState({
-    status: '',
-    dueDate: '',
-    lastChange: '',
-    feedback: '',
-  });
+export default function AssignmentStatusTab({ assignmentId }) {
+  const [statusData, setStatusData] = useState(null);
 
   useEffect(() => {
-    if (!task || !task.taskId) return; 
+    if (!assignmentId) return;
+
     const fetchStatus = async () => {
-      const token = localStorage.getItem('token');
-      const studentId = localStorage.getItem('studentId');  
+      const token = localStorage.getItem("token");
+
       try {
         const response = await axios.get(
-          `http://localhost:4000/api/assignment/status/${task.taskId}`,
+          `http://localhost:4000/api/assignment/student/submission-status/${assignmentId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setStatusData(response.data);
+        setStatusData(response.data.submission || {});
       } catch (error) {
         console.error("Error fetching status:", error);
       }
     };
 
     fetchStatus();
-  }, [task]); 
-  const handleUpdateFeedback = async () => {
-    const token = localStorage.getItem('token');
-    const feedback = prompt("Enter your feedback:");
+  }, [assignmentId]);
 
-    if (!feedback) return;
-
-    try {
-      const response = await axios.post(
-        `http://localhost:4000/api/assignment/status/update/${task.taskId}`,
-        { feedback },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setStatusData(response.data.submission);
-      alert("Feedback updated!");
-    } catch (error) {
-      console.error("Error updating feedback:", error);
-    }
-  };
-
-  if (!task) {
-    return <div>Loading...</div>; 
+  if (!statusData) {
+    return <div>Loading...</div>;
   }
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white max-w-xl w-full p-6 rounded-lg shadow-lg relative">
-        <h2 className="text-xl font-bold mb-4">{task.taskNumber} - {task.title}</h2>
-        <div className="mt-6 text-sm">
-          <div className="border p-4 rounded-lg bg-green-50">
-            <h3 className="text-md font-semibold mb-2">Submission Status</h3>
-            <p className="mb-1"><strong>Status:</strong> <span className="text-green-600">{statusData.status}</span></p>
-            <p className="mb-1"><strong>Due:</strong> {statusData.dueDate}</p>
-            <p className="mb-1"><strong>Last Change:</strong> {statusData.lastChange}</p>
-            <p><strong>Feedback:</strong> <span className="text-green-600">{statusData.feedback}</span></p>
-          </div>
+    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg border border-blue-200">
+      <div className="border-b border-gray-200 pb-4 mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">{statusData.assignmentTitle}</h2>
+      </div>
+      
+      <div className="space-y-4 mb-6">
+        <div className="flex justify-between">
+          <p className="text-lg text-gray-600"><strong>Status:</strong> <span className="text-green-600">{statusData.submittedAt ? "Submitted" : "Not Submitted"}</span></p>
         </div>
-        <div className="mt-6 text-center">
-          <button 
-            className="px-6 py-2 bg-green-600 text-white rounded-md"
-            onClick={handleUpdateFeedback}
-          >
-            Update
-          </button>
+        <div className="flex justify-between">
+          <p className="text-lg text-gray-600"><strong>Due:</strong> {statusData.dueDate || "N/A"}</p>
+        </div>
+        <div className="flex justify-between">
+          <p className="text-lg text-gray-600"><strong>Last Change:</strong> {statusData.lastChange || "N/A"}</p>
+        </div>
+        <div className="flex justify-between">
+          <p className="text-lg text-gray-600"><strong>Feedback:</strong> <span className="text-green-600">{statusData.feedback || "No Feedback yet"}</span></p>
         </div>
       </div>
+
+      {/* {statusData.fileUrl && (
+        <div className="mt-4">
+          <a
+            href={`http://localhost:4000${statusData.fileUrl}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            View Submitted File
+          </a>
+        </div>
+      )} */}
     </div>
   );
 }
