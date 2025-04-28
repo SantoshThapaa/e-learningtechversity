@@ -1,24 +1,49 @@
-"use client";
-import { useState } from "react";
+'use client';
 
-export default function FeedbackModal({ isOpen, onClose, onSubmit }) {
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";  // 🔥 Import toast
+
+export default function FeedbackModal({ isOpen, onClose, assignmentId, studentId, existingFeedback = '' }) {
   const [feedback, setFeedback] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setFeedback(existingFeedback || '');
+    }
+  }, [isOpen, existingFeedback]);
 
   if (!isOpen) return null;
 
   const handleSubmit = async () => {
-    if (!feedback) {
-      alert("Please provide feedback");
+    if (!feedback.trim()) {
+      toast.error("Please provide feedback");
       return;
     }
 
     try {
-      await onSubmit(feedback); // Call the onSubmit function passed from parent
-      setFeedback(''); // Reset feedback after submission
-      onClose(); // Close the modal
+      setIsSubmitting(true);
+      const token = localStorage.getItem("token");
+
+      const res = await axios.post(
+        `http://localhost:4000/api/assignment/feedback/${assignmentId}/${studentId}`, 
+        { feedback },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success("Feedback submitted successfully!");
+      setFeedback('');
+      onClose();
     } catch (error) {
       console.error("Error submitting feedback:", error);
-      alert("Failed to submit feedback");
+      toast.error("Failed to submit feedback");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -42,9 +67,10 @@ export default function FeedbackModal({ isOpen, onClose, onSubmit }) {
           </button>
           <button 
             onClick={handleSubmit}
+            disabled={isSubmitting}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg"
           >
-            Submit
+            {isSubmitting ? 'Submitting...' : 'Submit'}
           </button>
         </div>
       </div>
