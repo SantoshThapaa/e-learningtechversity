@@ -36,9 +36,9 @@ export default function CommunicationPage() {
         sender: "Admin",
       });
       showSuccessToast();
-      setValue("");  // Reset the message field
-      setSendAt(""); // Reset the datetime field
-      setTargetAudience("all");  // Reset the dropdown to "All"
+      setValue("");  
+      setSendAt(""); 
+      setTargetAudience("all");  
     } catch (error) {
       showErrorToast();
       console.error(error);
