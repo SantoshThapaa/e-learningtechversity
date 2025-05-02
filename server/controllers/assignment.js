@@ -297,6 +297,32 @@ export const getSubmittedAssignmentIds = TryCatch(async (req, res) => {
       },
     });
   });
+
+  export const getAllCompletedAssignments = TryCatch(async (req, res) => {
+    const assignments = await Assignment.find().populate("course", "title");
+
+    if (assignments.length === 0) {
+        return res.status(404).json({ message: "No assignments found" });
+    }
+
+    const completedAssignments = await Promise.all(assignments.map(async (assignment) => {
+        const submissions = await Submission.find({ assignment: assignment._id });
+        const completedCount = submissions.filter(submission => submission.fileUrl).length;
+        const completionPercentage = (completedCount / submissions.length) * 100;
+
+        return { 
+            assignmentId: assignment._id, 
+            title: assignment.title,
+            completionPercentage,
+            completedCount,
+            totalSubmissions: submissions.length 
+        };
+    }));
+
+    res.status(200).json({
+        completedAssignments
+    });
+});
   
 
 
