@@ -21,6 +21,7 @@ import blogRoutes from './routes/blog.js';
 import courseResourceRoutes from './routes/courseResourceRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import subscriptionRoutes from './routes/subscriptionRoutes.js';
+import attendanceRoutes from './routes/attendance.js';
 
 const app = express();
 dotenv.config();
@@ -53,6 +54,7 @@ app.use('/api/resources', courseResourceRoutes);
 app.use('/api/', blogRoutes);
 app.use("/api", subscriptionRoutes);
 app.use("/api", notificationRoutes);
+app.use("/api", attendanceRoutes);
 
 app.get('/', (req, res) => {
     res.send("Server is working");
