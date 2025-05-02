@@ -8,26 +8,28 @@ import axios from 'axios'
 export default function CoursesPage() {
   const [courses, setCourses] = useState([])
   const [filteredCourses, setFilteredCourses] = useState([])
-
+  const [availableCategories, setAvailableCategories] = useState([])
   const [filters, setFilters] = useState({
     priceRange: [10, 500],
     rating: 3,
-    selectedCategories: {
-      'Web Development': false,
-      'business-industries': false,
-      'personal-development': false,
-      'parenting': false,
-      'sport': false,
-      'learn-a-language': false
-    }
+    selectedCategories: {}
   })
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const res = await axios.get('http://localhost:4000/api/allcourses')
-        setCourses(res.data.courses || [])
-        setFilteredCourses(res.data.courses || [])
+        const allCourses = res.data.courses || []
+        setCourses(allCourses)
+        setFilteredCourses(allCourses)
+        const categories = [
+          ...new Set(allCourses.map(course => course.category))
+        ]
+        const categoryState = {}
+        categories.forEach(cat => (categoryState[cat] = false))
+
+        setAvailableCategories(categories)
+        setFilters(prev => ({ ...prev, selectedCategories: categoryState }))
       } catch (err) {
         console.error('Error fetching courses:', err)
       }
@@ -37,34 +39,14 @@ export default function CoursesPage() {
   }, [])
 
   const applyFilters = () => {
-    const { priceRange, rating, selectedCategories } = filters;
-
+    const { priceRange, selectedCategories } = filters;
     const filtered = courses.filter(course => {
       const priceCondition = course.price >= priceRange[0] && course.price <= priceRange[1];
-
-      // Log the course rating to see if it's a number and how it compares with the filter
-      console.log("Course Rating:", course.rating);
-      console.log("Applied Rating Filter:", rating);
-
-      const ratingCondition = parseFloat(course.rating) >= rating;  // Ensure it’s a number
-
-      // Log category and selected category for debugging
-      console.log("Course Category:", course.category);
-      console.log("Selected Categories:", selectedCategories);
-
       const categoryCondition = Object.keys(selectedCategories).some(
         category => selectedCategories[category] && course.category === category
       );
-
-      console.log("Price Condition:", priceCondition);
-      console.log("Rating Condition:", ratingCondition);
-      console.log("Category Condition:", categoryCondition);
-
-      return priceCondition && ratingCondition && categoryCondition;
+      return priceCondition && categoryCondition;
     });
-
-    console.log("Filtered Courses:", filtered);
-
     setFilteredCourses(filtered);
   }
 
@@ -79,9 +61,9 @@ export default function CoursesPage() {
   }
 
   return (
-    <div className="py-20 px-2 bg-gray-100">
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-4">
-        <CourseFilter onFilterChange={handleFilterChange} />
+    <div className="py-20 px-10 lg:px-20 bg-gray-100">
+      <div className="max-w-8xl mx-auto flex flex-col lg:flex-row gap-4 ">
+        <CourseFilter onFilterChange={handleFilterChange} categories={availableCategories} selectedCategories={filters.selectedCategories} />
         <div className="w-full px-4 lg:px-4">
           {filteredCourses.length === 0 ? (
             <p>No courses match your filters</p>
