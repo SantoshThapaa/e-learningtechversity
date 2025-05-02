@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
+import ShareButton from '../ui/shareButton';
+import Blog from './Blog';
+import Footer from './Footer/StudentFooter';
 
-export default function BlogPost() {
+const BlogPost = () => {
     const [blog, setBlog] = useState(null);
-    const [moreBlogs, setMoreBlogs] = useState([]);
+    const [recentPosts, setRecentPosts] = useState([]);
     const { blogId } = useParams();
 
     useEffect(() => {
@@ -19,107 +21,104 @@ export default function BlogPost() {
             .then((response) => setBlog(response.data))
             .catch((err) => console.error("Error fetching blog details:", err));
 
-        // Fetching all blogs for the "More Blogs" section
         axios
             .get('http://localhost:4000/api/blogs/all')
             .then((response) => {
-                setMoreBlogs(response.data.slice(0, 3));  // Limit to 3 blogs
+                setRecentPosts(response.data.slice(0, 3));  // Limit to 3 blogs
             })
-            .catch((err) => console.error("Error fetching more blogs:", err));
+            .catch((err) => console.error("Error fetching recent blogs:", err));
     }, [blogId]);
 
     if (!blog) {
         return <div>Loading...</div>;
     }
 
-    const validImageUrl = blog.imageUrl && (blog.imageUrl.startsWith('http') || blog.imageUrl.startsWith('https'))
-        ? blog.imageUrl
-        : '/fallback-image.jpg';
+    // Construct the valid image URL using the provided logic
+    const imageUrl = `http://localhost:4000/${blog.imageUrl.replace(/^\/+/, '')}`;
+    console.log("Image URL:", imageUrl);
 
     return (
-        <div className="max-w-7xl mx-auto mt-202 px-4">
-            <div className="text-center mb-12">
-                <h1 className="text-3xl md:text-4xl font-bold mb-4">{blog.title}</h1>
-                <p className="text-lg text-gray-500">by {blog.author} | {new Date(blog.date).toLocaleDateString()} | 5 min read</p>
-                <div className="flex justify-center gap-4 mt-4">
-                    <Button variant="outline" className="text-sm text-gray-500 hover:text-black">
-                        Share Post: Facebook
-                    </Button>
-                    <Button variant="outline" className="text-sm text-gray-500 hover:text-black">
-                        Share Post: Twitter
-                    </Button>
-                </div>
-            </div>
-
-            <div className="max-w-2xl mx-auto mb-12">
-                <div className="flex justify-center">
-                    <Image
-                        src={validImageUrl}
-                        alt={blog.title}
-                        width={500}
-                        height={300}
-                        className="object-cover rounded-lg"
-                    />
-                </div>
-                <p className="text-gray-700 mt-6 mb-4">
-                    {blog.description}
-                </p>
-            </div>
-
-            <div className="flex justify-between items-center mb-8">
+        <div className="max-w-7xl mx-auto mt-30 px-4">
+            {/* Blog Post Header */}
+            <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center">
                     <Image
-                        src={blog.authorImage || "/author-placeholder.jpg"}
-                        alt="Author Image"
-                        width={40}
-                        height={40}
-                        className="rounded-full"
+                        src="/author.jpg"
+                        alt="Author"
+                        width={50}
+                        height={50}
+                        className="rounded-full mr-3"
                     />
-                    <div className="ml-4">
-                        <p className="font-semibold">{blog.author}</p>
-                        <p className="text-sm text-gray-500">{blog.authorRole}</p>
+                    <div>
+                        <h1 className="text-4xl font-semibold text-gray-800">{blog.title}</h1>
+                        <p className="text-sm text-gray-600">{blog.author} • {new Date(blog.date).toLocaleDateString()} • {blog.readTime} min read</p>
+                    </div>
+                </div>
+                <div className='flex gap-4'>
+                    <h2>Share this Post</h2>
+                    <ShareButton />
+                </div>
+            </div>
+
+            {/* Blog Image */}
+            <div className="relative mb-6">
+                <Image
+                    src={imageUrl}
+                    alt="Blog Post Image"
+                    width={1200}
+                    height={800}
+                    className="object-cover w-full h-96 rounded-xl"
+                />
+            </div>
+
+            <div className='flex space-x-12'>
+                {/* Blog Content */}
+                <div className="prose lg:prose-xl text-gray-700 mb-12">
+                    {blog.description}
+                </div>
+
+                {/* Recent Posts */}
+                <div className="mt-12">
+                    <h2 className="text-xl font-semibold text-gray-800">Recent Post</h2>
+                    <div className="flex flex-col mt-4">
+                        {recentPosts.map((post) => (
+                            <div key={post._id} className="flex items-center space-x-4 mb-6">
+                                <Image
+                                    src={post.imageUrl ? `http://localhost:4000/${post.imageUrl.replace(/^\/+/, '')}` : '/fallback-image.jpg'}
+                                    alt="Recent Post Image"
+                                    width={80}
+                                    height={80}
+                                    className="rounded-md"
+                                />
+                                <div>
+                                    <p className="text-lg text-gray-800 font-semibold">{post.title}</p>
+                                    <p className="text-sm text-gray-600">{new Date(blog.date).toLocaleDateString()}</p>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
 
-            <div className="mb-8">
-                <h3 className="font-semibold mb-2">Share This Post</h3>
-                <div className="flex gap-4">
-                    {(blog.tags || []).map(tag => (
-                        <Button key={tag} variant="outline" className="text-sm text-blue-500 hover:bg-blue-100">
-                            {tag}
-                        </Button>
-                    ))}
+
+            {/* Share This Post */}
+            <div className="mt-8 flex gap-10">
+                <div>
+                    <p className="text-sm text-gray-600">Share This Post</p>
+                    <ShareButton />
+                </div>
+                <div className="flex space-x-4 mt-2">
+                    <Button variant="outline" className="text-gray-600 bg-gray-200">Multilanguage</Button>
+                    <Button variant="outline" className="text-gray-600 bg-gray-200">Language Club</Button>
+                    <Button variant="outline" className="text-gray-600 bg-gray-200">Language Learning</Button>
+
                 </div>
             </div>
-
-            <div className="mb-12">
-                <h3 className="font-semibold mb-4">Recent Posts</h3>
-                <div className="space-y-4">
-                    {(blog.recentPosts || []).map(post => (
-                        <Card key={post.id} className="shadow-lg rounded-xl overflow-hidden cursor-pointer">
-                            <CardContent className="p-4">
-                                <h3 className="font-medium text-lg text-black">{post.title}</h3>
-                                <p className="text-sm text-gray-600">{new Date(post.date).toLocaleDateString()}</p>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-            </div>
-
-            <div>
-                <h3 className="font-semibold mb-6">More Blogs</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {moreBlogs.map(blog => (
-                        <Card key={blog.id} className="shadow-lg rounded-xl overflow-hidden">
-                            <CardContent className="p-4">
-                                <h3 className="font-medium text-lg text-black">{blog.title}</h3>
-                                <p className="text-sm text-gray-600">{new Date(blog.date).toLocaleDateString()}</p>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
+            <div className='mt-20'>
+                <Blog recentPosts={recentPosts.slice(0, 3)} />
             </div>
         </div>
     );
 }
+
+export default BlogPost;
