@@ -6,15 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
+import { FaEye, FaTrash } from 'react-icons/fa';
 
 export default function CourseStudents() {
     const [students, setStudents] = useState([]);
-
+    const [showViewModal, setShowViewModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedStudent, setSelectedStudent] = useState(null);
     useEffect(() => {
         const fetchStudents = async () => {
             try {
                 const res = await axios.get('http://localhost:4000/api/students');
-                console.log("Fetched users:", res.data.users); 
+                console.log("Fetched users:", res.data.users);
                 setStudents(res.data.users || []);
             } catch (err) {
                 console.error('Failed to fetch students:', err);
@@ -30,6 +33,27 @@ export default function CourseStudents() {
             month: 'long',
             day: 'numeric',
         });
+    };
+    const handleView = (student) => {
+        setSelectedStudent(student);
+        setShowViewModal(true);
+    };
+
+    const handleDelete = (student) => {
+        setSelectedStudent(student);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        try {
+            await axios.delete(`http://localhost:4000/api/user/${selectedStudent._id}`);
+            toast.success('Student deleted successfully!');
+            setStudents((prev) => prev.filter((student) => student._id !== selectedStudent._id));
+            setShowDeleteModal(false);
+        } catch (err) {
+            toast.error('Error deleting student.');
+            console.error('Error deleting student:', err);
+        }
     };
 
     return (
@@ -57,8 +81,8 @@ export default function CourseStudents() {
                                     <td className="p-4"><Checkbox /></td>
                                     <td className="p-4 flex items-center gap-3">
                                         <Avatar className="h-8 w-8">
-                                            <AvatarImage 
-                                                src={`http://localhost:4000${student.profile?.profilePicture || "/avatar-default.jpg"}`} 
+                                            <AvatarImage
+                                                src={`http://localhost:4000${student.profile?.profilePicture || "/avatar-default.jpg"}`}
                                                 alt="Profile"
                                             />
                                             <AvatarFallback>{student.name[0]}</AvatarFallback>
@@ -67,7 +91,7 @@ export default function CourseStudents() {
                                     </td>
                                     <td className="p-4">{student.email}</td>
                                     <td className="p-4 text-blue-600 hover:underline cursor-pointer">{student.course}</td>
-                                    <td className="p-4">{formatJoinDate(student.createdAt)}</td> 
+                                    <td className="p-4">{formatJoinDate(student.createdAt)}</td>
                                     <td className="p-4">
                                         <span
                                             className={cn(
@@ -81,9 +105,16 @@ export default function CourseStudents() {
                                         </span>
                                     </td>
                                     <td className="p-4">
-                                        <Button variant="ghost" className="text-blue-600 hover:underline text-xs">
-                                            View More
-                                        </Button>
+                                        <div className="flex gap-2 text-gray-500 cursor-pointer">
+                                            <FaEye
+                                                onClick={() => handleView(student)}
+                                                className="text-blue-500 cursor-pointer"
+                                            />
+                                            <FaTrash
+                                                onClick={() => handleDelete(student)}
+                                                className="text-red-500 cursor-pointer"
+                                            />
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
