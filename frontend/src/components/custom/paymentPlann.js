@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button'
 import { useStripe, useElements, CardElement, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js'
-import Details from './Details'
+import Detailed from './Detailed'
 import { getCourseIdFromLocalStorage, getUserIdFromToken } from '@/utils/authUtils';
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
@@ -374,7 +374,7 @@ export default function Paymentplan() {
                         </div>
                     )}
                 </div>
-                <Details />
+                <Detailed/>
             </div>
             <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
         </section>
