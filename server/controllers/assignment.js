@@ -225,9 +225,10 @@ export const getSubmittedAssignmentIds = TryCatch(async (req, res) => {
     if (!submission) {
       return res.status(200).json({
         status: "Not Submitted",
-        dueDate: assignment.dueDate,
-        lastChange: "N/A",
+        dueDate: assignment.deadline,
+        lastChange: submittedAt ? new Date(submittedAt).toLocaleDateString() : "N/A",
         feedback: "No feedback yet",
+        submittedAt,
       });
     }
   
@@ -250,7 +251,9 @@ export const getSubmittedAssignmentIds = TryCatch(async (req, res) => {
     const submission = await Submission.findOne({
       assignment: assignmentId,
       student: studentId,
-    });
+    })
+    .populate("assignment", "title taskNumber deadline")
+    .populate("student", "name email");
   
     if (!submission) {
       return res.status(404).json({ message: "Submission not found for this assignment and student." });
@@ -261,7 +264,13 @@ export const getSubmittedAssignmentIds = TryCatch(async (req, res) => {
   
     res.status(200).json({
       message: "Feedback submitted successfully.",
-      submission,
+      submission: {
+        ...submission.toObject(),
+        assignmentTitle: submission.assignment.title,
+        taskNumber: submission.assignment.taskNumber,
+        deadline: submission.assignment.deadline, 
+        submittedAt: submission.submittedAt,
+      },
     });
   });
   
