@@ -36,7 +36,7 @@ export default function AssignmentStatusTab({ assignmentId }) {
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg border border-blue-200">
       <div className="border-b border-gray-200 pb-4 mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">{statusData.assignmentTitle}</h2>
+        <h2 className="text-2xl font-bold text-gray-800">{statusData.taskNumber}-{statusData.assignmentTitle}</h2>
       </div>
       
       <div className="space-y-4 mb-6">
@@ -47,14 +47,14 @@ export default function AssignmentStatusTab({ assignmentId }) {
           <p className="text-lg text-gray-600"><strong>Due:</strong> {statusData.dueDate || "N/A"}</p>
         </div>
         <div className="flex justify-between">
-          <p className="text-lg text-gray-600"><strong>Last Change:</strong> {statusData.lastChange || "N/A"}</p>
+          <p className="text-lg text-gray-600"><strong>Last Change:</strong> {new Date(statusData.submittedAt).toLocaleDateString()}</p>
         </div>
         <div className="flex justify-between">
           <p className="text-lg text-gray-600"><strong>Feedback:</strong> <span className="text-green-600">{statusData.feedback || "No Feedback yet"}</span></p>
         </div>
       </div>
 
-      {/* {statusData.fileUrl && (
+      {statusData.fileUrl && (
         <div className="mt-4">
           <a
             href={`http://localhost:4000${statusData.fileUrl}`}
@@ -65,7 +65,7 @@ export default function AssignmentStatusTab({ assignmentId }) {
             View Submitted File
           </a>
         </div>
-      )} */}
+      )}
     </div>
   );
 }
