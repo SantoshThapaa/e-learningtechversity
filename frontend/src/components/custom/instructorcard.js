@@ -87,10 +87,10 @@ export default function InstructorCard() {
               {lecture.hashtags}
             </span>
             <h2 className="text-2xl font-semibold text-gray-800 mb-2">{lecture.title}</h2>
-            <div className="flex items-center gap-2 text-green-600 font-medium text-sm mb-4">
+            {/* <div className="flex items-center gap-2 text-green-600 font-medium text-sm mb-4">
               <FaStar className="text-yellow-500" />
               4.8
-            </div>
+            </div> */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 text-sm text-gray-600">
               <div className="flex items-center gap-2">
                 <FaCalendarAlt className="text-green-600" />
@@ -108,10 +108,10 @@ export default function InstructorCard() {
                 <GiLevelThreeAdvanced className="text-green-600" />
                 {lecture.level}
               </div>
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <FaDownload className="text-green-600" />
                 70 downloads
-              </div>
+              </div> */}
             </div>
           </CardContent>
         </Card>
@@ -123,15 +123,17 @@ export default function InstructorCard() {
               <Card key={teacher._id || index} className="p-6 text-center shadow-lg">
                 <div className="flex justify-center">
                   <Image
-                    src={`http://localhost:4000/${teacher?.profile?.profilePicture || 'uploads/default-bg.jpg'}`}
+                    src={`http://localhost:4000${teacher?.profile?.profilePicture || '/uploads/default-bg.jpg'}`}
                     alt="Instructor"
                     width={80}
                     height={80}
                     className="rounded-full object-cover"
                   />
-
                 </div>
-                <h3 className="text-lg font-semibold mt-4">{teacher.fullName}</h3>
+                <h3 className="text-lg font-semibold mt-2">
+                  {teacher.fullName ? teacher.fullName.charAt(0).toUpperCase() + teacher.fullName.slice(1).toLowerCase() : ''}
+                </h3>
+
                 <p className="text-sm text-gray-500">{teacher.role}</p>
                 <div className="mt-3 flex items-center justify-center gap-2 text-sm text-green-600">
                   <MailIcon className="w-4 h-4" />
@@ -154,7 +156,7 @@ export default function InstructorCard() {
           <Card className="p-6 text-center shadow-lg">
             <Button
               className="w-full bg-green-500 hover:bg-green-600 text-white text-lg"
-              onClick={() => window.open(lecture.meetLink, "_blank")} // Open meet link in a new tab
+              onClick={() => window.open(lecture.meetLink, "_blank")} 
             >
               Join
             </Button>
