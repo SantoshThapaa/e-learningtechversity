@@ -1,78 +1,49 @@
 'use client'
-
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Rating } from '@smastrom/react-rating'
 import { motion } from 'framer-motion'
-import '@smastrom/react-rating/style.css'
 
-export default function CourseFilter({ onFilterChange }) {
+export default function CourseFilter({ onFilterChange, categories, selectedCategories }) {
   const [priceRange, setPriceRange] = useState([10, 500])
-  const [rating, setRating] = useState(3)
-  const [selectedCategories, setSelectedCategories] = useState({
-    'web-development': false,
-    'business-industries': false,
-    'personal-development': false,
-    'parenting': false,
-    'sport': false,
-    'learn-a-language': false
-  })
+  const [localCategories, setLocalCategories] = useState(selectedCategories)
+
+  useEffect(() => {
+    setLocalCategories(selectedCategories)
+  }, [selectedCategories])
 
   const handleCategoryChange = (category) => {
-    setSelectedCategories((prev) => {
-      const updatedCategories = { ...prev, [category]: !prev[category] }
-      onFilterChange({
-        priceRange,
-        rating,
-        selectedCategories: updatedCategories
-      })
-      return updatedCategories
-    })
+    const updated = { ...localCategories, [category]: !localCategories[category] }
+    setLocalCategories(updated)
+    onFilterChange({ priceRange, selectedCategories: updated })
   }
 
   const clearFilters = () => {
+    const cleared = Object.fromEntries(Object.keys(localCategories).map(key => [key, false]))
     setPriceRange([10, 500])
-    setRating(3)
-    setSelectedCategories({
-      'web-development': false,
-      'business-industries': false,
-      'personal-development': false,
-      'parenting': false,
-      'sport': false,
-      'learn-a-language': false
-    })
+    setLocalCategories(cleared)
     onFilterChange({
       priceRange: [10, 500],
-      rating: 3,
-      selectedCategories: {
-        'web-development': false,
-        'business-industries': false,
-        'personal-development': false,
-        'parenting': false,
-        'sport': false,
-        'learn-a-language': false
-      }
+      selectedCategories: cleared
     })
   }
 
   const applyFilters = () => {
     onFilterChange({
-      priceRange,
-      rating,
-      selectedCategories
+      priceRange: priceRange,
+      selectedCategories: localCategories
     })
   }
 
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="py-10 px-4 bg-white w-full max-w-sm">
       <motion.div
         initial={{ opacity: 0, x: -100 }}
         whileInView={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
         viewport={{ once: true }}
-        className="max-w-2xl mx-auto lg:max-w-4xl lg:mx-0"  // Increased the width of the filter card
+        className="max-w-2xl mx-auto lg:max-w-4xl lg:mx-0" 
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold mb-4">Filter By</h2>
@@ -88,37 +59,26 @@ export default function CourseFilter({ onFilterChange }) {
         <div className="mb-6">
           <h3 className="font-semibold mb-2">Category</h3>
           <div className="space-y-2">
-            {Object.entries(selectedCategories).map(([key, isChecked]) => (
-              <label
-                key={key}
-                htmlFor={key}
-                className="flex items-center space-x-2 cursor-pointer"
-              >
+            {categories.map(cat => (
+              <label key={cat} className="flex items-center space-x-2 cursor-pointer">
                 <Checkbox
-                  id={key}
-                  checked={isChecked}
-                  onChange={() => handleCategoryChange(key)}
-                  className={`cursor-pointer ${isChecked ? 'text-green-500' : 'text-gray-500'}`}  // Green color when checked
+                  checked={localCategories[cat]}
+                  onCheckedChange={() => handleCategoryChange(cat)}
                 />
-                <span className={`text-gray-700 capitalize ${isChecked ? 'text-green-600' : ''}`}>
-                  {key.replace(/-/g, ' ')}
-                </span>
+                <span className="capitalize">{cat.replace(/-/g, ' ')}</span>
               </label>
             ))}
-            <Button className="w-full text-sm text-green-600 hover:underline">
-              Show all categories
-            </Button>
           </div>
         </div>
 
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <h3 className="font-semibold mb-2">Rating</h3>
           <Rating
             style={{ maxWidth: 150 }}
             value={rating}
             onChange={value => setRating(value)}
           />
-        </div>
+        </div> */}
 
         <div className="mb-6">
           <h3 className="font-semibold mb-2">Price</h3>
@@ -127,7 +87,10 @@ export default function CourseFilter({ onFilterChange }) {
             max={1000}
             step={10}
             value={priceRange}
-            onValueChange={setPriceRange}
+            onValueChange={(value) => {
+              setPriceRange(value);
+              onFilterChange({ priceRange: value, selectedCategories: localCategories });
+            }}
             aria-label="Price Range"
           />
           <div className="flex justify-between text-sm mt-2">
