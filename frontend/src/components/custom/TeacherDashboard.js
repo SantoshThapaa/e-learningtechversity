@@ -55,6 +55,11 @@ const TeacherDashboard = () => {
     localStorage.setItem("courseId", courseId);
     router.push("/teacher/coursemanagement");
   };
+  const handleAttendance = (courseId) => {
+    localStorage.setItem("courseId", courseId);
+    router.push("/teacher/attendance");
+  };
+
 
   return (
     <div className="px-4 py-2 sm:px-6 md:px-10 lg:px-20 mt-10">
@@ -119,7 +124,8 @@ const TeacherDashboard = () => {
                         <span className="text-sm font-medium">Manage Course</span>
                       </div>
 
-                      <div className="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm">
+                      <div className="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm"
+                      onClick={() => handleAttendance(course._id)}>
                         <div className="bg-green-200 p-2 rounded-md">
                           <GraduationCap className="h-4 w-4 text-green-700" />
                         </div>
