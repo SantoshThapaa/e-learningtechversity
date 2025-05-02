@@ -87,4 +87,44 @@ export const getNewBatchNo = TryCatch(async (req, res) => {
     }
 });
 
+export const getTotalLectures = TryCatch(async (req, res) => {
+    const { courseId } = req.params;
+  
+    const lectures = await Lecture.find({ course: courseId });
+    const totalLectures = lectures.length;
+
+    if (totalLectures === 0) {
+        return res.status(404).json({ message: "No lectures found for this course" });
+    }
+
+    res.status(200).json({
+        totalLectures
+    });
+});
+
+export const getLectureCompletionPercentage = TryCatch(async (req, res) => {
+    const { courseId } = req.params;
+    const course = await Courses.findById(courseId);
+    if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+    }
+    const courseDurationStr = course.duration; 
+    const totalLectures = parseInt(courseDurationStr); 
+    if (isNaN(totalLectures)) {
+        return res.status(400).json({ message: "Invalid course duration format" });
+    }
+    const courseStartDate = new Date(course.startDate); 
+    const currentDate = new Date();
+    const diffTime = currentDate - courseStartDate;
+    const weeksCompleted = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7)); 
+
+    const completionPercentage = (weeksCompleted / totalLectures) * 100;
+
+    res.status(200).json({
+        totalLectures,
+        completionPercentage: completionPercentage.toFixed(2) 
+    });
+});
+
+
 
