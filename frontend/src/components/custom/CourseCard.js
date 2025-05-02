@@ -39,7 +39,7 @@ export default function CourseCard({ course }) {
         <CardContent className="p-4">
           <h3 className="text-lg font-semibold text-black">{course.title}</h3>
           <p className="text-sm text-gray-600 mb-2">
-            <span className="inline-block bg-gray-100 px-2 py-1 rounded">
+            <span className="inline-block bg-gray-100 px-2 py-1 rounded bg-green-200">
               {course.category}
             </span>
           </p>
@@ -49,10 +49,10 @@ export default function CourseCard({ course }) {
               <FaClock className="text-green-500 mr-1" />
               {course.duration}
             </div>
-            <div className="flex items-center text-sm text-gray-600">
+            {/* <div className="flex items-center text-sm text-gray-600">
               <FaStar className="text-yellow-500" size={16} />
               <span className="ml-2">4.9</span>
-            </div>
+            </div> */}
           </div>
 
           <p className="text-sm text-gray-600">
