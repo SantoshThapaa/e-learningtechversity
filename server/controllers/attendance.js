@@ -63,3 +63,28 @@ export const getStudentAttendance = TryCatch(async (req, res) => {
   });
   res.json({ attendance: formattedAttendance });
 });
+
+export const getStudentAttendancePercentage = TryCatch(async (req, res) => {
+  const studentId = req.user._id;
+  const { courseId } = req.params;
+  const course = await Courses.findById(courseId);
+  if (!course) {
+    return res.status(404).json({ message: "Course not found" });
+  }
+  const attendanceRecords = await Attendance.find({ studentId, courseId });
+  if (attendanceRecords.length === 0) {
+    return res.status(200).json({
+      attendancePercentage: 0, 
+      totalDays: 0,
+      daysPresent: 0,
+    });
+  }
+  const totalDays = attendanceRecords.length;
+  const daysPresent = attendanceRecords.filter(record => record.present).length;
+  const attendancePercentage = (daysPresent / totalDays) * 100;
+  res.status(200).json({
+    attendancePercentage: attendancePercentage.toFixed(2), 
+    totalDays,
+    daysPresent,
+  });
+});
