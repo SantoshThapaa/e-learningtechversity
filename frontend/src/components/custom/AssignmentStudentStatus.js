@@ -17,13 +17,14 @@ export default function AssignmentStudentStatus() {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          `http://localhost:4000/api/assignment/submission/${assignmentId}/${studentId}`,
+          `https://back.bishalpantha.com.np/api/assignment/submission/${assignmentId}/${studentId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
+
         console.log(res.data);
         setSubmission(res.data.submission || null);
       } catch (error) {
@@ -68,7 +69,7 @@ export default function AssignmentStudentStatus() {
             <p>
               <strong>File:</strong>{" "}
               <a
-                href={`http://localhost:4000${submission.fileUrl}`}
+                href={`https://back.bishalpantha.com.np${submission.fileUrl}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 underline"

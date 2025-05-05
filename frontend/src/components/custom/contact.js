@@ -22,10 +22,13 @@ const Contact = () => {
         <span className="text-lg font-semibold text-black">
           +61 456 78912
         </span>
-        <Button className="rounded-full bg-[#00C853] p-3 hover:bg-[#00b44a] transition-all" size="icon">
-          <Phone className="text-black w-5 h-5" />
-        </Button>
+        <a href="tel:+6145678912">
+          <Button className="rounded-full bg-[#00C853] p-3 hover:bg-[#00b44a] transition-all" size="icon">
+            <Phone className="text-black w-5 h-5" />
+          </Button>
+        </a>
       </div>
+
 
       {/* Description */}
       <p className="mt-6 text-sm text-[#6c6c6c] max-w-md">

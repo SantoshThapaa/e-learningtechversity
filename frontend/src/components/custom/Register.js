@@ -25,21 +25,26 @@ export default function Register({ variants }) {
     }
 
     try {
-      const response = await axios.post('http://localhost:4000/api/user/register', {
+      const payload = {
         name,
         email,
         password,
         confirmPassword,
-      })
+      }
+
+      const response = await axios.post('https://back.bishalpantha.com.np/api/user/register', payload)
 
       setSuccessMessage(response.data.message)
       setError(null)
 
-      // Redirect to OTP verification with email
-      router.push(`/student/verify-otp?email=${encodeURIComponent(email)}`)
+      if (response.data.role === 'admin') {
+        router.push('/admin/home') 
+      } else {
+        router.push(`/student/verify-otp?email=${encodeURIComponent(email)}`)
+      }
 
     } catch (err) {
-      setError(err.response ? err.response.data.message : 'An error occurred')
+      setError(err.response?.data?.message || 'An error occurred')
       setSuccessMessage('')
     }
   }

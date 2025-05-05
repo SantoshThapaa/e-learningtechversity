@@ -19,15 +19,13 @@ export default function TaskTab() {
       const token = localStorage.getItem('token');
       const courseId = localStorage.getItem('courseId');
       if (!token || !courseId) return;
-
       try {
         const res = await axios.get(
-          `http://localhost:4000/api/assignment/teacher/assignments/course/${courseId}`,
+          `https://back.bishalpantha.com.np/api/assignment/teacher/assignments/course/${courseId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-
         const assignments = res.data.assignments.map((assignment, index) => ({
           taskId: assignment._id,
           taskNumber: `Task ${index + 1}`,
@@ -37,19 +35,17 @@ export default function TaskTab() {
           description: assignment.description || 'No Description Provided',
           isActive: index === 0,
           createdAt: new Date(assignment.createdAt),
-          submitted: false, // Initially, set submission status to false
+          submitted: false,
         })).sort((a, b) => b.createdAt - a.createdAt);
-
-        // Fetch submission status for each task
         for (let task of assignments) {
           try {
             const submissionRes = await axios.get(
-              `http://localhost:4000/api/assignment/status/${task.taskId}`,
+              `https://back.bishalpantha.com.np/api/assignment/status/${task.taskId}`,
               {
                 headers: { Authorization: `Bearer ${token}` },
               }
             );
-            task.submitted = submissionRes.data.submitted; // Set the submission status
+            task.submitted = submissionRes.data.submitted;
           } catch (error) {
             console.error('Failed to fetch submission status:', error);
           }

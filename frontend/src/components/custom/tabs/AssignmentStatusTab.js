@@ -13,7 +13,7 @@ export default function AssignmentStatusTab({ assignmentId }) {
 
       try {
         const response = await axios.get(
-          `http://localhost:4000/api/assignment/student/submission-status/${assignmentId}`,
+          `https://back.bishalpantha.com.np/api/assignment/student/submission-status/${assignmentId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -24,6 +24,7 @@ export default function AssignmentStatusTab({ assignmentId }) {
       } catch (error) {
         console.error("Error fetching status:", error);
       }
+
     };
 
     fetchStatus();
@@ -38,7 +39,7 @@ export default function AssignmentStatusTab({ assignmentId }) {
       <div className="border-b border-gray-200 pb-4 mb-6">
         <h2 className="text-2xl font-bold text-gray-800">{statusData.taskNumber}-{statusData.assignmentTitle}</h2>
       </div>
-      
+
       <div className="space-y-4 mb-6">
         <div className="flex justify-between">
           <p className="text-lg text-gray-600"><strong>Status:</strong> <span className="text-green-600">{statusData.submittedAt ? "Submitted" : "Not Submitted"}</span></p>
@@ -57,13 +58,14 @@ export default function AssignmentStatusTab({ assignmentId }) {
       {statusData.fileUrl && (
         <div className="mt-4">
           <a
-            href={`http://localhost:4000${statusData.fileUrl}`}
+            href={`https://back.bishalpantha.com.np${statusData.fileUrl}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
           >
             View Submitted File
           </a>
+
         </div>
       )}
     </div>

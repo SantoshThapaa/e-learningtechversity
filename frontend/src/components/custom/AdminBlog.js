@@ -32,7 +32,7 @@ const AdminBlog = () => {
     formData.append("readMoreLink", "#");
 
     try {
-      const response = await axios.post('http://localhost:4000/api/blogs/new', formData, {
+      const response = await axios.post('https://back.bishalpantha.com.np/api/blogs/new', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

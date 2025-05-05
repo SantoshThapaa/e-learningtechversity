@@ -18,7 +18,7 @@ export default function AdminRightSidebar() {
   useEffect(() => {
     const fetchAssignments = async () => {
       try {
-        const response = await fetch("http://localhost:4000/api/assignment/assignments");
+        const response = await fetch("https://back.bishalpantha.com.np/api/assignment/assignments");
         const data = await response.json();
         setAssignments(data.assignments.slice(0, 6));
       } catch (error) {

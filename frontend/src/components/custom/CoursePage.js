@@ -14,7 +14,7 @@ export default function CoursePage() {
 
   const fetchCourses = async () => {
     try {
-      const res = await axios.get('http://localhost:4000/api/allcourses');
+      const res = await axios.get('https://back.bishalpantha.com.np/api/allcourses');
       setCourses(res.data.courses || []);
     } catch (err) {
       console.error('Failed to fetch courses:', err);
@@ -27,7 +27,7 @@ export default function CoursePage() {
   useEffect(() => {
     const fetchCoursesStatus = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/courses/status');
+        const response = await fetch('https://back.bishalpantha.com.np/api/courses/status');
         const data = await response.json();
         setCompletedCourses(data.completedCourses);
         setInProgressCourses(data.inProgressCourses);
@@ -71,7 +71,7 @@ export default function CoursePage() {
         {courses.map((course, index) => (
           <Card key={index} className="p-4 border rounded-xl relative">
             <Image
-              src={`http://localhost:4000/${course.image}`}
+              src={`https://back.bishalpantha.com.np/${course.image}`}
               alt={course.title}
               width={500}
               height={300}

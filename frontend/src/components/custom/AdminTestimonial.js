@@ -18,7 +18,7 @@ const AdminTestimonial = () => {
 
   const fetchTestimonials = async () => {
     try {
-      const res = await axios.get('http://localhost:4000/api/allTestimonials');
+      const res = await axios.get('https://back.bishalpantha.com.np/api/allTestimonials');
       setTestimonials(res.data);
     } catch (err) {
       console.error('Failed to fetch testimonials:', err);
@@ -57,18 +57,19 @@ const AdminTestimonial = () => {
 
     try {
       if (selectedTestimonialId) {
-        await axios.put(`http://localhost:4000/api/editTestimonial/${selectedTestimonialId}`, formData, {
+        await axios.put(`https://back.bishalpantha.com.np/api/editTestimonial/${selectedTestimonialId}`, 
+          formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
         toast.success('Testimonial updated successfully!');
       } else {
-        await axios.post('http://localhost:4000/api/createTestimonial', formData, {
+        await axios.post('https://back.bishalpantha.com.np/api/createTestimonial', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
-        });
+        });        
         toast.success('Testimonial submitted successfully!');
       }
       fetchTestimonials();
@@ -90,7 +91,7 @@ const AdminTestimonial = () => {
 
   const handleDelete = async (testimonialId) => {
     try {
-      await axios.delete(`http://localhost:4000/api/deleteTestimonial/${testimonialId}`);
+      await axios.delete(`https://back.bishalpantha.com.np/api/deleteTestimonial/${testimonialId}`);
       toast.success('Testimonial deleted successfully!');
       fetchTestimonials();
     } catch (err) {
@@ -203,7 +204,7 @@ const AdminTestimonial = () => {
             <div key={testimonial._id} className="flex justify-between items-center border-b py-4">
               <div className="flex items-center gap-4">
                 <Image
-                  src={`http://localhost:4000/${testimonial.profilePic || 'uploads/default-avatar.png'}`}
+                  src={`https://back.bishalpantha.com.np/${testimonial.profilePic || 'uploads/default-avatar.png'}`}
                   alt={testimonial.name}
                   className="w-10 h-10 rounded-full object-cover"
                   width={40}

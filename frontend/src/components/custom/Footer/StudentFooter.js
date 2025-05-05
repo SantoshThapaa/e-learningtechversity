@@ -47,13 +47,21 @@ export default function Footer() {
           <div>
             <h3 className="mb-3 text-lg font-bold">About Us</h3>
             <ul className="space-y-2 text-sm">
-              {["Contact", "Support", "Resources", "Help Center", "Blog"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="hover:text-green-600">
-                    {item}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <a href="/student/contact" className="hover:text-green-600">Contact</a>
+              </li>
+              <li>
+                <a href="/support" className="hover:text-green-600">Support</a>
+              </li>
+              <li>
+                <a href="/resources" className="hover:text-green-600">Resources</a>
+              </li>
+              <li>
+                <a href="/help-center" className="hover:text-green-600">Help Center</a>
+              </li>
+              <li>
+                <a href="/student/updates" className="hover:text-green-600">Blog</a>
+              </li>
             </ul>
           </div>
 
@@ -61,16 +69,20 @@ export default function Footer() {
           <div>
             <h3 className="mb-3 text-lg font-bold">Courses</h3>
             <ul className="space-y-2 text-sm">
-              {["Learning", "Testimonials", "Partners", "Careers"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="hover:text-green-600">
-                    {item}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <a href="/learning" className="hover:text-green-600">Learning</a>
+              </li>
+              <li>
+                <a href="/testimonials" className="hover:text-green-600">Testimonials</a>
+              </li>
+              <li>
+                <a href="/partners" className="hover:text-green-600">Partners</a>
+              </li>
+              <li>
+                <a href="/careers" className="hover:text-green-600">Careers</a>
+              </li>
             </ul>
           </div>
-
           {/* Newsletter */}
           <div>
             <h3 className="mb-3 text-lg font-bold">Newsletter</h3>

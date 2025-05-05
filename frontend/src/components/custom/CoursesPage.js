@@ -18,7 +18,7 @@ export default function CoursesPage() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/api/allcourses')
+        const res = await axios.get('https://back.bishalpantha.com.np/api/allcourses')
         const allCourses = res.data.courses || []
         setCourses(allCourses)
         setFilteredCourses(allCourses)

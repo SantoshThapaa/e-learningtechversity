@@ -28,7 +28,7 @@ export default function AssignmentInstructorCard() {
 
       try {
 
-        const resLecture = await fetch(`http://localhost:4000/api/lectures/${courseId}`, {
+        const resLecture = await fetch(`https://back.bishalpantha.com.np/api/lectures/${courseId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const lectureData = await resLecture.json();
@@ -36,7 +36,7 @@ export default function AssignmentInstructorCard() {
           setLecture(lectureData.lectures[0]);
         }
 
-        const resCourse = await fetch(`http://localhost:4000/api/course/${courseId}`, {
+        const resCourse = await fetch(`https://back.bishalpantha.com.np/api/course/${courseId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const courseData = await resCourse.json();
@@ -45,7 +45,7 @@ export default function AssignmentInstructorCard() {
         if (Array.isArray(assignedTo)) {
           const teacherDetails = await Promise.all(
             assignedTo.map(async (teacherId) => {
-              const resTeacher = await fetch(`http://localhost:4000/api/teachers/${teacherId}`, {
+              const resTeacher = await fetch(`https://back.bishalpantha.com.np/api/teachers/${teacherId}`, {
                 headers: { Authorization: `Bearer ${token}` },
               });
               const data = await resTeacher.json();
@@ -75,7 +75,7 @@ export default function AssignmentInstructorCard() {
         {/* Left Section */}
         <Card className="w-full lg:w-[70%] p-0 overflow-hidden">
           <Image
-            src={`http://localhost:4000${lecture.thumbnail.replace('/thumbnail/', '/thumbnails/')}`}
+            src={`https://back.bishalpantha.com.np${lecture.thumbnail.replace('/thumbnail/', '/thumbnails/')}`}
             alt={lecture.title}
             className="w-full h-[300px] object-cover"
             width={600}
@@ -123,13 +123,12 @@ export default function AssignmentInstructorCard() {
               <Card key={teacher._id || index} className="p-6 text-center shadow-lg">
                 <div className="flex justify-center">
                   <Image
-                    src={`http://localhost:4000/${teacher?.profile?.profilePicture || 'uploads/default-bg.jpg'}`}
+                    src={`https://back.bishalpantha.com.np/${teacher?.profile?.profilePicture || 'uploads/default-bg.jpg'}`}
                     alt="Instructor"
                     width={80}
                     height={80}
                     className="rounded-full object-cover"
                   />
-
                 </div>
                 <h3 className="text-lg font-semibold mt-4">{teacher.fullName}</h3>
                 <p className="text-sm text-gray-500">{teacher.role}</p>
@@ -154,7 +153,7 @@ export default function AssignmentInstructorCard() {
           <Card className="p-6 text-center shadow-lg">
             <Button
               className="w-full bg-green-500 hover:bg-green-600 text-white text-lg"
-              onClick={() => window.open(lecture.meetLink, "_blank")} // Open meet link in a new tab
+              onClick={() => window.open(lecture.meetLink, "_blank")} 
             >
               Join
             </Button>

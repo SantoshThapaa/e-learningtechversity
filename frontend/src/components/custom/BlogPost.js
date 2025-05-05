@@ -17,12 +17,12 @@ const BlogPost = () => {
         if (!blogId) return;
 
         axios
-            .get(`http://localhost:4000/api/blog/${blogId}`)
+            .get(`https://back.bishalpantha.com.np/api/blog/${blogId}`)
             .then((response) => setBlog(response.data))
             .catch((err) => console.error("Error fetching blog details:", err));
 
         axios
-            .get('http://localhost:4000/api/blogs/all')
+            .get('https://back.bishalpantha.com.np/api/blogs/all')
             .then((response) => {
                 setRecentPosts(response.data.slice(0, 3));  // Limit to 3 blogs
             })
@@ -33,8 +33,7 @@ const BlogPost = () => {
         return <div>Loading...</div>;
     }
 
-    // Construct the valid image URL using the provided logic
-    const imageUrl = `http://localhost:4000/${blog.imageUrl.replace(/^\/+/, '')}`;
+    const imageUrl = `https://back.bishalpantha.com.np/${blog.imageUrl.replace(/^\/+/, '')}`;
     console.log("Image URL:", imageUrl);
 
     return (
@@ -84,7 +83,7 @@ const BlogPost = () => {
                         {recentPosts.map((post) => (
                             <div key={post._id} className="flex items-center space-x-4 mb-6">
                                 <Image
-                                    src={post.imageUrl ? `http://localhost:4000/${post.imageUrl.replace(/^\/+/, '')}` : '/fallback-image.jpg'}
+                                    src={post.imageUrl ? `https://back.bishalpantha.com.np/${post.imageUrl.replace(/^\/+/, '')}` : '/fallback-image.jpg'}
                                     alt="Recent Post Image"
                                     width={80}
                                     height={80}

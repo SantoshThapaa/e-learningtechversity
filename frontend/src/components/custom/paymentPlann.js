@@ -16,43 +16,53 @@ export default function Paymentplan() {
     const [course, setCourse] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [localCourseId, setLocalCourseId] = useState(null);
 
     const stripe = useStripe();
     const elements = useElements();
     const router = useRouter();
     const postalRef = useRef();
-    const params = useParams();
-    const courseId = params.coursepageId;
 
-
+    // Step 1: Get courseId from localStorage safely on client
     useEffect(() => {
-        const courseId = getCourseIdFromLocalStorage();
-        if (!courseId) {
-            console.error("Course ID not found in localStorage.");
-            return;
+        if (typeof window !== 'undefined') {
+            const id = getCourseIdFromLocalStorage();
+            if (id) {
+                setLocalCourseId(id);
+            } else {
+                console.error("Course ID not found in localStorage.");
+            }
         }
+    }, []);
+
+    // Step 2: Fetch course and check access once localCourseId is ready
+    useEffect(() => {
+        if (!localCourseId) return;
 
         const fetchCourse = async () => {
             try {
-                const res = await fetch(`http://localhost:4000/api/course/${courseId}`);
+                const res = await fetch(`https://back.bishalpantha.com.np/api/course/${localCourseId}`);
                 const data = await res.json();
                 setCourse(data.course);
                 setIsLoading(false);
+
                 const userId = getUserIdFromToken();
-                const accessRes = await fetch('http://localhost:4000/api/check-access', {
+                const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+
+                const accessRes = await fetch('https://back.bishalpantha.com.np/api/check-access', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        Authorization: token ? `Bearer ${token}` : '',
                     },
-                    body: JSON.stringify({ userId, courseId })
+                    body: JSON.stringify({ userId, courseId: localCourseId }),
                 });
 
                 const accessData = await accessRes.json();
                 if (accessRes.status === 200 && accessData.message === 'Access granted') {
                     toast.info('You already purchased this course. Redirecting...');
                     setTimeout(() => {
-                        router.push(`/student/coursepage/${courseId}`);
+                        router.push(`/student/coursepage/${localCourseId}`);
                     }, 1500);
                 }
             } catch (err) {
@@ -62,11 +72,11 @@ export default function Paymentplan() {
         };
 
         fetchCourse();
-    }, [courseId, router]);
+    }, [localCourseId, router]);
 
+    // Step 3: Handle Payment
     const handlePayment = async (event) => {
         event.preventDefault();
-
         if (!stripe || !elements) return;
 
         const { paymentMethod, error } = await stripe.createPaymentMethod({
@@ -93,11 +103,13 @@ export default function Paymentplan() {
 
         setIsProcessing(true);
 
-        const response = await fetch('http://localhost:4000/api/createpayments', {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+
+        const response = await fetch('https://back.bishalpantha.com.np/api/createpayments', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                Authorization: token ? `Bearer ${token}` : '',
             },
             body: JSON.stringify({
                 paymentMethodToken: paymentMethod.id,
@@ -112,7 +124,7 @@ export default function Paymentplan() {
         setIsProcessing(false);
 
         if (data.message === 'Payment successful') {
-            toast.success('Payment Successful 🎉');
+            toast.success('Payment Successful');
             elements.getElement(CardNumberElement)?.clear();
             elements.getElement(CardExpiryElement)?.clear();
             elements.getElement(CardCvcElement)?.clear();
@@ -120,14 +132,12 @@ export default function Paymentplan() {
             setTimeout(() => {
                 router.push(`/student/coursepage/${course._id}`);
             }, 100);
-
         } else if (data.message === 'Further action required') {
             toast.warn('Additional authentication needed');
         } else {
-            toast.error('Payment Failed ');
+            toast.error('Payment Failed');
         }
     };
-
     return (
         <section className="py-20 px-6">
             <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 items-start">
@@ -374,7 +384,7 @@ export default function Paymentplan() {
                         </div>
                     )}
                 </div>
-                <Detailed/>
+                <Detailed />
             </div>
             <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
         </section>

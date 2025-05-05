@@ -18,38 +18,11 @@ export default function AddResource() {
   const [loading, setLoading] = useState(false);
 
 
-  const fetchCourses = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const UserId = getUserIdFromToken();
-
-      if (!token || !UserId) {
-        toast.error('You must be logged in as a teacher.');
-        return;
-      }
-
-      const res = await axios.get(`http://localhost:4000/api/assigned-courses/${UserId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (Array.isArray(res.data.courses) && res.data.courses.length > 0) {
-        setCourses(res.data.courses);
-        setCourseId(res.data.courses[0]._id); 
-        fetchResources(res.data.courses[0]._id);
-      } else {
-        toast.warning('No assigned courses found.');
-      }
-    } catch (error) {
-      console.error('Error fetching assigned courses:', error);
-      toast.error('Failed to load courses.');
-    }
-  };
+  
 
   const fetchResources = async (courseId) => {
     try {
-      const res = await axios.get(`http://localhost:4000/api/resources/${courseId}`);
+      const res = await axios.get(`https://back.bishalpantha.com.np/api/resources/${courseId}`);
       console.log(res.data);
     } catch (error) {
       console.error('Error fetching resources:', error);
@@ -63,8 +36,38 @@ export default function AddResource() {
   }, [courseId]);
 
   useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const UserId = getUserIdFromToken();
+  
+        if (!token || !UserId) {
+          toast.error('You must be logged in as a teacher.');
+          return;
+        }
+  
+        const res = await axios.get(`https://back.bishalpantha.com.np/api/assigned-courses/${UserId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        if (Array.isArray(res.data.courses) && res.data.courses.length > 0) {
+          setCourses(res.data.courses);
+          setCourseId(res.data.courses[0]._id);
+          fetchResources(res.data.courses[0]._id);
+        } else {
+          toast.warning('No assigned courses found.');
+        }
+      } catch (error) {
+        console.error('Error fetching assigned courses:', error);
+        toast.error('Failed to load courses.');
+      }
+    };
+  
     fetchCourses();
   }, []);
+  
 
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
@@ -81,12 +84,10 @@ export default function AddResource() {
     formData.append('sectionTitle', sectionTitle);
     formData.append('subHeadingTitle', subHeadingTitle);
     formData.append('video', video);
-
     try {
       setLoading(true);
-
       await axios.post(
-        `http://localhost:4000/api/resources/${courseId}/add`,
+        `https://back.bishalpantha.com.np/api/resources/${courseId}/add`,
         formData,
         {
           headers: {
@@ -94,7 +95,7 @@ export default function AddResource() {
           },
         }
       );
-
+    
       toast.success('Resource uploaded successfully!');
       setSectionTitle('');
       setSubHeadingTitle('');

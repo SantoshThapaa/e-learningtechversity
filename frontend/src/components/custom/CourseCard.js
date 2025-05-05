@@ -25,7 +25,7 @@ export default function CourseCard({ course }) {
         className="shadow-lg rounded-xl overflow-hidden relative cursor-pointer"
       >
         <Image
-          src={`http://localhost:4000/${course.image}`}
+          src={`https://back.bishalpantha.com.np/${course.image}`}
           alt={course.title}
           width={500}
           height={300}

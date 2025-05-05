@@ -20,7 +20,7 @@ export default function StudentTable() {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/api/students');
+        const res = await axios.get('https://back.bishalpantha.com.np/api/students');
         console.log("Fetched students:", res.data.users);
         setStudents(res.data.users || []);
       } catch (err) {
@@ -42,7 +42,7 @@ export default function StudentTable() {
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://localhost:4000/api/user/${selectedStudent._id}`);
+      await axios.delete(`https://back.bishalpantha.com.np/api/user/${selectedStudent._id}`);
       toast.success('Student deleted successfully!');
       setStudents((prev) => prev.filter((student) => student._id !== selectedStudent._id));
       setShowDeleteModal(false);
@@ -84,7 +84,7 @@ export default function StudentTable() {
                   <td className="p-4"><Checkbox /></td>
                   <td className="p-4 flex items-center gap-3">
                     <Image
-                      src={`http://localhost:4000${student.profile?.profilePicture || '/uploads/default-avatar.png'}`}
+                      src={`https://back.bishalpantha.com.np${student.profile?.profilePicture || '/uploads/default-avatar.png'}`}
                       alt={student.name}
                       className="w-8 h-8 rounded-full border-4 border-white shadow-lg"
                       width={96}

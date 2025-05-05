@@ -34,22 +34,9 @@ const AttendancePage = () => {
     }
   }, [searchParams]);
 
-  const fetchStudentsByCourse = async () => {
-    if (!courseId) return;
-    try {
-      setLoading(true);
-      const res = await axios.get(`http://localhost:4000/api/courses/${courseId}/students`); 
-      setStudents(res.data.students);
-    } catch (error) {
-      console.error("Error fetching students by course:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const fetchAttendanceData = async () => {
     try {
-      const res = await axios.get(`http://localhost:4000/api/attendance/student`); 
+      const res = await axios.get(`https://back.bishalpantha.com.np/api/attendance/student`); 
       setAttendance(res.data.attendance); 
     } catch (error) {
       console.error("Error fetching attendance data:", error);
@@ -76,7 +63,7 @@ const AttendancePage = () => {
         present: att.present,
       }));
 
-      await axios.post(`http://localhost:4000/api/attendance/${courseId}/save`, { updatedAttendance });
+      await axios.post(`https://back.bishalpantha.com.np/api/attendance/${courseId}/save`, { updatedAttendance });
       alert("Attendance saved successfully!");
     } catch (error) {
       console.error("Error saving attendance:", error);
@@ -84,12 +71,26 @@ const AttendancePage = () => {
   };
 
   useEffect(() => {
-    if (courseId) {
-      setDates(getLast10Days());
-      fetchStudentsByCourse();
-      fetchAttendanceData();
-    }
+    if (!courseId) return;
+  
+    setDates(getLast10Days());
+  
+    const fetchStudentsByCourse = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`https://back.bishalpantha.com.np/api/courses/${courseId}/students`);
+        setStudents(res.data.students);
+      } catch (error) {
+        console.error("Error fetching students by course:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchStudentsByCourse();
+    fetchAttendanceData();
   }, [courseId]);
+  
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">

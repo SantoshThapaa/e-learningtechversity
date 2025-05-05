@@ -27,7 +27,7 @@ export default function ProfilePage() {
     const fetchUserProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:4000/api/user/me', {
+        const res = await axios.get('https://back.bishalpantha.com.np/api/user/me', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -45,10 +45,10 @@ export default function ProfilePage() {
         setZipCode(user.profile?.zipCode || '');
         setBio(user.profile?.bio || '');
         if (user.profile?.coverImage) {
-          setCoverImage(`http://localhost:4000${user.profile.coverImage}`);
+          setCoverImage(`https://back.bishalpantha.com.np${user.profile.coverImage}`);
         }
         if (user.profile?.profilePicture) {
-          setProfileImageUrl(`http://localhost:4000${user.profile.profilePicture}`);
+          setProfileImageUrl(`https://back.bishalpantha.com.np${user.profile.profilePicture}`);
         }
         
 
@@ -94,7 +94,7 @@ export default function ProfilePage() {
       }
 
       const token = localStorage.getItem('token');
-      await axios.put('http://localhost:4000/api/profile', formData, {
+      await axios.put('https://back.bishalpantha.com.np/api/profile', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

@@ -24,7 +24,7 @@ export default function AssignmentSubmissionTab() {
 
     const fetchAssignments = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/api/assignment/teacher/assignments/course/${courseId}`, {
+        const response = await axios.get(`https://back.bishalpantha.com.np/api/assignment/teacher/assignments/course/${courseId}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
 
@@ -68,9 +68,8 @@ export default function AssignmentSubmissionTab() {
       formData.append('document', file);
       formData.append('content', submissionContent);
       formData.append('userId', userId);
-
       const response = await axios.post(
-        `http://localhost:4000/api/assignment/submit/${task._id}`,
+        `https://back.bishalpantha.com.np/api/assignment/submit/${task._id}`,
         formData,
         {
           headers: {
@@ -78,8 +77,7 @@ export default function AssignmentSubmissionTab() {
             'Content-Type': 'multipart/form-data',
           },
         }
-      );
-
+      );      
       clearEditor();
     } catch (error) {
       console.error('Failed to submit assignment:', error);

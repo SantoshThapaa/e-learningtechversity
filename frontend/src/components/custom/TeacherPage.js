@@ -20,7 +20,7 @@ export default function TeacherPage() {
 
     const fetchTeachers = async () => {
         try {
-            const res = await axios.get('http://localhost:4000/api/teachers');
+            const res = await axios.get('https://back.bishalpantha.com.np/api/teachers');
             setTeachers(res.data.teachers || []);
         } catch (err) {
             console.error('Error fetching teachers:', err);
@@ -30,7 +30,7 @@ export default function TeacherPage() {
     
     const fetchCourses = async () => {
         try {
-            const res = await axios.get('http://localhost:4000/api/allcourses');
+            const res = await axios.get('https://back.bishalpantha.com.np/api/allcourses');
             setCourses(res.data.courses || []);
         } catch (err) {
             console.error('Error fetching courses:', err);
@@ -54,7 +54,7 @@ export default function TeacherPage() {
 
     const confirmDelete = async () => {
         try {
-            await axios.delete(`http://localhost:4000/api/user/${selectedTeacher._id}`);
+            await axios.delete(`https://back.bishalpantha.com.np/api/user/${selectedTeacher._id}`);
             toast.success('Teacher deleted successfully!');
             fetchTeachers();
             setShowDeleteModal(false);
@@ -88,7 +88,7 @@ export default function TeacherPage() {
                 {teachers.slice(0, 5).map((teacher, index) => (
                     <Card key={index} className="overflow-hidden rounded-xl shadow-lg bg-white">
                         <Image
-                            src={`http://localhost:4000/${teacher?.profile?.backgroundImage || 'uploads/default-bg.jpg'}`}
+                            src={`https://back.bishalpantha.com.np/${teacher?.profile?.backgroundImage || 'uploads/default-bg.jpg'}`}
                             alt="background"
                             className="w-full h-32 object-cover"
                             width={1280}
@@ -97,7 +97,7 @@ export default function TeacherPage() {
                         />
                         <div className="flex flex-col items-center p-4 -mt-12">
                             <Image
-                                src={`http://localhost:4000${teacher?.profile?.profilePicture || '/uploads/default-avatar.png'}`}
+                                src={`https://back.bishalpantha.com.np${teacher?.profile?.profilePicture || '/uploads/default-avatar.png'}`}
                                 alt={teacher.name}
                                 className="w-24 h-24 rounded-full border-4 border-white shadow-lg"
                                 width={96}
@@ -127,7 +127,7 @@ export default function TeacherPage() {
                         <h3 className="text-xl font-semibold">{selectedTeacher.name}</h3>
                         <div className="flex items-center gap-4 mt-4">
                             <Image
-                                src={`http://localhost:4000${selectedTeacher?.profile?.profilePicture || '/uploads/default-avatar.png'}`}
+                                src={`https://back.bishalpantha.com.np${selectedTeacher?.profile?.profilePicture || '/uploads/default-avatar.png'}`}
                                 alt={selectedTeacher.name}
                                 className="w-24 h-24 rounded-full border-4 border-white shadow-lg"
                                 width={96}
@@ -188,7 +188,7 @@ export default function TeacherPage() {
                             <tr key={i} className="border-t">
                                 <td className="p-3 flex items-center gap-2">
                                     <Image
-                                        src={`http://localhost:4000${teacher?.profile?.profilePicture || '/uploads/default-avatar.png'}`}
+                                        src={`https://back.bishalpantha.com.np${teacher?.profile?.profilePicture || '/uploads/default-avatar.png'}`}
                                         alt={teacher.name}
                                         className="w-15 h-15 rounded-full border-4 border-white shadow-lg"
                                         width={25}

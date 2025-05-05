@@ -22,11 +22,11 @@ export default function AddTeacherForm({ onClose }) {
 
   const handleAdd = async () => {
     try {
-      await axios.post('http://localhost:4000/api/registerteacher', form);
+      await axios.post('https://back.bishalpantha.com.np/api/registerteacher', form);
       toast.success('Teacher added successfully!', {
         position: "top-right", 
         autoClose: 5000, 
-      });
+      });    
       onClose();
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Something went wrong.', {

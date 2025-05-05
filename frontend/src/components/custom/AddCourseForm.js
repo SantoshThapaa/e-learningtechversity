@@ -66,7 +66,7 @@ export default function AddCourseForm({ onClose }) {
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/api/teachers');
+        const res = await axios.get('https://back.bishalpantha.com.np/api/teachers');
         setTeachers(res.data.teachers || []);
       } catch (err) {
         console.error('Failed to fetch teachers:', err);
@@ -78,9 +78,7 @@ export default function AddCourseForm({ onClose }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log('Fetching categories data from: http://localhost:4000/api/categories');
-
-        const categoryRes = await axios.get('http://localhost:4000/api/categories');
+        const categoryRes = await axios.get('https://back.bishalpantha.com.np/api/categories');
         setCategories(categoryRes.data.categories || []);
       } catch (err) {
         console.error('Failed to load initial course data:', err);
@@ -93,7 +91,7 @@ export default function AddCourseForm({ onClose }) {
   useEffect(() => {
     const fetchBatchOptions = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/api/batch/no");
+        const res = await axios.get("https://back.bishalpantha.com.np/api/batch/no");
         if (res.data && res.data.batchNo) {
           setBatchOptions([res.data.batchNo]); 
         } else {
@@ -117,7 +115,7 @@ export default function AddCourseForm({ onClose }) {
     });
 
     try {
-      await axios.post('http://localhost:4000/api/createnewcourses', data);
+      await axios.post('https://back.bishalpantha.com.np/api/createnewcourses', data);
       toast.success('Course added successfully!', {
         position: "top-right",
         autoClose: 5000,

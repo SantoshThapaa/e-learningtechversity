@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Menu, X, Bell } from 'lucide-react';
+import Image from 'next/image';
 
 export default function TeacherNavbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,9 +20,9 @@ export default function TeacherNavbar() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/api/user/me', {
+        const response = await axios.get('https://back.bishalpantha.com.np/api/user/me', {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`, // Assuming you're using JWT for auth
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
         setUser(response.data.user);
@@ -38,7 +39,7 @@ export default function TeacherNavbar() {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:4000/api/user/logout');
+      await axios.post('https://back.bishalpantha.com.np/api/user/logout');
       localStorage.removeItem('user');
       setUser(null);
       toast.success('Logout successful!');
@@ -57,9 +58,14 @@ export default function TeacherNavbar() {
     >
       <div className="container mx-auto flex items-center justify-between py-3 px-4">
         <Link href="/">
-          <img src="/logo.png" alt="logo" className="h-12" />
+          <Image
+            src="/logo.png"
+            alt="logo"
+            width={120}
+            height={48}
+            className="h-12 w-auto"
+          />
         </Link>
-
         <ul className="hidden lg:flex gap-6 items-center">
           {user && (
             <>
@@ -72,18 +78,17 @@ export default function TeacherNavbar() {
                 </Link>
               </li>
               <li className="relative profile-dropdown">
-                {/* Console log to check image URL */}
-                {console.log('Profile Image URL:', `http://localhost:4000${user?.profile?.profilePicture || '/default-profile.jpg'}`)}
-
-                <img
-                  src={`http://localhost:4000${user?.profile?.profilePicture || '/default-profile.jpg'}`}
+                <Image
+                  src={user?.profile?.profilePicture
+                    ? `https://back.bishalpantha.com.np${user.profile.profilePicture}`
+                    : '/default-profile.jpg'}
                   alt="Profile"
-                  className="w-8 h-8 rounded-full object-cover cursor-pointer"
                   width={32}
                   height={32}
+                  className="w-8 h-8 rounded-full object-cover cursor-pointer"
                   onClick={() => setShowDropdown(prev => !prev)}
+                  unoptimized
                 />
-
                 {showDropdown && (
                   <ul className="absolute right-0 mt-2 w-50 bg-white shadow-md rounded-md z-50">
                     <li>

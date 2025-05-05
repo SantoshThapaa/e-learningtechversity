@@ -23,12 +23,11 @@ export default function AddTitleOverlay({ onClose, onTitleAdded }) {
         return;
       }
 
-      const res = await axios.get(`http://localhost:4000/api/assigned-courses/${teacherId}`, {
+      const res = await axios.get(`https://back.bishalpantha.com.np/api/assigned-courses/${teacherId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
       if (res.data.courses?.length > 0) {
         setCourses(res.data.courses);
         setCourseId(res.data.courses[0]._id);
@@ -57,7 +56,7 @@ export default function AddTitleOverlay({ onClose, onTitleAdded }) {
     formData.append('video', dummyBlob, 'placeholder.mp4');
 
     try {
-      await axios.post(`http://localhost:4000/api/resources/${courseId}/add`, formData, {
+      await axios.post(`https://back.bishalpantha.com.np/api/resources/${courseId}/add`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       toast.success(`Title "${title}" added successfully`);
@@ -72,7 +71,7 @@ export default function AddTitleOverlay({ onClose, onTitleAdded }) {
     <div className="fixed inset-0 z-50 bg-black-50 bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-[400px]">
         <h2 className="text-xl font-semibold mb-4">Add New Title</h2>
-        
+
         <label className="block text-sm font-medium mb-2">Select Course</label>
         <select
           className="w-full border border-gray-300 rounded-md px-3 py-2 mb-4"

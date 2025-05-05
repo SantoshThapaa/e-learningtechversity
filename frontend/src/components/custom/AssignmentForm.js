@@ -26,13 +26,11 @@ export default function AssignmentForm() {
         toast.error('Login required to fetch courses.');
         return;
       }
-
-      const res = await axios.get(`http://localhost:4000/api/assigned-courses/${teacherId}`, {
+      const res = await axios.get(`https://back.bishalpantha.com.np/api/assigned-courses/${teacherId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
       if (res.data.courses?.length > 0) {
         setCourses(res.data.courses);
         setCourseId(res.data.courses[0]._id);
@@ -58,9 +56,8 @@ export default function AssignmentForm() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-
       await axios.post(
-        `http://localhost:4000/api/assignment/create/${courseId}`,
+        `https://back.bishalpantha.com.np/api/assignment/create/${courseId}`,
         { 
           title,
           description: brief,  
@@ -72,7 +69,6 @@ export default function AssignmentForm() {
           },
         }
       );
-
       toast.success("Assignment created successfully!");
       setTitle('');
       setDueDate('');
