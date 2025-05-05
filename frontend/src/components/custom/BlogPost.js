@@ -98,9 +98,6 @@ const BlogPost = () => {
                     </div>
                 </div>
             </div>
-
-
-            {/* Share This Post */}
             <div className="mt-8 flex gap-10">
                 <div>
                     <p className="text-sm text-gray-600">Share This Post</p>
