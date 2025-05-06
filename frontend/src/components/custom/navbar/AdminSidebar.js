@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BlocksIcon, GraduationCap, LayoutGrid, Phone, UploadCloud, Users } from 'lucide-react';
+import { BlocksIcon, GraduationCap, LayoutGrid, Phone, UploadCloud, UserCheck, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
@@ -41,14 +41,17 @@ const links = [
     href: '/admin/blogs',
     label: 'Blogs',
     icon: BlocksIcon,
+  },
+  {
+    href: '/admin/admin',
+    label: 'Admin',
+    icon: UserCheck,
   }
 ];
 
 export default function AdminSidebar () { 
     const pathname = usePathname();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-    // Toggle sidebar visibility on mobile
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
     return (

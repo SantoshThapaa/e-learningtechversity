@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export default function AddTeacherForm({ onClose }) {
+export default function AddAdminForm({ onClose }) {
   const [form, setForm] = useState({
     name: '',
     email: '',

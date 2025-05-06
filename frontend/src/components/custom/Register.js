@@ -30,7 +30,8 @@ export default function Register({ variants }) {
         email,
         password,
         confirmPassword,
-      }
+      };
+      console.log('Payload being sent:', payload);
 
       const response = await axios.post('https://back.bishalpantha.com.np/api/user/register', payload)
 
@@ -38,6 +39,7 @@ export default function Register({ variants }) {
       setError(null)
 
       if (response.data.role === 'admin') {
+        localStorage.setItem('token', response.data.token);
         router.push('/admin/home') 
       } else {
         router.push(`/student/verify-otp?email=${encodeURIComponent(email)}`)

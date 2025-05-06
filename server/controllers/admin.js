@@ -132,6 +132,18 @@ export const getAllTeachers = TryCatch(async (req, res) => {
   });
 });
 
+export const getAllAdmins = TryCatch(async (req, res) => {
+  const admins = await User.find({ role: 'admin' }).select('-password');
+  if (!admins || admins.length === 0) {
+    return res.status(404).json({
+      message: "No admins found",
+    });
+  }
+  res.status(200).json({
+    message: "All admins fetched successfully",
+    admins,
+  });
+});
 
 
 export const getAllCourses = TryCatch(async (req, res) => {
@@ -227,6 +239,53 @@ export const Teacherlogin = TryCatch(async (req, res) => {
     id: user._id,
     photoUrl: user.photoUrl || '',
     role: user.role
+  },
+    process.env.JWT_SECRET, { expiresIn: "7d" });
+
+  res.status(200).json({ token, user });
+});
+
+export const registerAdmin = TryCatch(async (req, res) => {
+  const { name, email, password, confirmPassword } = req.body;
+
+  if (password !== confirmPassword) {
+    return res.status(400).json({ message: "Passwords do not match" });
+  }
+
+  const existingAdmin = await User.findOne({ email });
+  if (existingAdmin) return res.status(400).json({ message: "Email already exists" });
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const admin = await User.create({
+    name,
+    email,
+    password: hashedPassword,
+    role: "admin",
+    isApprovedByAdmin: true,
+  });
+
+  res.status(201).json({ message: "Admin registered successfully", admin });
+});
+
+
+export const adminLogin = TryCatch(async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) return res.status(404).json({ message: "User not found" });
+
+  if (user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied. Only admins can log in." });
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
+
+  const token = jwt.sign({
+    id: user._id,
+    photoUrl: user.photoUrl || '',
+    role: user.role,
   },
     process.env.JWT_SECRET, { expiresIn: "7d" });
 

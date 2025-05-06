@@ -11,7 +11,7 @@ import crypto from 'crypto';
 // **REGISTER**
 export const register = TryCatch(async (req, res) => {
     const { name, email, password, confirmPassword } = req.body;
-  
+    console.log("Received data:", { name, email, password, confirmPassword });
     if (password !== confirmPassword) {
       return res.status(400).json({ message: "Passwords do not match" });
     }
@@ -21,35 +21,7 @@ export const register = TryCatch(async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
   
-    const today = new Date().toISOString().split('T')[0];
-    const expectedAdminToken = crypto
-      .createHash('sha256')
-      .update(process.env.ADMIN_SECRET + today)
-      .digest('hex');
-  
-    const isAdminToken = password === expectedAdminToken;
-  
     const hashPassword = await bcrypt.hash(password, 10);
-  
-    if (
-        isAdminToken &&
-        email.trim().toLowerCase() === "admin@example.com"
-      ) {
-      const admin = new User({
-        name,
-        email,
-        password: hashPassword,
-        role: 'admin',
-        isVerified: true,
-      });
-  
-      await admin.save();
-  
-      return res.status(200).json({
-        message: "Admin registered successfully.",
-        success: true,
-      });
-    }
   
     const user = new User({
       name,
@@ -120,32 +92,6 @@ export const loginUser = TryCatch(async (req, res) => {
     }
 
     const trimmedPassword = password.trim();
-    if (user.role === 'admin') {
-        const today = new Date().toISOString().split('T')[0];
-        const crypto = await import('crypto');
-        const expectedToken = crypto.createHash('sha256').update(process.env.ADMIN_SECRET + today).digest('hex');
-
-        if (trimmedPassword === expectedToken) {
-            const token = jwt.sign(
-                {
-                    userId: user._id,
-                    role: user.role
-                },
-                process.env.jwt_secret,
-                { expiresIn: "1h" }
-            );
-
-            return res.status(200).json({
-                message: "Login successful",
-                success: true,
-                token,
-                name: user.name,
-                photoUrl: user.photoUrl || '',
-                role: user.role
-            });
-        }
-    }
-
     const isMatch = await bcrypt.compare(trimmedPassword, user.password);
 
     if (!isMatch) {

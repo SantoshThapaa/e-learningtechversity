@@ -24,7 +24,7 @@ const BlogPost = () => {
         axios
             .get('https://back.bishalpantha.com.np/api/blogs/all')
             .then((response) => {
-                setRecentPosts(response.data.slice(0, 3));  // Limit to 3 blogs
+                setRecentPosts(response.data.slice(0, 3)); 
             })
             .catch((err) => console.error("Error fetching recent blogs:", err));
     }, [blogId]);
