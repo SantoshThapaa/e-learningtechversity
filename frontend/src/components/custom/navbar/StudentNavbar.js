@@ -34,8 +34,6 @@ export default function StudentNavbar() {
         setUser(response.data.user);
         setLoading(false);
       } catch (error) {
-        toast.error('Failed to fetch profile');
-        console.error('Error fetching profile:', error);
         setLoading(false);
       }
     };

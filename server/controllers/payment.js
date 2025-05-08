@@ -1,9 +1,10 @@
 import Stripe from 'stripe';
 import { Payment } from '../models/Payment.js';
 import { User } from '../models/User.js';
-import { Courses } from '../models/Courses.js'; 
+import { Courses } from '../models/Courses.js';
 import { stripe_key } from '../config/config.js';
-import sendMail from '../middlewares/sendMail.js';  
+import sendMail from '../middlewares/sendMail.js';
+import TryCatch from '../middlewares/TryCatch.js';
 
 const stripe = new Stripe(stripe_key);
 
@@ -35,7 +36,7 @@ export const createPayment = async (req, res) => {
             amount,
             paymentMethod: 'Stripe',
             paymentMethodToken,
-            accessGranted: false, 
+            accessGranted: false,
         });
 
         await payment.save();
@@ -56,14 +57,14 @@ export const createPayment = async (req, res) => {
 
             if (paymentPlan === 'EMI') {
                 payment.nextPaymentDue = new Date();
-                payment.nextPaymentDue.setMonth(payment.nextPaymentDue.getMonth() + 1);  
+                payment.nextPaymentDue.setMonth(payment.nextPaymentDue.getMonth() + 1);
                 sendMail(user.email, 'EMI Payment Reminder', {
                     name: user.name,
                     nextPaymentDate: payment.nextPaymentDue.toLocaleDateString(),
                 });
             }
 
-            payment.accessGranted = true; 
+            payment.accessGranted = true;
             await payment.save();
             const course = await Courses.findById(courseId);
             if (course) {
@@ -95,28 +96,93 @@ export const createPayment = async (req, res) => {
     }
 };
 
-
-
-export const getUserPayments = async (req, res) => {
+export const getEmiPayments = TryCatch(async (req, res) => {
     try {
-        const payments = await Payment.find({ userId: req.params.userId })
-            .populate('courseId', 'title')
+        const emiPayments = await Payment.find({ paymentPlan: 'EMI' })
+            .populate('userId', 'name email')
+            .populate('courseId', 'title description batchNo')
             .sort({ createdAt: -1 });
 
-        res.status(200).json(payments);
+        if (!emiPayments || emiPayments.length === 0) {
+            return res.status(404).json({ message: 'No EMI payments found.' });
+        }
+
+        res.status(200).json(emiPayments);
     } catch (error) {
-        console.error('Get user payments error:', error);
+        console.error('Error fetching EMI payments:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
-};
+});
 
-
-export const getPayments = async (req, res) => {
+export const getFullPayPayments = TryCatch(async (req, res) => {
     try {
-        const payments = await Payment.find().populate('userId', 'name email');
-        return res.status(200).json(payments);
+        const fullPayPayments = await Payment.find({ paymentPlan: 'Full Pay' })
+            .populate('userId', 'name email')
+            .populate('courseId', 'title description batchNo')
+            .sort({ createdAt: -1 });
+
+        if (!fullPayPayments || fullPayPayments.length === 0) {
+            return res.status(404).json({ message: 'No Full Pay payments found.' });
+        }
+
+        res.status(200).json(fullPayPayments);
     } catch (error) {
-        console.error('Get payments error:', error);
-        return res.status(500).json({ message: 'Server error', error: error.message });
+        console.error('Error fetching Full Pay payments:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+export const getUserPayments = TryCatch(async (req, res) => {
+    const { paymentPlan } = req.query;
+    if (!['Full Pay', 'EMI'].includes(paymentPlan)) {
+        return res.status(400).json({ message: 'Invalid payment plan. Please specify either "Full Pay" or "EMI".' });
+    }
+
+    const payments = await Payment.find({ userId: req.params.userId, paymentPlan: paymentPlan })
+        .populate('courseId', 'title')
+        .sort({ createdAt: -1 });
+
+    if (!payments || payments.length === 0) {
+        return res.status(404).json({ message: `No ${paymentPlan} payments found for this user.` });
+    }
+
+    res.status(200).json(payments);
+});
+
+export const getPayments = TryCatch(async (req, res) => {
+    const { paymentPlan } = req.query;
+    if (paymentPlan && !['Full Pay', 'EMI'].includes(paymentPlan)) {
+        return res.status(400).json({ message: 'Invalid payment plan. Please specify either "Full Pay" or "EMI".' });
+    }
+    const query = paymentPlan ? { paymentPlan: paymentPlan } : {};
+
+    const payments = await Payment.find(query)
+        .populate('userId', 'name email')
+        .populate('courseId', 'title description')
+        .sort({ createdAt: -1 });
+
+    if (!payments || payments.length === 0) {
+        return res.status(404).json({ message: `No payments found for the "${paymentPlan}" plan.` });
+    }
+
+    res.status(200).json(payments);
+});
+
+export const deleteEmiPayment = async (req, res) => {
+    try {
+        const { paymentId } = req.params;
+
+        const payment = await Payment.findById(paymentId);
+
+        if (!payment) {
+            return res.status(404).json({ message: 'Payment not found' });
+        }
+
+        await Payment.findByIdAndDelete(paymentId);
+
+        res.status(200).json({ message: 'Payment deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting EMI payment:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };

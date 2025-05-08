@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
-import { Courses } from './Courses.js';  // Import the Courses model
-
+import { Courses } from './Courses.js'; 
 const paymentSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,

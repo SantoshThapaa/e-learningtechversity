@@ -43,6 +43,7 @@ export default function TeacherNavbar() {
       localStorage.removeItem('user');
       setUser(null);
       toast.success('Logout successful!');
+      window.location.href = "/student/home";
     } catch (error) {
       toast.error('Logout failed. Please try again.');
       console.error(error);

@@ -112,7 +112,7 @@ export default function StudyMaterialTab() {
             >
               <div className="flex justify-center mb-4">
                 <Image
-                  src={item.imageUrl || "/pdf file.png"}
+                  src={item.imageUrl || "/pdffile.png"}
                   alt="PDF Icon"
                   width={150}
                   height={150}

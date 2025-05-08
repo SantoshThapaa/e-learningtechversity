@@ -126,3 +126,6 @@
   -webkit-text-stroke: 1px black;
 }
 
+html {
+  scroll-behavior: smooth;
+}

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 import {
   Command,
   CommandEmpty,
@@ -41,24 +42,17 @@ export default function AddCourseForm({ onClose }) {
   const [openCategory, setOpenCategory] = useState(false);
   const [open, setOpen] = useState(false);
   const [batchOptions, setBatchOptions] = useState([]);
-
+  const router = useRouter();
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-
     if (name === 'image') {
       setForm({ ...form, image: files[0] });
-    } else if (name === 'duration' || name === 'durationUnit') {
-      setForm((prevForm) => {
-        const updatedForm = { ...prevForm, [name]: value };
-
-
-        if (updatedForm.duration && updatedForm.durationUnit) {
-          updatedForm.duration = `${updatedForm.duration} ${updatedForm.durationUnit}`;
-        }
-
-        return updatedForm;
-      });
-    } else {
+    } else if (name === 'duration') {
+      setForm({ ...form, duration: value });
+    } else if (name === 'durationUnit') {
+      setForm({ ...form, durationUnit: value });
+    }
+    else {
       setForm({ ...form, [name]: value });
     }
   };
@@ -93,7 +87,7 @@ export default function AddCourseForm({ onClose }) {
       try {
         const res = await axios.get("https://back.bishalpantha.com.np/api/batch/no");
         if (res.data && res.data.batchNo) {
-          setBatchOptions([res.data.batchNo]); 
+          setBatchOptions([res.data.batchNo]);
         } else {
           console.error("API response is not in the expected format:", res.data);
           toast.error("Failed to fetch batch options. Invalid response format.");
@@ -104,15 +98,25 @@ export default function AddCourseForm({ onClose }) {
       }
     };
 
-    fetchBatchOptions(); 
+    fetchBatchOptions();
   }, []);
 
 
   const handleSubmit = async () => {
     const data = new FormData();
+    const combinedDuration = form.duration && form.durationUnit
+      ? `${form.duration} ${form.durationUnit}`
+      : '';
+
     Object.keys(form).forEach((key) => {
-      if (form[key]) data.append(key, form[key]);
+      if (key !== 'duration' && key !== 'durationUnit') {
+        if (form[key]) data.append(key, form[key]);
+      }
     });
+
+    if (combinedDuration) {
+      data.append('duration', combinedDuration);
+    }
 
     try {
       await axios.post('https://back.bishalpantha.com.np/api/createnewcourses', data);
@@ -120,13 +124,17 @@ export default function AddCourseForm({ onClose }) {
         position: "top-right",
         autoClose: 5000,
       });
-      onClose();
+      router.push("/admin/courses");
+      router.back();
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Failed to add course', {
         position: "top-right",
         autoClose: 5000,
       });
     }
+  };
+  const handleCancel = () => {
+    router.back();
   };
 
   return (
@@ -223,7 +231,7 @@ export default function AddCourseForm({ onClose }) {
                   onChange={handleChange}
                   className="text-sm border-0 p-2 w-20"
                 >
-                  <option value="weeks">Weeks</option>
+                  <option value="months">Weeks</option>
                   <option value="months">Months</option>
                   <option value="years">Years</option>
                 </select>
@@ -270,6 +278,8 @@ export default function AddCourseForm({ onClose }) {
                     </CommandGroup>
                   </Command>
                 </PopoverContent>
+
+
               </Popover>
             </div>
           </div>
@@ -285,7 +295,7 @@ export default function AddCourseForm({ onClose }) {
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={onClose}>Cancel</Button>
+            <Button variant="outline" onClick={handleCancel}>Cancel</Button>
             <Button onClick={handleSubmit} className="bg-[#1D1E40] text-white">Send</Button>
           </div>
         </CardContent>

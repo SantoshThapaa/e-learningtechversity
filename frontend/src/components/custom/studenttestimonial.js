@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Star } from 'lucide-react';
 import axios from 'axios';
 
-export const StudentTestimonial = () => {
+export const StudentTestimonial = ({id}) => {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
 

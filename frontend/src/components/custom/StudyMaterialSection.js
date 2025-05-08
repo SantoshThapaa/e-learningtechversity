@@ -152,7 +152,7 @@ export default function StudyMaterialSection() {
                 checked={selectedFiles.includes(file._id)}
               />
               <Image
-                src={`/pdf file.png`}
+                src={`/pdffile.png`}
                 alt={file.fileType}
                 width={48}
                 height={48}

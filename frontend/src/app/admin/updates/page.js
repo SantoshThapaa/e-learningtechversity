@@ -7,7 +7,7 @@ const Page = () => {
   return (
     <div className="flex">
       <AdminSidebar />
-      <main className="ml-60 w-full p-6 bg-gray-100 min-h-screen">
+      <main className="ml-60 mt-10 w-full p-6 bg-gray-100 min-h-screen">
         <div className="mt-12"> 
           <AdminTestimonial />
         </div>

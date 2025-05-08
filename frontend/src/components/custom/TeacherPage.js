@@ -6,17 +6,18 @@ import axios from 'axios';
 import { FaEye, FaTrash } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AddTeacherForm from './AddTeacherForm';
+import { HiOutlinePlus } from 'react-icons/hi';
 
 export default function TeacherPage() {
     const [teachers, setTeachers] = useState([]);
     const [courses, setCourses] = useState([]);
-    const [showAddModal, setShowAddModal] = useState(false);
     const [showViewModal, setShowViewModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedTeacher, setSelectedTeacher] = useState(null);
+    const router = useRouter();
 
     const fetchTeachers = async () => {
         try {
@@ -27,7 +28,7 @@ export default function TeacherPage() {
             toast.error('Failed to fetch teachers');
         }
     };
-    
+
     const fetchCourses = async () => {
         try {
             const res = await axios.get('https://back.bishalpantha.com.np/api/allcourses');
@@ -75,12 +76,16 @@ export default function TeacherPage() {
                 <div className="text-sm text-muted-foreground mb-4">
                     <span className="text-gray-500">Home</span> {'>'} <span className="text-blue-500">Teachers</span>
                 </div>
-                <Button
-                    onClick={() => setShowAddModal(true)}
-                    className="bg-blue-500 text-white rounded-full px-4 py-2 hover:bg-blue-600"
+                <button
+                    className="bg-[#1A2D62] text-white py-2 px-6 rounded-lg flex items-center gap-2 hover:bg-blue-800 transition-colors"
+                    onClick={() => {
+                        console.log("Redirecting to /admin/courseform...");
+                        router.push("/admin/teacherform");
+                      }}
                 >
+                    <HiOutlinePlus className="text-xl" />
                     Add Teacher
-                </Button>
+                </button>
             </div>
 
             {/* Grid Layout for Teacher Cards */}
@@ -227,16 +232,7 @@ export default function TeacherPage() {
                     </tbody>
                 </table>
             </Card>
-
-            {showAddModal && (
-                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                    <div className="p-6 rounded shadow-xl max-w-md w-full">
-                        <AddTeacherForm onClose={() => setShowAddModal(false)} />
-                    </div>
-                </div>
-            )}
-
-            <ToastContainer position="top-right" autoClose={5000}/>
+            <ToastContainer position="top-right" autoClose={5000} />
         </div>
     );
 }

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BlocksIcon, GraduationCap, LayoutGrid, Phone, UploadCloud, UserCheck, Users } from 'lucide-react';
+import { BlocksIcon, Book, CopySlash, FeatherIcon, GraduationCap, Group, LayoutGrid, LogsIcon, Phone, UploadCloud, UserCheck, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
@@ -28,9 +28,35 @@ const links = [
     icon: Users,
   },
   {
+    href: '/admin/team',
+    label: 'Teams',
+    icon: Group,
+  },
+  {
+    href: '/admin/feature',
+    label: 'Sliding Image',
+    icon: FeatherIcon,
+  },
+  {
+    href: '/admin/mentor',
+    label: 'Mentors',
+    icon: Book,
+  },
+  
+  {
+    href: '/admin/logo',
+    label: 'Logos',
+    icon: LogsIcon,
+  },
+  {
     href: '/admin/communication',
     label: 'Communication',
     icon: Phone,
+  },
+  {
+    href: '/admin/fees',
+    label: 'Fees',
+    icon: CopySlash,
   },
   {
     href: '/admin/updates',

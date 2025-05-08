@@ -8,16 +8,31 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from 'next/navigation';
 
-export default function AddAdminForm({ onClose }) {
+export default function AddTeacherForm({ onClose = () => {} }) {
   const [form, setForm] = useState({
     name: '',
     email: '',
-    phone: ''
+    phone: '',
+    password: '',
   });
+
+  const router = useRouter();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleCancel = () => {
+    setForm({
+      name: '',
+      email: '',
+      phone: '',
+      password: '',
+    });
+    router.push("/admin/teacher");
+    onClose(); 
   };
 
   const handleAdd = async () => {
@@ -26,8 +41,14 @@ export default function AddAdminForm({ onClose }) {
       toast.success('Teacher added successfully!', {
         position: "top-right", 
         autoClose: 5000, 
-      });    
-      onClose();
+      });   
+      router.push("/admin/teacher"); 
+      setForm({
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+      }); 
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Something went wrong.', {
         position: "top-right", 
@@ -35,6 +56,9 @@ export default function AddAdminForm({ onClose }) {
       });
     }
   };
+  // const handleCancel = () => {
+  //   router.back(); 
+  // };
   
 
   return (
@@ -64,7 +88,7 @@ export default function AddAdminForm({ onClose }) {
             />
           </div>
           <div>
-            <Label htmlFor="phone">Ph number</Label>
+            <Label htmlFor="phone">Phone Number</Label>
             <Input
               name="phone"
               placeholder="Teacher Name/ID"
@@ -72,10 +96,20 @@ export default function AddAdminForm({ onClose }) {
               onChange={handleChange}
             />
           </div>
+          <div>
+            <Label htmlFor="password">Password</Label>
+            <Input
+              name="password"
+              type="password"
+              placeholder="Enter Password"
+              value={form.password}
+              onChange={handleChange}
+            />
+          </div>
         </div>
 
         <div className="flex justify-end gap-3">
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
           <Button onClick={handleAdd} className="bg-[#1D1E40] text-white hover:bg-[#2f3060]">

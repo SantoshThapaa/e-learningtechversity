@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -48,19 +49,19 @@ export default function Footer() {
             <h3 className="mb-3 text-lg font-bold">About Us</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="/student/contact" className="hover:text-green-600">Contact</a>
+                <Link href="/student/contact" className="hover:text-green-600">Contact</Link>
               </li>
               <li>
-                <a href="/support" className="hover:text-green-600">Support</a>
+                <Link href="/support" className="hover:text-green-600">Support</Link>
               </li>
               <li>
-                <a href="/resources" className="hover:text-green-600">Resources</a>
+                <Link href="/resources" className="hover:text-green-600">Resources</Link>
               </li>
               <li>
-                <a href="/help-center" className="hover:text-green-600">Help Center</a>
+                <Link href="/help-center" className="hover:text-green-600">Help Center</Link>
               </li>
               <li>
-                <a href="/student/updates" className="hover:text-green-600">Blog</a>
+                <Link href="/student/updates" className="hover:text-green-600">Blog</Link>
               </li>
             </ul>
           </div>
@@ -70,26 +71,27 @@ export default function Footer() {
             <h3 className="mb-3 text-lg font-bold">Courses</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="/learning" className="hover:text-green-600">Learning</a>
+                <Link href="/learning" className="hover:text-green-600">Learning</Link>
               </li>
               <li>
-                <a href="/testimonials" className="hover:text-green-600">Testimonials</a>
+                <Link href="#testimonials" className="hover:text-green-600">Testimonials</Link>
               </li>
               <li>
-                <a href="/partners" className="hover:text-green-600">Partners</a>
+                <Link href="#logo" className="hover:text-green-600">Partners</Link>
               </li>
               <li>
-                <a href="/careers" className="hover:text-green-600">Careers</a>
+                <Link href="/careers" className="hover:text-green-600">Careers</Link>
               </li>
             </ul>
           </div>
+
           {/* Newsletter */}
           <div>
             <h3 className="mb-3 text-lg font-bold">Newsletter</h3>
             <p className="mb-3 text-sm">
               Stay updated with our latest news and offers.
             </p>
-            <form className="flex items-center gap-2">
+            <form className="flex items-center gap-2" onSubmit={(e) => e.preventDefault()}>
               <Input
                 type="email"
                 placeholder="Enter email address"

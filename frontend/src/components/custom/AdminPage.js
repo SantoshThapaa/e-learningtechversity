@@ -2,11 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import { FaEye, FaTrash } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AddAdminForm from './AddAdminForm';
+import { HiOutlinePlus } from 'react-icons/hi';
+import Link from 'next/link';
 
 export default function AdminPage() {
     const [admins, setAdmins] = useState([]);
@@ -14,6 +16,7 @@ export default function AdminPage() {
     const [showViewModal, setShowViewModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedAdmin, setSelectedAdmin] = useState(null);
+    const router = useRouter();
 
     const fetchAdmins = async () => {
         try {
@@ -39,6 +42,11 @@ export default function AdminPage() {
         setShowDeleteModal(true);
     };
 
+
+    const closeAddAdminModal = () => {
+        setShowAddModal(false);
+    };
+
     const confirmDelete = async () => {
         try {
             await axios.delete(`https://back.bishalpantha.com.np/api/user/${selectedAdmin._id}`);
@@ -57,12 +65,17 @@ export default function AdminPage() {
                 <div className="text-sm text-muted-foreground mb-4">
                     <span className="text-gray-500">Home</span> {'>'} <span className="text-blue-500">Admins</span>
                 </div>
-                <Button
-                    onClick={() => setShowAddModal(true)}
-                    className="bg-blue-500 text-white rounded-full px-4 py-2 hover:bg-blue-600"
+                <button
+                    className="bg-[#1A2D62] text-white py-2 px-6 rounded-lg flex items-center gap-2 hover:bg-blue-800 transition-colors"
+                    onClick={() => {
+                        console.log("Redirecting to /admin/adminform...");
+                        router.push("/admin/adminform");  
+                    }}
                 >
+                    <HiOutlinePlus className="text-xl" />
                     Add Admin
-                </Button>
+                </button>
+
             </div>
 
             {/* Table Layout */}
@@ -140,16 +153,6 @@ export default function AdminPage() {
                     </div>
                 </div>
             )}
-
-            {/* Add Admin Modal */}
-            {showAddModal && (
-                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                    <div className="p-6 rounded shadow-xl max-w-md w-full">
-                        <AddAdminForm onClose={() => setShowAddModal(false)} />
-                    </div>
-                </div>
-            )}
-
             <ToastContainer position="top-right" autoClose={5000} />
         </div>
     );

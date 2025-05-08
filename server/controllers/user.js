@@ -6,12 +6,10 @@ import { OTP } from "../models/OTP.js";
 import sendMail from "../middlewares/sendMail.js";
 import { Lecture } from "../models/Lecture.js";
 import { Courses } from "../models/Courses.js";
-import crypto from 'crypto';
 
 // **REGISTER**
 export const register = TryCatch(async (req, res) => {
     const { name, email, password, confirmPassword } = req.body;
-    console.log("Received data:", { name, email, password, confirmPassword });
     if (password !== confirmPassword) {
       return res.status(400).json({ message: "Passwords do not match" });
     }
@@ -216,5 +214,28 @@ export const getLecturesByCourse = TryCatch(async (req, res) => {
     });
 });
 
-
+export const updatePassword = TryCatch(async (req, res) => {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    if (newPassword !== confirmPassword) {
+        return res.status(400).json({ message: "New password and confirm password do not match" });
+    }
+    const userId = req.user._id;  
+    console.log('Authenticated User ID:', userId);  
+    const user = await User.findById(userId);
+    
+    if (!user) {
+        return res.status(400).json({ message: "User not found" });
+    }
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+        return res.status(400).json({ message: "Current password is incorrect" });
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+    return res.status(200).json({
+        message: "Password updated successfully",
+        success: true,
+    });
+});
 

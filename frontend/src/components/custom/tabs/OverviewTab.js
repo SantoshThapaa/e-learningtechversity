@@ -7,7 +7,7 @@ import CircularProgress from '@/components/ui/circular-progress';
 
 export default function OverviewTab() {
   const [lecture, setLecture] = useState(null);
-  const [teacher, setTeacher] = useState(null); // Store teacher data
+  const [teacher, setTeacher] = useState(null); 
   const [loading, setLoading] = useState(true);
   const [performanceData, setPerformanceData] = useState({
     attendance: 0,
@@ -194,9 +194,9 @@ export default function OverviewTab() {
             )}
             <div>
               <h3 className="text-lg font-semibold mt-2">
-              {teacher.name}
+              {teacher?.name}
               </h3>
-              <p className="text-sm text-gray-500">{teacher.role}</p>
+              <p className="text-sm text-gray-500">{teacher?.role}</p>
             </div>
           </div>
         </div>

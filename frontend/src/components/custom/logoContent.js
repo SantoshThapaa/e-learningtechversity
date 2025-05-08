@@ -1,22 +1,25 @@
-"use client"
-import Image from "next/image"
-import React from "react"
-import { motion } from "framer-motion"
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import axios from "axios";
 
 export default function LogoContent() {
-  const logos = [
-    "/logo.png",
-    "/logo.png",
-    "/logo.png",
-    "/logo.png",
-    "/logo.png",
-    "/logo.png",
-    "/logo.png",
-    "/logo.png",
-  ]
+  const [logos, setLogos] = useState([]);
 
-  // Duplicate logos for seamless looping
-  const scrollingLogos = [...logos, ...logos]
+  useEffect(() => {
+    axios
+      .get("https://back.bishalpantha.com.np/api/logos")
+      .then((response) => {
+        setLogos(response.data.logos); 
+      })
+      .catch((error) => {
+        console.error("Error fetching logos:", error);
+      });
+  }, []);
+
+  const scrollingLogos = [...logos, ...logos];
 
   return (
     <div className="mt-[30px] overflow-hidden bg-[#f1fffb] py-6">
@@ -29,13 +32,10 @@ export default function LogoContent() {
           ease: "linear",
         }}
       >
-        {scrollingLogos.map((src, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-center min-w-[200px]"
-          >
+        {scrollingLogos.map((logo, index) => (
+          <div key={index} className="flex items-center justify-center min-w-[200px]">
             <Image
-              src={src}
+              src={`https://back.bishalpantha.com.np/${logo.image}`}  
               alt={`Logo ${index + 1}`}
               width={200}
               height={140}
@@ -45,5 +45,5 @@ export default function LogoContent() {
         ))}
       </motion.div>
     </div>
-  )
+  );
 }

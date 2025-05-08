@@ -44,9 +44,9 @@ export default function AssignmentStatusTab({ assignmentId }) {
         <div className="flex justify-between">
           <p className="text-lg text-gray-600"><strong>Status:</strong> <span className="text-green-600">{statusData.submittedAt ? "Submitted" : "Not Submitted"}</span></p>
         </div>
-        <div className="flex justify-between">
-          <p className="text-lg text-gray-600"><strong>Due:</strong> {statusData.dueDate || "N/A"}</p>
-        </div>
+        {/* <div className="flex justify-between"> */}
+          {/* <p className="text-lg text-gray-600"><strong>Due:</strong> {statusData.dueDate || "N/A"}</p> */}
+        {/* </div> */}
         <div className="flex justify-between">
           <p className="text-lg text-gray-600"><strong>Last Change:</strong> {new Date(statusData.submittedAt).toLocaleDateString()}</p>
         </div>

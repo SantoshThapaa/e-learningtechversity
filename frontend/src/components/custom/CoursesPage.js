@@ -61,7 +61,7 @@ export default function CoursesPage() {
   }
 
   return (
-    <div className="py-20 px-10 lg:px-20 bg-gray-100">
+    <div className="flex py-20 px-10 lg:px-20 bg-gray-100">
       <div className="max-w-8xl mx-auto flex flex-col lg:flex-row gap-4 ">
         <CourseFilter onFilterChange={handleFilterChange} categories={availableCategories} selectedCategories={filters.selectedCategories} />
         <div className="w-full px-4 lg:px-4">

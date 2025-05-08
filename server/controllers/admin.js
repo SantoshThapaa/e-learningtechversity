@@ -201,19 +201,23 @@ export const assignTeacherToCourse = TryCatch(async (req, res) => {
 
 
 export const registerTeacher = TryCatch(async (req, res) => {
-  const { name, email, phone } = req.body;
+  const { name, email, phone, password } = req.body;
+
+  if (!password) {
+    return res.status(400).json({ message: "Password is required" });
+  }
 
   const existing = await User.findOne({ email });
   if (existing) return res.status(400).json({ message: "Email already exists" });
 
-  const defaultPassword = "teacher@123";
-  const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const teacher = await User.create({
     name,
     email,
     phone,
     password: hashedPassword,
+    isVerified: true,
     role: "teacher",
     isApprovedByAdmin: true
   });
@@ -262,6 +266,7 @@ export const registerAdmin = TryCatch(async (req, res) => {
     email,
     password: hashedPassword,
     role: "admin",
+    isVerified: true,
     isApprovedByAdmin: true,
   });
 
