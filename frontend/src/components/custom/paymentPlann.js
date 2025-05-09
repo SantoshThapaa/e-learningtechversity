@@ -23,7 +23,6 @@ export default function Paymentplan() {
     const router = useRouter();
     const postalRef = useRef();
 
-    // Step 1: Get courseId from localStorage safely on client
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const id = getCourseIdFromLocalStorage();
@@ -35,7 +34,7 @@ export default function Paymentplan() {
         }
     }, []);
 
-    // Step 2: Fetch course and check access once localCourseId is ready
+   
     useEffect(() => {
         if (!localCourseId) return;
 
@@ -74,7 +73,6 @@ export default function Paymentplan() {
         fetchCourse();
     }, [localCourseId, router]);
 
-    // Step 3: Handle Payment
     const handlePayment = async (event) => {
         event.preventDefault();
         if (!stripe || !elements) return;
