@@ -28,7 +28,7 @@ export default function VerifyOtpPage() {
     e.preventDefault()
 
     try {
-      const response = await axios.post('http://localhost:4000/api/user/verify', {
+      const response = await axios.post('https://back.bishalpantha.com.np/api/user/verify', {
         email,
         otp,
       })
@@ -37,7 +37,7 @@ export default function VerifyOtpPage() {
       setError('')
 
       setTimeout(() => {
-        router.push('/student/about')
+        router.push('/student/home')
       }, 2000)
     } catch (err) {
       setError(err.response?.data?.message || 'OTP verification failed')

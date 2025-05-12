@@ -27,7 +27,7 @@ export default function FeedbackModal({ isOpen, onClose, assignmentId, studentId
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
-        `http://localhost:4000/api/assignment/feedback/${assignmentId}/${studentId}`, 
+        `https://back.bishalpantha.com.np/api/assignment/feedback/${assignmentId}/${studentId}`, 
         { feedback },
         {
           headers: {

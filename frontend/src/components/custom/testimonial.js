@@ -1,13 +1,28 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import axios from "axios";
+import { Button } from "@/components/ui/button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
 export const Testimonial = () => {
+  const [mentors, setMentors] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:4000/api/mentors")
+      .then((response) => {
+        setMentors(response.data.mentors);
+      })
+      .catch((error) => {
+        console.error("Error fetching mentors:", error);
+      });
+  }, []);
+
   return (
     <section className="w-full bg-white px-4 py-8 mt-[30px]">
       <div className="container mx-auto flex flex-col gap-6">
@@ -17,81 +32,81 @@ export const Testimonial = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
-          className="flex justify-between items-center w-[90%] mx-auto mt-[80px]"
+          className="flex flex-col sm:flex-row justify-between items-center w-[90%] mx-auto mt-[80px]"
         >
           {/* Left Content */}
-          <div>
-            <h2 className="text-[40px] font-semibold text-black leading-[48px] font-[unbounded]">
-              OUR POPULAR COURSES
+          <div className="mb-6 sm:mb-0">
+            <h2 className="text-[32px] sm:text-[40px] font-semibold text-black leading-[48px] font-[unbounded] text-center sm:text-left">
+              OUR POPULAR MENTORS
             </h2>
-            <p className="text-[#555555] text-[16px] font-[poppins] leading-[28.8px]">
-              Discover a variety of engaging tech courses designed to help <br />
-              you master new skills, stay ahead in your career, and turn <br />
-              your ideas into reality.
+            <p className="text-[#555555] text-[14px] sm:text-[16px] font-[poppins] leading-[28.8px] text-center sm:text-left">
+              Learn from the best mentors and enhance your skills for a brighter future.
             </p>
           </div>
 
           {/* Right CTA Button */}
-          <Button className="w-[150px] h-[150px] rounded-full bg-[#00D96A] text-black text-[16px] font-[poppins] flex flex-col justify-center items-center hover:bg-[#00c060] transition">
-            Explore All <br /> Courses
-            <FontAwesomeIcon icon={faArrowRight} className="text-white mt-2" />
-          </Button>
+          <Link href="/student/courses">
+            <Button className="w-[150px] h-[150px] rounded-full bg-[#00D96A] text-black text-[16px] font-[poppins] flex flex-col justify-center items-center hover:bg-[#00c060] transition">
+              Explore All <br /> Courses
+              <FontAwesomeIcon icon={faArrowRight} className="text-white mt-2" />
+            </Button>
+          </Link>
         </motion.div>
 
-        {/* Course Cards */}
-        <div className="flex justify-between gap-6 w-[90%] mx-auto">
-          {[
-            {
-              title: 'UI/UX Designing',
-              number: '01',
-              color: '#0B944D',
-              desc: 'Learn the Beauty of UI/UX',
-              instructor: 'Steven James',
-              img: '/user1.jpg.png',
-            },
-            {
-              title: 'MERN Stack',
-              number: '02',
-              color: '#0B944D',
-              desc: 'Learn the Beauty of MERN Stack',
-              instructor: 'Michael Eller',
-              img: '/user2.jpg.png',
-            },
-            {
-              title: 'Full Stack',
-              number: '03',
-              color: '#0B944D',
-              desc: 'Learn the Beauty of Full Stack',
-              instructor: 'Charles Ferrell',
-              img: '/user3.jpg.png',
-            },
-          ].map((course, index) => (
+        {/* Mentor Cards */}
+        <div className="flex flex-wrap justify-between gap-6 w-[90%] mx-auto sm:flex-row flex-col">
+          {mentors.slice(0, 4).map((mentor, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2 }}
               viewport={{ once: true }}
-              className="w-[30%] bg-[#F6FFEB] px-[12px] rounded-lg shadow-lg"
+              className="w-full sm:w-[48%] md:w-[30%] bg-[#F6FFEB] px-[12px] py-[16px] rounded-lg shadow-lg flex flex-col mb-6"
             >
-              <h3 className={`text-[24px] font-semibold flex justify-between items-center text-[${course.color}]`}>
-                <span className="w-[70%]">{course.title}</span>
-                <span className="w-[25%] text-[48px] font-[unbounded]">{course.number}</span>
+              <h3 className="text-[20px] sm:text-[24px] font-semibold flex justify-between items-center text-[#0B944D]">
+                <span className="w-[70%]">{mentor.title}</span>
+                <span className="w-[25%] text-[36px] sm:text-[48px] font-[unbounded]">
+                  {mentor.number}
+                </span>
               </h3>
-              <p className="text-[#555555] text-[16px] leading-[28.8px] mt-4">{course.desc}</p>
-              <div className="flex items-center mt-4">
-                <Image src={course.img} alt="Instructor" width={50} height={50} />
-                <div className="ml-2">
-                  <p className="text-black text-[20px] font-semibold">{course.instructor}</p>
-                  <p className="text-gray-600 text-[16px]">Instructor</p>
+              <p className="text-[#555555] text-[14px] sm:text-[16px] leading-[28.8px] mt-4">
+                {mentor.description}
+              </p>
+              <div className="flex items-center justify-between mt-4">
+                {/* Mentor Info: Image, Name, Role */}
+                <div className="flex items-center">
+                  <Image
+                    // src={`http://localhost:4000/${mentor.image}`}
+                    alt="Instructor"
+                    width={50}
+                    height={50}
+                    className="rounded-full"
+                  />
+                  <div className="ml-2">
+                    <p className="text-black text-[16px] sm:text-[20px] font-semibold">
+                      {mentor.instructor}
+                    </p>
+                    <p className="text-gray-600 text-[14px] sm:text-[16px]">Instructor</p>
+                  </div>
                 </div>
+                
+                {/* Motion for Arrow Button */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.2 }}
+                  viewport={{ once: true }}
+                  className="ml-4 flex items-center text-[#0B944D] text-[16px] sm:text-[20px] hover:underline"
+                >
+                  <Link href="/student/courses">
+                    <FontAwesomeIcon
+                      icon={faArrowRight}
+                      className="text-[#0B944D] font-bold"
+                    />
+                  </Link>
+                </motion.div>
               </div>
-              <Link href="/student/courses" className="mt-4 inline-flex items-center text-[#0B944D] text-[14px] hover:underline">
-                <span>Explore All Courses</span>
-                <svg className="ml-2" width="12" height="12" viewBox="0 0 12 12">
-                  <path d="M4.6 8L8 4.6 6.6 3 3 6.6l3.6 3.6z" fill="#0B944D" />
-                </svg>
-              </Link>
             </motion.div>
           ))}
         </div>
@@ -99,4 +114,3 @@ export const Testimonial = () => {
     </section>
   );
 };
-

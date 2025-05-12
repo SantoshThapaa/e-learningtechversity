@@ -15,8 +15,6 @@ export default function StudyMaterialUpload({ onClose, onUploadSuccess }) {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [courseId, setCourseId] = useState("");
   const [courses, setCourses] = useState([]);
-
-  // ✅ Get user ID from token
   useEffect(() => {
     const userId = getUserIdFromToken();
     if (userId) {
@@ -26,22 +24,18 @@ export default function StudyMaterialUpload({ onClose, onUploadSuccess }) {
       setIsLoggedIn(false);
     }
   }, []);
-
-  // ✅ Fetch assigned courses for this teacher
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const token = localStorage.getItem("token");
-
-        // Use template string to correctly inject uploaderId
-        const res = await axios.get(`http://localhost:4000/api/assigned-courses/${uploaderId}`, {
+        const res = await axios.get(`https://back.bishalpantha.com.np/api/assigned-courses/${uploaderId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         setCourses(res.data.courses || []);
       } catch (err) {
         console.error("Failed to fetch courses", err);
-        toast.error("❌ Failed to fetch courses.");
+        toast.error(" Failed to fetch courses.");
       }
     };
 
@@ -69,7 +63,7 @@ export default function StudyMaterialUpload({ onClose, onUploadSuccess }) {
     formData.append("courseId", courseId);
 
     try {
-      await axios.post("http://localhost:4000/api/study-materials/upload", formData, {
+      await axios.post("https://back.bishalpantha.com.np/api/study-materials/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,

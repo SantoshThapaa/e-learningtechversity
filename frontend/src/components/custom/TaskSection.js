@@ -19,7 +19,7 @@ const TaskPage = () => {
       if (!token || !userId) return;
 
       try {
-        const res = await fetch("http://localhost:4000/api/assignment/courseassignments", {
+        const res = await fetch("https://back.bishalpantha.com.np/api/assignment/courseassignments", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

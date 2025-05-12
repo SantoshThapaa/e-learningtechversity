@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -47,13 +48,21 @@ export default function Footer() {
           <div>
             <h3 className="mb-3 text-lg font-bold">About Us</h3>
             <ul className="space-y-2 text-sm">
-              {["Contact", "Support", "Resources", "Help Center", "Blog"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="hover:text-green-600">
-                    {item}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <Link href="/student/contact" className="hover:text-green-600">Contact</Link>
+              </li>
+              <li>
+                <Link href="/support" className="hover:text-green-600">Support</Link>
+              </li>
+              <li>
+                <Link href="/resources" className="hover:text-green-600">Resources</Link>
+              </li>
+              <li>
+                <Link href="/help-center" className="hover:text-green-600">Help Center</Link>
+              </li>
+              <li>
+                <Link href="/student/updates" className="hover:text-green-600">Blog</Link>
+              </li>
             </ul>
           </div>
 
@@ -61,13 +70,18 @@ export default function Footer() {
           <div>
             <h3 className="mb-3 text-lg font-bold">Courses</h3>
             <ul className="space-y-2 text-sm">
-              {["Learning", "Testimonials", "Partners", "Careers"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="hover:text-green-600">
-                    {item}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <Link href="/learning" className="hover:text-green-600">Learning</Link>
+              </li>
+              <li>
+                <Link href="#testimonials" className="hover:text-green-600">Testimonials</Link>
+              </li>
+              <li>
+                <Link href="#logo" className="hover:text-green-600">Partners</Link>
+              </li>
+              <li>
+                <Link href="/careers" className="hover:text-green-600">Careers</Link>
+              </li>
             </ul>
           </div>
 
@@ -77,7 +91,7 @@ export default function Footer() {
             <p className="mb-3 text-sm">
               Stay updated with our latest news and offers.
             </p>
-            <form className="flex items-center gap-2">
+            <form className="flex items-center gap-2" onSubmit={(e) => e.preventDefault()}>
               <Input
                 type="email"
                 placeholder="Enter email address"

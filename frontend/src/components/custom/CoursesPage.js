@@ -18,7 +18,7 @@ export default function CoursesPage() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/api/allcourses')
+        const res = await axios.get('https://back.bishalpantha.com.np/api/allcourses')
         const allCourses = res.data.courses || []
         setCourses(allCourses)
         setFilteredCourses(allCourses)
@@ -61,7 +61,7 @@ export default function CoursesPage() {
   }
 
   return (
-    <div className="py-20 px-10 lg:px-20 bg-gray-100">
+    <div className="flex py-20 px-10 lg:px-20 bg-gray-100">
       <div className="max-w-8xl mx-auto flex flex-col lg:flex-row gap-4 ">
         <CourseFilter onFilterChange={handleFilterChange} categories={availableCategories} selectedCategories={filters.selectedCategories} />
         <div className="w-full px-4 lg:px-4">

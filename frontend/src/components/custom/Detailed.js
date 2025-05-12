@@ -19,11 +19,11 @@ export default function Details() {
 
     const fetchCourse = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/api/course/${courseId}`)
+        const response = await axios.get(`https://back.bishalpantha.com.np/api/course/${courseId}`)
         setCourse(response.data.course)
         if (response.data.course.assignedTo && response.data.course.assignedTo.length > 0) {
           const teacherId = response.data.course.assignedTo[0]
-          const teacherResponse = await axios.get(`http://localhost:4000/api/teachers/${teacherId}`)
+          const teacherResponse = await axios.get(`https://back.bishalpantha.com.np/api/teachers/${teacherId}`)
           setTeacher(teacherResponse.data.teacher)
         }
       } catch (error) {
@@ -47,7 +47,7 @@ export default function Details() {
   return (
     <div className="flex-1">
       <Image
-        src={`http://localhost:4000/${course.image}`} 
+        src={`https://back.bishalpantha.com.np/${course.image}`} 
         alt="Course Visual"
         width={400}
         height={150}
@@ -72,7 +72,7 @@ export default function Details() {
           <>
             {teacher.profile?.profilePicture && (
               <Image
-                src={`http://localhost:4000${teacher.profile.profilePicture}`} 
+                src={`https://back.bishalpantha.com.np${teacher.profile.profilePicture}`} 
                 alt="Instructor"
                 width={100}
                 height={100}

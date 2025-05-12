@@ -16,7 +16,7 @@ export default function CourseStudents() {
     useEffect(() => {
         const fetchStudents = async () => {
             try {
-                const res = await axios.get('http://localhost:4000/api/students');
+                const res = await axios.get('https://back.bishalpantha.com.np/api/students');
                 console.log("Fetched users:", res.data.users);
                 setStudents(res.data.users || []);
             } catch (err) {
@@ -46,7 +46,7 @@ export default function CourseStudents() {
 
     const confirmDelete = async () => {
         try {
-            await axios.delete(`http://localhost:4000/api/user/${selectedStudent._id}`);
+            await axios.delete(`https://back.bishalpantha.com.np/api/user/${selectedStudent._id}`);
             toast.success('Student deleted successfully!');
             setStudents((prev) => prev.filter((student) => student._id !== selectedStudent._id));
             setShowDeleteModal(false);
@@ -82,7 +82,7 @@ export default function CourseStudents() {
                                     <td className="p-4 flex items-center gap-3">
                                         <Avatar className="h-8 w-8">
                                             <AvatarImage
-                                                src={`http://localhost:4000${student.profile?.profilePicture || "/avatar-default.jpg"}`}
+                                                src={`https://back.bishalpantha.com.np${student.profile?.profilePicture || "/avatar-default.jpg"}`}
                                                 alt="Profile"
                                             />
                                             <AvatarFallback>{student.name[0]}</AvatarFallback>

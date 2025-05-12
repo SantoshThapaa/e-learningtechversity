@@ -8,7 +8,7 @@ const page = () => {
       <div className=''>
       <AdminSidebar />
       </div>
-      <main className="w-full p-6 min-h-screen ml-50">
+      <main className="w-full mt-10 p-6 min-h-screen ml-50">
         <TeacherPage/>
       </main>
     </div>

@@ -33,7 +33,7 @@ export default function StudyMaterialTab() {
       }
 
       const res = await axios.get(
-        `http://localhost:4000/api/study-materials/course/${courseId}`,
+        `https://back.bishalpantha.com.np/api/study-materials/course/${courseId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -58,7 +58,7 @@ export default function StudyMaterialTab() {
     }
 
     try {
-      const res = await axios.get(`http://localhost:4000/api/user/${userId}`);
+      const res = await axios.get(`https://back.bishalpantha.com.np/api/user/${userId}`);
       const teacher = res.data; 
       setTeacherName(teacher.name); 
     } catch (err) {
@@ -73,7 +73,7 @@ export default function StudyMaterialTab() {
       return;
     }
 
-    const fullUrl = `http://localhost:4000${fileUrl}`;
+    const fullUrl = `https://back.bishalpantha.com.np${fileUrl}`;
     console.log("Opening file at:", fullUrl); 
     window.open(fullUrl, "_blank");
   };
@@ -84,7 +84,7 @@ export default function StudyMaterialTab() {
       return;
     }
 
-    const fullUrl = `http://localhost:4000${fileUrl}`;
+    const fullUrl = `https://back.bishalpantha.com.np${fileUrl}`;
     const a = document.createElement("a");
     a.href = fullUrl;
     a.download = title;
@@ -112,7 +112,7 @@ export default function StudyMaterialTab() {
             >
               <div className="flex justify-center mb-4">
                 <Image
-                  src={item.imageUrl || "/pdf file.png"}
+                  src={item.imageUrl || "/pdffile.png"}
                   alt="PDF Icon"
                   width={150}
                   height={150}

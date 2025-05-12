@@ -25,17 +25,21 @@ export default function NotificationListPage() {
   const fetchNotifications = async () => {
     setLoading(true);
     try {
-      const role = "user";  // This will be for the "user" role
+      const role = "user";
       const response = await axios.get(
-        `http://localhost:4000/api/notifications/user/${role}`
+        `https://back.bishalpantha.com.np/api/notifications/user/${role}`
       );
-      console.log(response.data);  // Log to check the response structure
+      console.log(response.data);
       setNotifications(response.data);
       setLoading(false);
-      showSuccessToast("Notifications fetched successfully.");
+      toast.success("Notifications fetched successfully.", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
     } catch (error) {
       setLoading(false);
-      showErrorToast("Error fetching notifications.");
+      toast.error("Error fetching notifications.", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
       console.error("Error fetching notifications:", error);
     }
   };

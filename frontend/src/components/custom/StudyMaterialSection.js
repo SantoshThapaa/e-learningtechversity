@@ -26,7 +26,7 @@ export default function StudyMaterialSection() {
         return;
       }
 
-      const res = await axios.get(`http://localhost:4000/api/study-materials/teacher/${uploaderId}`);
+      const res = await axios.get(`https://back.bishalpantha.com.np/api/study-materials/teacher/${uploaderId}`);
       setFiles(res.data.materials || []);
     } catch (err) {
       console.error("Failed to fetch study materials:", err);
@@ -59,7 +59,7 @@ export default function StudyMaterialSection() {
     }
 
     try {
-      await axios.delete("http://localhost:4000/api/study-materials/delete", {
+      await axios.delete("https://back.bishalpantha.com.np/api/study-materials/delete", {
         data: { fileIds: selectedFiles },
       });
 
@@ -152,7 +152,7 @@ export default function StudyMaterialSection() {
                 checked={selectedFiles.includes(file._id)}
               />
               <Image
-                src={`/pdf file.png`}
+                src={`/pdffile.png`}
                 alt={file.fileType}
                 width={48}
                 height={48}

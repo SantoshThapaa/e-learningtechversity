@@ -1,37 +1,17 @@
-"use client";
-import EMI from "@/components/custom/EMI";
-import FullPaid from "../../../components/custom/FullPaid"; 
-import { useState } from "react";
+import FeePage from '@/components/custom/FeePage'
+import AdminSidebar from '@/components/custom/navbar/AdminSidebar'
+import React from 'react'
 
-export default function FeePage() {
-  const [isFullPaid, setIsFullPaid] = useState(true);
-
+const page = () => {
   return (
-    <div className="container mx-auto mt-20 ml-60">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl font-semibold">Fees</h1>
-      </div>
-
-      {/* Toggle Buttons */}
-      <div className="flex space-x-4 mb-6">
-        <button
-          className={`px-6 py-2 rounded-lg ${isFullPaid ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"
-            } hover:bg-blue-700 transition duration-300 ease-in-out`}
-          onClick={() => setIsFullPaid(true)}
-        >
-          Full Paid
-        </button>
-        <button
-          className={`px-6 py-2 rounded-lg ${!isFullPaid ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"
-            } hover:bg-blue-700 transition duration-300 ease-in-out`}
-          onClick={() => setIsFullPaid(false)}
-        >
-          EMI
-        </button>
-      </div>
-
-      {/* Tab Content */}
-      {isFullPaid ? <FullPaid /> : <EMI />}
+    <div className="flex">
+      <AdminSidebar />
+      <main className="ml-50 mt-10 w-full p-6 bg-gray-100 min-h-screen">
+        <FeePage/>
+      </main>
     </div>
-  );
+
+  )
 }
+
+export default page

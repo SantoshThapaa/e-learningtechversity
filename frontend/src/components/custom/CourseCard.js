@@ -18,14 +18,14 @@ export default function CourseCard({ course }) {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       viewport={{ once: true }}
-      className="w-full p-4"
+      className="flex w-full p-4"
     >
       <Card
         onClick={handleRedirect}
         className="shadow-lg rounded-xl overflow-hidden relative cursor-pointer"
       >
         <Image
-          src={`http://localhost:4000/${course.image}`}
+          src={`https://back.bishalpantha.com.np/${course.image}`}
           alt={course.title}
           width={500}
           height={300}
@@ -64,9 +64,9 @@ export default function CourseCard({ course }) {
             </span>
           </p>
 
-          <p className="text-sm text-gray-600 mt-1">
+          {/* <p className="text-sm text-gray-600 mt-1">
             Seats Available: {30 - (course.enrolledStudents?.length || 0)}
-          </p>
+          </p> */}
         </CardContent>
       </Card>
     </motion.div>

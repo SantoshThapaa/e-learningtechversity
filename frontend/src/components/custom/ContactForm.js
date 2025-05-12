@@ -11,7 +11,7 @@ export default function ContactForm() {
         email: '',
         message: '',
     });
-    const [status, setStatus] = useState(null); // To track the message status (success/error)
+    const [status, setStatus] = useState(null); 
     const [isLoading, setIsLoading] = useState(false);
 
     // Handle input changes
@@ -28,10 +28,10 @@ export default function ContactForm() {
         e.preventDefault();
         setIsLoading(true);
         setStatus(null);
-        console.log(formData);  // Debugging the data being sent
+        console.log(formData); 
 
         try {
-            const response = await fetch('http://localhost:4000/api/send', {
+            const response = await fetch('https://back.bishalpantha.com.np/api/send', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -41,7 +41,6 @@ export default function ContactForm() {
             const data = await response.json();
 
             if (response.ok) {
-                // Reset form data if the message was sent successfully
                 setFormData({
                     fullName: '',
                     email: '',

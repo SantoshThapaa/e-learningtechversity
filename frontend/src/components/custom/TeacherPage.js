@@ -6,31 +6,32 @@ import axios from 'axios';
 import { FaEye, FaTrash } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AddTeacherForm from './AddTeacherForm';
+import { HiOutlinePlus } from 'react-icons/hi';
 
 export default function TeacherPage() {
     const [teachers, setTeachers] = useState([]);
     const [courses, setCourses] = useState([]);
-    const [showAddModal, setShowAddModal] = useState(false);
     const [showViewModal, setShowViewModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedTeacher, setSelectedTeacher] = useState(null);
+    const router = useRouter();
 
     const fetchTeachers = async () => {
         try {
-            const res = await axios.get('http://localhost:4000/api/teachers');
+            const res = await axios.get('https://back.bishalpantha.com.np/api/teachers');
             setTeachers(res.data.teachers || []);
         } catch (err) {
             console.error('Error fetching teachers:', err);
             toast.error('Failed to fetch teachers');
         }
     };
-    
+
     const fetchCourses = async () => {
         try {
-            const res = await axios.get('http://localhost:4000/api/allcourses');
+            const res = await axios.get('https://back.bishalpantha.com.np/api/allcourses');
             setCourses(res.data.courses || []);
         } catch (err) {
             console.error('Error fetching courses:', err);
@@ -54,7 +55,7 @@ export default function TeacherPage() {
 
     const confirmDelete = async () => {
         try {
-            await axios.delete(`http://localhost:4000/api/user/${selectedTeacher._id}`);
+            await axios.delete(`https://back.bishalpantha.com.np/api/user/${selectedTeacher._id}`);
             toast.success('Teacher deleted successfully!');
             fetchTeachers();
             setShowDeleteModal(false);
@@ -75,12 +76,16 @@ export default function TeacherPage() {
                 <div className="text-sm text-muted-foreground mb-4">
                     <span className="text-gray-500">Home</span> {'>'} <span className="text-blue-500">Teachers</span>
                 </div>
-                <Button
-                    onClick={() => setShowAddModal(true)}
-                    className="bg-blue-500 text-white rounded-full px-4 py-2 hover:bg-blue-600"
+                <button
+                    className="bg-[#1A2D62] text-white py-2 px-6 rounded-lg flex items-center gap-2 hover:bg-blue-800 transition-colors"
+                    onClick={() => {
+                        console.log("Redirecting to /admin/courseform...");
+                        router.push("/admin/teacherform");
+                      }}
                 >
+                    <HiOutlinePlus className="text-xl" />
                     Add Teacher
-                </Button>
+                </button>
             </div>
 
             {/* Grid Layout for Teacher Cards */}
@@ -88,7 +93,7 @@ export default function TeacherPage() {
                 {teachers.slice(0, 5).map((teacher, index) => (
                     <Card key={index} className="overflow-hidden rounded-xl shadow-lg bg-white">
                         <Image
-                            src={`http://localhost:4000/${teacher?.profile?.backgroundImage || 'uploads/default-bg.jpg'}`}
+                            src={`https://back.bishalpantha.com.np/${teacher?.profile?.backgroundImage || 'uploads/default-bg.jpg'}`}
                             alt="background"
                             className="w-full h-32 object-cover"
                             width={1280}
@@ -97,7 +102,7 @@ export default function TeacherPage() {
                         />
                         <div className="flex flex-col items-center p-4 -mt-12">
                             <Image
-                                src={`http://localhost:4000${teacher?.profile?.profilePicture || '/uploads/default-avatar.png'}`}
+                                src={`https://back.bishalpantha.com.np${teacher?.profile?.profilePicture || '/uploads/default-avatar.png'}`}
                                 alt={teacher.name}
                                 className="w-24 h-24 rounded-full border-4 border-white shadow-lg"
                                 width={96}
@@ -127,7 +132,7 @@ export default function TeacherPage() {
                         <h3 className="text-xl font-semibold">{selectedTeacher.name}</h3>
                         <div className="flex items-center gap-4 mt-4">
                             <Image
-                                src={`http://localhost:4000${selectedTeacher?.profile?.profilePicture || '/uploads/default-avatar.png'}`}
+                                src={`https://back.bishalpantha.com.np${selectedTeacher?.profile?.profilePicture || '/uploads/default-avatar.png'}`}
                                 alt={selectedTeacher.name}
                                 className="w-24 h-24 rounded-full border-4 border-white shadow-lg"
                                 width={96}
@@ -188,7 +193,7 @@ export default function TeacherPage() {
                             <tr key={i} className="border-t">
                                 <td className="p-3 flex items-center gap-2">
                                     <Image
-                                        src={`http://localhost:4000${teacher?.profile?.profilePicture || '/uploads/default-avatar.png'}`}
+                                        src={`https://back.bishalpantha.com.np${teacher?.profile?.profilePicture || '/uploads/default-avatar.png'}`}
                                         alt={teacher.name}
                                         className="w-15 h-15 rounded-full border-4 border-white shadow-lg"
                                         width={25}
@@ -227,16 +232,7 @@ export default function TeacherPage() {
                     </tbody>
                 </table>
             </Card>
-
-            {showAddModal && (
-                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                    <div className="p-6 rounded shadow-xl max-w-md w-full">
-                        <AddTeacherForm onClose={() => setShowAddModal(false)} />
-                    </div>
-                </div>
-            )}
-
-            <ToastContainer position="top-right" autoClose={5000}/>
+            <ToastContainer position="top-right" autoClose={5000} />
         </div>
     );
 }

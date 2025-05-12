@@ -7,7 +7,7 @@ import CircularProgress from '@/components/ui/circular-progress';
 
 export default function OverviewTab() {
   const [lecture, setLecture] = useState(null);
-  const [teacher, setTeacher] = useState(null); // Store teacher data
+  const [teacher, setTeacher] = useState(null); 
   const [loading, setLoading] = useState(true);
   const [performanceData, setPerformanceData] = useState({
     attendance: 0,
@@ -28,7 +28,7 @@ export default function OverviewTab() {
       if (!token || !courseId) return;
 
       try {
-        const res = await axios.get(`http://localhost:4000/api/lectures/${courseId}`, {
+        const res = await axios.get(`https://back.bishalpantha.com.np/api/lectures/${courseId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -48,7 +48,7 @@ export default function OverviewTab() {
       if (!token || !courseId) return;
 
       try {
-        const res = await axios.get(`http://localhost:4000/api/assignment/assignments/completed`, {
+        const res = await axios.get(`https://back.bishalpantha.com.np/api/assignment/assignments/completed`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -78,7 +78,7 @@ export default function OverviewTab() {
       if (!token || !courseId) return;
 
       try {
-        const res = await axios.get(`http://localhost:4000/api/courses/${courseId}/attendance/percentage`, {
+        const res = await axios.get(`https://back.bishalpantha.com.np/api/courses/${courseId}/attendance/percentage`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -97,7 +97,7 @@ export default function OverviewTab() {
       if (!token || !courseId) return;
 
       try {
-        const res = await axios.get(`http://localhost:4000/api/courses/${courseId}/lecture-completion`, {
+        const res = await axios.get(`https://back.bishalpantha.com.np/api/courses/${courseId}/lecture-completion`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -118,7 +118,7 @@ export default function OverviewTab() {
       if (!token || !courseId) return;
 
       try {
-        const courseRes = await axios.get(`http://localhost:4000/api/course/${courseId}`, {
+        const courseRes = await axios.get(`https://back.bishalpantha.com.np/api/course/${courseId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const assignedTo = courseRes.data.course?.assignedTo;
@@ -126,7 +126,7 @@ export default function OverviewTab() {
         if (Array.isArray(assignedTo)) {
           const teacherDetails = await Promise.all(
             assignedTo.map(async (teacherId) => {
-              const resTeacher = await fetch(`http://localhost:4000/api/teachers/${teacherId}`, {
+              const resTeacher = await fetch(`https://back.bishalpantha.com.np/api/teachers/${teacherId}`, {
                 headers: { Authorization: `Bearer ${token}` },
               });
               const data = await resTeacher.json();
@@ -185,7 +185,7 @@ export default function OverviewTab() {
           <div className="flex items-center gap-4 mt-6">
             {teacher && teacher.profile && teacher.profile.profilePicture && (
               <Image
-                src={`http://localhost:4000${teacher?.profile?.profilePicture || '/uploads/default-bg.jpg'}`}
+                src={`https://back.bishalpantha.com.np${teacher?.profile?.profilePicture || '/uploads/default-bg.jpg'}`}
                 alt="Instructor"
                 width={80}
                 height={80}
@@ -194,9 +194,9 @@ export default function OverviewTab() {
             )}
             <div>
               <h3 className="text-lg font-semibold mt-2">
-              {teacher.name}
+              {teacher?.name}
               </h3>
-              <p className="text-sm text-gray-500">{teacher.role}</p>
+              <p className="text-sm text-gray-500">{teacher?.role}</p>
             </div>
           </div>
         </div>

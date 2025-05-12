@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
@@ -21,7 +21,7 @@ export default function HeroBanner() {
                         transition={{ duration: 3 }}
                         className="flex flex-col items-center justify-center"
                     >
-                        <h1 className="text-[56px] md:text-[64px] leading-[68px] text-black font-unbounded font-bold text-center">
+                        <h1 className="text-[32px] sm:text-[56px] md:text-[64px] leading-[48px] sm:leading-[68px] text-black font-unbounded font-bold text-center">
                             Empowering the Next Generation
                             <br />
                             of Tech Talent
@@ -31,7 +31,7 @@ export default function HeroBanner() {
                                 Whether you’re a beginner or an experienced professional, we bring you industry-relevant courses designed to boost your career and future-proof your skills.
                             </p>
                         </div>
-                        <div className="flex justify-center gap-4">
+                        <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
                             <a
                                 href="/student/contact"
                                 className="px-6 py-3 rounded-md bg-[#00C853] text-white font-medium hover:bg-green-600 transition"
@@ -76,7 +76,7 @@ export default function HeroBanner() {
 
                                 {/* Left: Heading */}
                                 <div className="col-span-1 sm:col-span-1">
-                                    <h2 className="text-2xl md:text-3xl font-bold leading-snug">
+                                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-snug">
                                         DIVE INTO PRACTICAL <br />
                                         PROJECTS AND BUILD <br />
                                         JOB-READY SKILLS
@@ -92,8 +92,8 @@ export default function HeroBanner() {
                                         transition={{ delay: 0.2 * (idx + 1), duration: 0.6 }}
                                         className="flex flex-col items-start sm:items-center justify-center gap-1"
                                     >
-                                        <h3 className="text-4xl font-bold text-green-300">{item.value}</h3>
-                                        <p className="text-md">{item.label}</p>
+                                        <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold text-green-300">{item.value}</h3>
+                                        <p className="text-md sm:text-lg">{item.label}</p>
                                     </motion.div>
                                 ))}
                             </div>
@@ -101,14 +101,6 @@ export default function HeroBanner() {
                     </div>
                 </div>
             </section>
-
-
-
-
-
-
-
-
         </div>
     )
 }

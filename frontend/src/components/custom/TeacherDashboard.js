@@ -17,7 +17,7 @@ const TeacherDashboard = () => {
   const fetchAssignedCourses = async (id) => {
     if (!id) return console.warn("Missing teacher ID for fetchAssignedCourses");
     try {
-      const response = await axios.get(`http://localhost:4000/api/assigned-courses/${id}`);
+      const response = await axios.get(`https://back.bishalpantha.com.np/api/assigned-courses/${id}`);
       setCourses(response.data.courses);
     } catch (error) {
       console.error("Error fetching assigned courses:", error);
@@ -26,7 +26,7 @@ const TeacherDashboard = () => {
 
   const fetchCoursesStatus = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/courses/status");
+      const response = await axios.get("https://back.bishalpantha.com.np/api/courses/status");
       setCourseStatus(response.data); 
     } catch (error) {
       console.error("Error fetching course status:", error);

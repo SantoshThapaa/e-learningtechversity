@@ -19,23 +19,28 @@ export default function StudentNavbar() {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await axios.get('http://localhost:4000/api/user/me', {
+        const response = await axios.get('https://back.bishalpantha.com.np/api/user/me', {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setUser(response.data.user);
         setLoading(false);
       } catch (error) {
-        toast.error('Failed to fetch profile');
-        console.error('Error fetching profile:', error);
         setLoading(false);
       }
     };
 
     fetchUserProfile();
   }, []);
+
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -75,7 +80,7 @@ export default function StudentNavbar() {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:4000/api/user/logout');
+      await axios.post('https://back.bishalpantha.com.np/api/user/logout');
       localStorage.removeItem('user');
       setUser(null);
       toast.success('Logout successful!');
@@ -88,7 +93,7 @@ export default function StudentNavbar() {
   const fetchNotifications = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:4000/api/notifications/user/all');
+      const response = await axios.get('https://back.bishalpantha.com.np/api/notifications/user/all');
       setNotifications(response.data);
       setLoading(false);
     } catch (error) {
@@ -149,14 +154,14 @@ export default function StudentNavbar() {
                 )}
               </li>
               <li className="relative profile-dropdown">
-                {console.log('Profile Image URL:', `http://localhost:4000${user?.profile?.profilePicture || '/default-profile.jpg'}`)}
-                <img
-                  src={`http://localhost:4000${user?.profile?.profilePicture || '/default-profile.jpg'}`}
+                <Image
+                  src={`https://back.bishalpantha.com.np${user?.profile?.profilePicture || '/default-profile.jpg'}`}
                   alt="Profile"
-                  className="w-8 h-8 rounded-full object-cover cursor-pointer"
                   width={32}
                   height={32}
+                  className="w-8 h-8 rounded-full object-cover cursor-pointer"
                   onClick={() => setShowDropdown(prev => !prev)}
+                  unoptimized
                 />
                 {showDropdown && (
                   <ul className="absolute right-0 mt-2 w-30 shadow-md rounded-md bg-white z-50">

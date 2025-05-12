@@ -10,45 +10,46 @@ import { Courses } from "../models/Courses.js";
 // **REGISTER**
 export const register = TryCatch(async (req, res) => {
     const { name, email, password, confirmPassword } = req.body;
-
     if (password !== confirmPassword) {
-        return res.status(400).json({ message: "Passwords do not match" });
+      return res.status(400).json({ message: "Passwords do not match" });
     }
-
-    let user = await User.findOne({ email });
-    if (user) {
-        return res.status(400).json({ message: "User already exists" });
+  
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
     }
-    console.log(password);
+  
     const hashPassword = await bcrypt.hash(password, 10);
-    user = new User({
-        name,
-        email,
-        password: hashPassword,
-        isVerified: false,
+  
+    const user = new User({
+      name,
+      email,
+      password: hashPassword,
+      role: 'user',
+      isVerified: false,
     });
-
+  
     await user.save();
-
+  
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+  
     const otpRecord = new OTP({
-        userId: user._id,
-        otp,
-        expiresAt,
+      userId: user._id,
+      otp,
+      expiresAt,
     });
-
+  
     await otpRecord.save();
-
-    // Send OTP to email
+  
     await sendMail(email, "Techversity - Email Verification", { name, otp });
-
+  
     return res.status(200).json({
-        message: "OTP sent to your email. Please verify your account.",
-        success: true,
+      message: "OTP sent to your email. Please verify your account.",
+      success: true,
     });
-});
-
+  });
+  
 
 // **VERIFY USER**
 export const verifyUser = TryCatch(async (req, res) => {
@@ -64,11 +65,9 @@ export const verifyUser = TryCatch(async (req, res) => {
         return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    // Mark user as verified
     user.isVerified = true;
     await user.save();
 
-    // Mark OTP as verified
     otpRecord.isVerified = true;
     await otpRecord.save();
 
@@ -86,7 +85,6 @@ export const loginUser = TryCatch(async (req, res) => {
         return res.status(400).json({ message: "User not found" });
     }
 
-    // ✅ Skip email verification if role is 'teacher'
     if (user.role !== 'teacher' && !user.isVerified) {
         return res.status(400).json({ message: "Please verify your email first" });
     }
@@ -117,8 +115,6 @@ export const loginUser = TryCatch(async (req, res) => {
     });
 });
 
-
-// **LOGOUT USER**
 export const logoutUser = TryCatch(async (req, res) => {
     res.clearCookie("token");
 
@@ -127,6 +123,7 @@ export const logoutUser = TryCatch(async (req, res) => {
         success: true,
     });
 });
+
 
 export const myProfile = TryCatch(async (req, res) => {
     const user = await User.findById(req.user._id);
@@ -217,5 +214,28 @@ export const getLecturesByCourse = TryCatch(async (req, res) => {
     });
 });
 
-
+export const updatePassword = TryCatch(async (req, res) => {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    if (newPassword !== confirmPassword) {
+        return res.status(400).json({ message: "New password and confirm password do not match" });
+    }
+    const userId = req.user._id;  
+    console.log('Authenticated User ID:', userId);  
+    const user = await User.findById(userId);
+    
+    if (!user) {
+        return res.status(400).json({ message: "User not found" });
+    }
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+        return res.status(400).json({ message: "Current password is incorrect" });
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+    return res.status(200).json({
+        message: "Password updated successfully",
+        success: true,
+    });
+});
 

@@ -23,7 +23,7 @@ export default function Login({ variants }) {
     setError('')
 
     try {
-      const response = await axios.post('http://localhost:4000/api/user/login', {
+      const response = await axios.post('https://back.bishalpantha.com.np/api/user/login', {
         email: formData.email.trim(),
         password: formData.password.trim(),
       })
@@ -34,11 +34,13 @@ export default function Login({ variants }) {
       localStorage.setItem('user', JSON.stringify({ name, photo: photoUrl, role }))
       toast.success('Login successful!')
 
-      if (role === 'teacher') {
+      if (role === 'admin') {
+        router.push('/admin/home')
+      } else if (role === 'teacher') {
         router.push('/teacher/home')
       } else {
         router.push('/student/courses')
-      }
+      }      
 
     } catch (err) {
       const message = err.response?.data?.message || 'Login failed'

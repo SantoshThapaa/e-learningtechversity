@@ -1,21 +1,11 @@
-import ContactForm from '@/components/custom/ContactForm'
-import CourseBanner from '@/components/custom/CourseBanner'
-import Footer from '@/components/custom/Footer/StudentFooter'
-import StudentNavbar from '@/components/custom/navbar/StudentNavbar'
-import Paymentplan from '@/components/custom/paymentPlann'
-import Section from '@/components/custom/scetion'
-import React from 'react'
+'use client';
 
-const Payment = () => {
-  return (
-    <>
-    <StudentNavbar/>
-    <CourseBanner/>
-    <Section/>
-    <Paymentplan/>
-    <ContactForm/>
-    <Footer/>
-    </>
-  )
+import dynamic from 'next/dynamic';
+
+const PaymentClient = dynamic(() => import('@/components/custom/PaymentClient'), {
+  ssr: false,
+});
+
+export default function Page() {
+  return <PaymentClient />;
 }
-export default Payment;

@@ -2,19 +2,20 @@
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import AddCourseForm from '@/components/custom/AddCourseForm';
+import { HiOutlinePlus } from 'react-icons/hi';
 
 export default function CoursePage() {
   const [courses, setCourses] = useState([]);
-  const [showAddModal, setShowAddModal] = useState(false);
   const [completedCourses, setCompletedCourses] = useState(0);
   const [inProgressCourses, setInProgressCourses] = useState(0);
+  const router = useRouter();
 
   const fetchCourses = async () => {
     try {
-      const res = await axios.get('http://localhost:4000/api/allcourses');
+      const res = await axios.get('https://back.bishalpantha.com.np/api/allcourses');
       setCourses(res.data.courses || []);
     } catch (err) {
       console.error('Failed to fetch courses:', err);
@@ -24,10 +25,11 @@ export default function CoursePage() {
   useEffect(() => {
     fetchCourses();
   }, []);
+
   useEffect(() => {
     const fetchCoursesStatus = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/courses/status');
+        const response = await fetch('https://back.bishalpantha.com.np/api/courses/status');
         const data = await response.json();
         setCompletedCourses(data.completedCourses);
         setInProgressCourses(data.inProgressCourses);
@@ -39,20 +41,23 @@ export default function CoursePage() {
     fetchCoursesStatus();
   }, []);
 
-  const handleModalClose = () => {
-    setShowAddModal(false);
-    fetchCourses();
-  };
-
   return (
     <div className="p-6 bg-[#f4f7ff] min-h-screen">
       <div className="flex justify-between items-center mb-6 max-w-7xl mx-auto">
         <div className="text-sm text-muted-foreground">
           <span className="text-gray-500">Home</span> {'>'} <span className="text-blue-500">Course</span>
         </div>
-        <Button onClick={() => setShowAddModal(true)} className="bg-[#1D1E40] text-white">
+        <button
+          className="bg-[#1A2D62] text-white py-2 px-6 rounded-lg flex items-center gap-2 hover:bg-blue-800 transition-colors"
+          onClick={() => {
+            console.log("Redirecting to /admin/courseform...");
+            router.push("/admin/courseform");
+          }}
+        >
+          <HiOutlinePlus className="text-xl" />
           Create Course
-        </Button>
+        </button>
+
       </div>
 
       <div className="flex gap-4 mb-6 max-w-7xl mx-auto">
@@ -67,11 +72,11 @@ export default function CoursePage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
+      <div className=" flex grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
         {courses.map((course, index) => (
           <Card key={index} className="p-4 border rounded-xl relative">
             <Image
-              src={`http://localhost:4000/${course.image}`}
+              src={`https://back.bishalpantha.com.np/${course.image}`}
               alt={course.title}
               width={500}
               height={300}
@@ -96,9 +101,6 @@ export default function CoursePage() {
                   ? course.assignedTo.map((teacher) => teacher.name).join(', ')
                   : 'N/A'}
               </span>
-              {/* <div className="text-xs text-yellow-600 flex items-center">
-                ⭐ 4.9 (12k)
-              </div> */}
             </div>
             <Button variant="outline" className="w-full mt-1">
               View Progress
@@ -106,14 +108,6 @@ export default function CoursePage() {
           </Card>
         ))}
       </div>
-
-      {showAddModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow">
-            <AddCourseForm onClose={handleModalClose} />
-          </div>
-        </div>
-      )}
 
       <div className="text-xs text-muted-foreground text-center mt-16">
         © Copyright Techyversity 2025, All Right Reserved

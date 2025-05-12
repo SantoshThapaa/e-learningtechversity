@@ -9,7 +9,7 @@ const Blog = ({ recentPosts }) => {
   const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:4000/api/blogs/all')
+    axios.get('https://back.bishalpantha.com.np/api/blogs/all')
       .then(response => setBlogs(response.data.slice(0, 3)))
       .catch(err => console.error(err));
   }, []);
@@ -19,7 +19,7 @@ const Blog = ({ recentPosts }) => {
       <h1 className="text-4xl font-bold text-center mb-8">LATEST NEWS & BLOG</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {blogs.map(blog => {
-          const imageUrl = `http://localhost:4000/${blog.imageUrl.replace(/^\/+/, '')}`;
+          const imageUrl = `https://back.bishalpantha.com.np/${blog.imageUrl.replace(/^\/+/, '')}`;
           console.log("Image URL:", imageUrl);
 
           return (

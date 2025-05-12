@@ -14,12 +14,11 @@ export default function SubmissionPage() {
       const token = localStorage.getItem("token");
 
       try {
-        const res = await fetch(`http://localhost:4000/api/assignment/submissions/${assignmentId}`, {
+        const res = await fetch(`https://back.bishalpantha.com.np/api/assignment/submissions/${assignmentId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
         const data = await res.json();
 
         if (res.ok) {
@@ -73,8 +72,8 @@ export default function SubmissionPage() {
                   <td className="p-4 border">
                     <span
                       className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${submission.fileUrl
-                          ? "bg-green-100 text-green-800"
-                          : "bg-orange-100 text-orange-800"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-orange-100 text-orange-800"
                         }`}
                     >
                       {submission.fileUrl ? "Completed" : "In Progress"}

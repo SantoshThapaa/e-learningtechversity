@@ -17,12 +17,12 @@ const Home = () => {
     <StudentNavbar/>
     <HeroBanner/>
     <AboutSection/>
-    <LogoContent/>
+    <Testimonial />
+    <LogoContent id="logo"/>
     <FeaturesSection/>
     <WhyTechyversitySection/>
-    <Testimonial/>
     <TeamSection/>
-    <StudentTestimonial/>
+    <StudentTestimonial id="testimonials" />
     <Contact/>
     <Footer/>
     

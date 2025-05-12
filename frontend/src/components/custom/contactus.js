@@ -21,34 +21,13 @@ export default function ContactUs() {
                             <p className="text-white mb-4">387 Rhode Island Avenue, Beltsville, DC 20705</p>
                             <p className="text-white mb-2">📧 <a href="mailto:newyorkoff@email.com">newyorkoff@email.com</a></p>
                             <p className="text-white mb-2">📞 +123 456 7890</p>
-
                         </div>
-
-                        {/* Hungary Office */}
+                        {/* Nepal Office  */}
                         <div className="bg-black p-6 shadow-md rounded-lg">
-                            <h3 className="text-xl font-semibold mb-2 text-white">Hungary Office</h3>
-                            <p className="text-white mb-4">3653 Sajópüspöki, Szent Gellért tér 44</p>
-                            <p className="text-white mb-2">📧 <a href="mailto:hungaryoff@email.com">hungaryoff@email.com</a></p>
-                            <p className="text-white mb-2">📞 +123 456 7890</p>
-
-                        </div>
-
-                        {/* Netherlands Office */}
-                        <div className="bg-black p-6 shadow-md rounded-lg">
-                            <h3 className="text-xl font-semibold mb-2 text-white">Netherlands Office</h3>
-                            <p className="text-white mb-4">Ruigweg 11752 HC Sint Maartensbrug</p>
-                            <p className="text-white mb-2">📧 <a href="mailto:netherlandsoff@email.com">netherlandsoff@email.com</a></p>
-                            <p className="text-white mb-2">📞 +123 456 7890</p>
-
-                        </div>
-
-                        {/* Belgium Office */}
-                        <div className="bg-black p-6 shadow-md rounded-lg">
-                            <h3 className="text-xl font-semibold mb-2 text-white">Belgium Office</h3>
-                            <p className="text-white mb-4">Rue Jean Lorette 3245651 Thy-le-Château</p>
-                            <p className="text-white mb-2">📧 <a href="mailto:belgiumoff@email.com">belgiumoff@email.com</a></p>
-                            <p className="text-white mb-2">📞 +123 456 7890</p>
-
+                            <h3 className="text-xl font-semibold mb-2 text-white">Nepal Office</h3>
+                            <p className="text-white mb-4">Putalisadak, Kathmandu 44600, Nepal</p>
+                            <p className="text-white mb-2">📧 <a href="mailto:nepaloffice@email.com">nepaloffice@email.com</a></p>
+                            <p className="text-white mb-2">📞 +977 1 5101122</p>
                         </div>
                     </div>
                 </div>

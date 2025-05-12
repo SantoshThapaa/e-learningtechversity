@@ -115,7 +115,7 @@ const EditCoursePage = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:4000/api/course/${courseId}/lecture`,
+        `https://back.bishalpantha.com.np/api/course/${courseId}/lecture`,
         formData,
         {
           headers: {

@@ -21,38 +21,10 @@ export default function ResourceViewer() {
 
   const router = useRouter();
 
-  const fetchCourses = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const teacherId = getUserIdFromToken();
-      const res = await axios.get(`http://localhost:4000/api/assigned-courses/${teacherId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (Array.isArray(res.data.courses) && res.data.courses.length > 0) {
-        setCourses(res.data.courses);
-        const storedCourseId = localStorage.getItem('courseId');
-        if (storedCourseId) {
-          setCourseId(storedCourseId);
-          fetchResources(storedCourseId);
-        } else {
-          setCourseId(res.data.courses[0]._id);
-          fetchResources(res.data.courses[0]._id);
-        }
-      } else {
-        toast.warning('No courses assigned');
-      }
-    } catch (error) {
-      toast.error('Failed to fetch assigned courses');
-    }
-  };
-
   const fetchResources = async (id) => {
     try {
       setLoading(true);
-      const res = await axios.get(`http://localhost:4000/api/resources/${id}`);
+      const res = await axios.get(`https://back.bishalpantha.com.np/api/resources/${id}`);
       setSections(res.data.sections || []);
     } catch (err) {
       setSections([]);
@@ -64,7 +36,7 @@ export default function ResourceViewer() {
 
   const handleDelete = async (sectionTitle, subHeadingTitle) => {
     try {
-      await axios.delete('http://localhost:4000/api/resources/delete', {
+      await axios.delete('https://back.bishalpantha.com.np/api/resources/delete', {
         data: { courseId, sectionTitle, subHeadingTitle },
       });
       toast.success('Subheading deleted');
@@ -86,7 +58,7 @@ export default function ResourceViewer() {
   const handleSaveEdit = async (oldTitle, index) => {
     const newTitle = editedTitles[index];
     try {
-      await axios.put('http://localhost:4000/api/resources/update-title', {
+      await axios.put('https://back.bishalpantha.com.np/api/resources/update-title', {
         courseId,
         oldTitle,
         newTitle,
@@ -121,8 +93,37 @@ export default function ResourceViewer() {
   };
 
   useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const teacherId = getUserIdFromToken();
+        const res = await axios.get(`https://back.bishalpantha.com.np/api/assigned-courses/${teacherId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        if (Array.isArray(res.data.courses) && res.data.courses.length > 0) {
+          setCourses(res.data.courses);
+          const storedCourseId = localStorage.getItem('courseId');
+          if (storedCourseId) {
+            setCourseId(storedCourseId);
+            fetchResources(storedCourseId);
+          } else {
+            setCourseId(res.data.courses[0]._id);
+            fetchResources(res.data.courses[0]._id);
+          }
+        } else {
+          toast.warning('No courses assigned');
+        }
+      } catch (error) {
+        toast.error('Failed to fetch assigned courses');
+      }
+    };
+  
     fetchCourses();
   }, []);
+  
 
   return (
     <div className="space-y-4 relative mt-10">

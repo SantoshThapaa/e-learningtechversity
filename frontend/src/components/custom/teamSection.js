@@ -1,35 +1,43 @@
-"use client"
-import Link from 'next/link'
-import Image from 'next/image'
-import { motion } from 'framer-motion'
-import { FaFacebookF, FaLinkedinIn, FaTwitter } from 'react-icons/fa'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+'use client';
+
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import Link from 'next/link';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { FaFacebookF, FaLinkedinIn, FaTwitter } from 'react-icons/fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 export default function TeamSection() {
-  const team = [
-    {
-      name: 'Santosh Thapa',
-      role: 'Instructor',
-      image: '/team5.png',
-    },
-    {
-      name: 'Puna Rai',
-      role: 'Instructor',
-      image: '/team6.jpg.png',
-    },
-    {
-      name: 'Sabina Gautam',
-      role: 'Instructor',
-      image: '/team7.jpg.png',
-    },
-    
-  ]
+  const [team, setTeam] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false); 
+
+  useEffect(() => {
+    const fetchTeam = async () => {
+      try {
+        const response = await axios.get('https://back.bishalpantha.com.np/api/team/all');
+        setTeam(response.data);
+      } catch (error) {
+        console.error("Error fetching team members:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeam();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  const membersToDisplay = showAll ? team : team.slice(0, 3); 
 
   return (
     <section className="py-16 bg-white">
       <div className="mx-auto max-w-[1240px] px-4">
-        {/* Heading Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -45,16 +53,17 @@ export default function TeamSection() {
             whileHover={{ scale: 1.05 }}
             className="flex items-center justify-center bg-[#00D96A] w-[150px] h-[150px] rounded-full shadow-md transition"
           >
-            <Link href="#" className="text-[#000] text-[16px] font-[poppins] text-center">
-              <span className="text-[20px] leading-[24px]">View All<br />Members</span>
-            </Link>
+            <div className="text-[#000] text-[16px] font-[poppins] text-center">
+              <span className="text-[20px] leading-[24px]" onClick={() => setShowAll(!showAll)}>
+                {showAll ? "View Less" : "View All Members"}
+              </span>
+            </div>
             <FontAwesomeIcon icon={faArrowRight} className="text-white mt-2 ml-2" />
           </motion.div>
         </motion.div>
 
-        {/* Cards */}
         <div className="flex flex-wrap justify-center gap-10">
-          {team.map((member, idx) => (
+          {membersToDisplay.map((member, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 50 }}
@@ -66,22 +75,43 @@ export default function TeamSection() {
             >
               <div className="relative mx-auto mb-4 h-[460px] w-full rounded-lg overflow-hidden shadow-md">
                 <Image
-                  src={member.image}
+                  src={`https://back.bishalpantha.com.np/${member.image}`} 
                   alt={member.name}
-                  fill
-                  sizes="100vw"
+                  width={360}
+                  height={460}
                   className="object-cover object-center"
                 />
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-3">
-                  {[FaFacebookF, FaLinkedinIn, FaTwitter].map((Icon, iconIdx) => (
+                  {member.facebook && member.facebook !== "" && (
                     <a
-                      key={iconIdx}
-                      href="#"
+                      href={member.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="flex h-10 w-10 items-center justify-center rounded-full bg-[#00C853] text-white hover:bg-green-600 transition"
                     >
-                      <Icon size={14} />
+                      <FaFacebookF size={14} />
                     </a>
-                  ))}
+                  )}
+                  {member.linkedin && member.linkedin !== "" && (
+                    <a
+                      href={member.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-[#00C853] text-white hover:bg-green-600 transition"
+                    >
+                      <FaLinkedinIn size={14} />
+                    </a>
+                  )}
+                  {member.twitter && member.twitter !== "" && (
+                    <a
+                      href={member.twitter}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-[#00C853] text-white hover:bg-green-600 transition"
+                    >
+                      <FaTwitter size={14} />
+                    </a>
+                  )}
                 </div>
               </div>
               <h3 className="text-xl font-semibold">{member.name}</h3>
@@ -91,5 +121,5 @@ export default function TeamSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

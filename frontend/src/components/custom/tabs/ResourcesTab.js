@@ -24,7 +24,7 @@ export default function ResourcesTab() {
 
       const token = localStorage.getItem('token');
       const res = await axios.get(
-        `http://localhost:4000/api/resources/${courseId}`,  
+        `https://back.bishalpantha.com.np/api/resources/${courseId}`,  
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -85,7 +85,7 @@ export default function ResourcesTab() {
                     >
                       <PlayCircle size={18} className="text-gray-500" />
                       <a 
-                        href={`http://localhost:4000${item.videoUrl}`}
+                        href={`https://back.bishalpantha.com.np${item.videoUrl}`}
                         target="_blank" 
                         rel="noopener noreferrer" 
                         className="text-sm text-gray-800"

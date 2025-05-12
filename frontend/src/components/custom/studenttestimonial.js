@@ -6,15 +6,15 @@ import { Card } from '@/components/ui/card';
 import { Star } from 'lucide-react';
 import axios from 'axios';
 
-export const StudentTestimonial = () => {
+export const StudentTestimonial = ({id}) => {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchTestimonials = async () => {
     try {
-      const res = await axios.get('http://localhost:4000/api/allTestimonials');
+      const res = await axios.get('https://back.bishalpantha.com.np/api/allTestimonials');
       const sorted = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).reverse();
-      setTestimonials(sorted.slice(0, 4)); // Limit to only the first 4 testimonials
+      setTestimonials(sorted.slice(0, 4));
     } catch (error) {
       console.error('Error fetching testimonials:', error);
     } finally {
@@ -67,7 +67,7 @@ export const StudentTestimonial = () => {
                   <AvatarImage
                     src={
                       t.profilePic
-                        ? `http://localhost:4000/${t.profilePic.replace(/\\/g, '/')}`
+                        ? `https://back.bishalpantha.com.np${t.profilePic.replace(/\\/g, '/')}`
                         : '/default-avatar.png'
                     }
                     alt={t.name}

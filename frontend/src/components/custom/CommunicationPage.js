@@ -29,10 +29,10 @@ export default function CommunicationPage() {
     }
 
     try {
-      await axios.post("http://localhost:4000/api/notifications", {
+      await axios.post("https://back.bishalpantha.com.np/api/notifications", {
         message: value,
         sendAt: new Date(sendAt).toISOString(),
-        targetAudience,  // Send the selected target audience
+        targetAudience, 
         sender: "Admin",
       });
       showSuccessToast();
@@ -80,8 +80,8 @@ export default function CommunicationPage() {
                 className="w-56 bg-white p-2 border rounded-md"
               >
                 <option value="all">All</option>
-                <option value="teacher">Teachers</option>  {/* Updated option */}
-                <option value="user">Users</option>       {/* Updated option */}
+                <option value="teacher">Teachers</option>  
+                <option value="user">Users</option>       
               </select>
             </div>
 

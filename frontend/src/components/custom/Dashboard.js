@@ -31,7 +31,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const response = await fetch('http://localhost:4000/api/allcourses');
+                const response = await fetch('https://back.bishalpantha.com.np/api/allcourses');
                 const data = await response.json();
                 setCourses(data.courses);
             } catch (error) {
@@ -48,7 +48,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchCoursesStatus = async () => {
             try {
-                const response = await fetch('http://localhost:4000/api/courses/status');
+                const response = await fetch('https://back.bishalpantha.com.np/api/courses/status');
                 const data = await response.json();
                 setCompletedCourses(data.completedCourses);
                 setInProgressCourses(data.inProgressCourses);
@@ -63,7 +63,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchUserStats = async () => {
             try {
-                const response = await fetch(`http://localhost:4000/api/stats?period=${period}`);
+                const response = await fetch(`https://back.bishalpantha.com.np/api/stats?period=${period}`);
                 const data = await response.json();
                 setUserStats(data.stats);
             } catch (error) {
@@ -154,7 +154,7 @@ const Dashboard = () => {
                     <Card key={course._id} className="p-3">
                         <div className="relative">
                             <Image
-                                src={`http://localhost:4000/${course.image}`}
+                                src={`https://back.bishalpantha.com.np/${course.image}`}
                                 alt={course.title}
                                 width={500}
                                 height={300}
