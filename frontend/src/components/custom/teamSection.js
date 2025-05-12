@@ -17,7 +17,7 @@ export default function TeamSection() {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const response = await axios.get('https://back.bishalpantha.com.np/api/team/all');
+        const response = await axios.get('http://localhost:4000/api/team/all');
         setTeam(response.data);
       } catch (error) {
         console.error("Error fetching team members:", error);
@@ -75,7 +75,7 @@ export default function TeamSection() {
             >
               <div className="relative mx-auto mb-4 h-[460px] w-full rounded-lg overflow-hidden shadow-md">
                 <Image
-                  src={`https://back.bishalpantha.com.np/${member.image}`} 
+                  src={`http://localhost:4000/${member.image}`} 
                   alt={member.name}
                   width={360}
                   height={460}
